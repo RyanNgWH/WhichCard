@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "app/assets/fonts/Alata.ttf",
+      "sha1": "4c651869ecabcb2950a00c9036686eb13fb330c2"
+    },
+    {
+      "path": "app/assets/fonts/Roxborough-CF-Bold.ttf",
+      "sha1": "bd7abd9ebb7fe009fc79ae87fd5b5117e9d28cbe"
+    },
+    {
+      "path": "app/assets/fonts/Roxborough-CF.ttf",
+      "sha1": "5e3963b13bba04cb56f3e64c01ac61afe66036a8"
+    }
+  ]
+}
