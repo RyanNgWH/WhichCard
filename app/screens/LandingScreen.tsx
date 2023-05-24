@@ -6,6 +6,7 @@
 
 import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
 import TextStyles from '../styles/TextStyles';
+import {themes} from '../styles/themes';
 
 function LandingPage() {
   return (
@@ -28,7 +29,7 @@ function Branding() {
           numberOfLines={1}
           adjustsFontSizeToFit={true}
           style={[TextStyles.headerText, styles.appName]}>
-          <Text style={{color: '#5c70ea'}}>Which</Text>Card
+          <Text style={{color: themes.color.appNameSecondary}}>Which</Text>Card
         </Text>
         <Text
           numberOfLines={1}
@@ -47,7 +48,7 @@ const scaledDimensions = Dimensions.get('window').width * 0.8;
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#efe3fb',
+    backgroundColor: themes.color.appBackground,
   },
   container: {
     flexDirection: 'row',
@@ -69,10 +70,12 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 100,
     textAlign: 'center',
+    color: themes.color.primary,
   },
   appSubtitle: {
     fontSize: 16,
     textAlign: 'center',
+    color: themes.color.primary,
   },
 });
 

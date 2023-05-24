@@ -5,12 +5,13 @@
  */
 
 import {StyleSheet} from 'react-native';
+import {themes} from './themes';
 
 export default StyleSheet.create({
   headerText: {
-    fontFamily: 'Roxborough-CF-Bold',
+    fontFamily: themes.font.header,
   },
   subtitleText: {
-    fontFamily: 'Alata',
+    fontFamily: themes.font.subtitle,
   },
 });
