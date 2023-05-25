@@ -8,7 +8,7 @@ import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
 import TextStyles from '../styles/TextStyles';
 import {themes} from '../styles/themes';
 import RoundButton from '../components/RoundButton';
-import {Padding} from '../components/ViewComponents';
+import {Padding, ScreenView} from '../components/ViewComponents';
 
 function LandingPage() {
   /**
@@ -26,26 +26,22 @@ function LandingPage() {
   };
 
   return (
-    <View style={[styles.background, styles.container]}>
+    <ScreenView style={styles.background}>
       <Padding size={1} />
-      <View style={styles.landing}>
-        <Padding size={1} />
-        <Branding />
-        <View style={styles.buttonView}>
-          <RoundButton onPress={onCreateAccountPress} style={styles.button}>
-            Create Account
-          </RoundButton>
-          <RoundButton
-            mode="outlined"
-            onPress={onLoginPress}
-            style={styles.button}>
-            Login
-          </RoundButton>
-        </View>
-        <Padding size={1} />
+      <Branding />
+      <View style={styles.buttonView}>
+        <RoundButton onPress={onCreateAccountPress} style={styles.button}>
+          Create Account
+        </RoundButton>
+        <RoundButton
+          mode="outlined"
+          onPress={onLoginPress}
+          style={styles.button}>
+          Login
+        </RoundButton>
       </View>
       <Padding size={1} />
-    </View>
+    </ScreenView>
   );
 }
 
@@ -79,10 +75,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themes.color.appBackground,
   },
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-  },
   branding: {
     flex: 7,
   },
@@ -100,9 +92,6 @@ const styles = StyleSheet.create({
     fontSize: 100,
     textAlign: 'center',
     color: themes.color.textLightBackground,
-  },
-  landing: {
-    flex: 8,
   },
   buttonView: {
     flex: 1,
