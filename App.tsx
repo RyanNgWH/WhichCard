@@ -1,20 +1,8 @@
 import {StyleSheet, Text, View} from 'react-native';
+import LandingPage from './app/screens/LandingScreen';
 
 function App() {
-  return (
-    <View style={styles.hello}>
-      <Text>Hello World!</Text>
-    </View>
-  );
+  return <LandingPage />;
 }
-
-const styles = StyleSheet.create({
-  hello: {
-    alignContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
 
 export default App;
