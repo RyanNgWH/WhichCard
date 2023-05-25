@@ -10,6 +10,7 @@ export const themes = {
   color: {
     appBackground: palette.purple,
     buttonBackgroundPrimary: palette.darkBlue,
+    buttonBackgroundSecondary: palette.white,
     textDarkBackgound: palette.white,
     textLightBackground: palette.darkBlue,
     appNameSecondary: palette.darkPurple,

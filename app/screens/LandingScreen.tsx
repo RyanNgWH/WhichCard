@@ -37,7 +37,7 @@ function LandingPage() {
           </RoundButton>
           <RoundButton
             mode="outlined"
-            onPress={onCreateAccountPress}
+            onPress={onLoginPress}
             style={styles.button}>
             Login
           </RoundButton>

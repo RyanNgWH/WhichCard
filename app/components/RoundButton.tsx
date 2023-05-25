@@ -59,8 +59,9 @@ const styles = StyleSheet.create({
     color: themes.color.textLightBackground,
   },
   pressed: {
-    opacity: 0.8,
+    opacity: 0.75,
     borderRadius: 25,
+    backgroundColor: themes.color.buttonBackgroundSecondary,
   },
 });
 
