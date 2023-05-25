@@ -14,4 +14,10 @@ export default StyleSheet.create({
   subtitleText: {
     fontFamily: themes.font.subtitle,
   },
+  bodyText: {
+    fontFamily: themes.font.body,
+  },
+  buttonText: {
+    fontFamily: themes.font.button,
+  },
 });
