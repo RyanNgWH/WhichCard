@@ -8,7 +8,7 @@ import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
 import TextStyles from '../styles/TextStyles';
 import {themes} from '../styles/themes';
 import RoundButton from '../components/RoundButton';
-import {Padding, ScreenView} from '../components/ViewComponents';
+import {PaddedView, Padding} from '../components/ViewComponents';
 
 function LandingPage() {
   /**
@@ -26,44 +26,47 @@ function LandingPage() {
   };
 
   return (
-    <ScreenView style={styles.background}>
-      <Padding size={1} />
-      <Branding />
-      <View style={styles.buttonView}>
-        <RoundButton onPress={onCreateAccountPress} style={styles.button}>
-          Create Account
-        </RoundButton>
-        <RoundButton
-          mode="outlined"
-          onPress={onLoginPress}
-          style={styles.button}>
-          Login
-        </RoundButton>
-      </View>
-      <Padding size={1} />
-    </ScreenView>
+    <PaddedView direction={'horizontal'} size={8} style={styles.background}>
+      <PaddedView direction={'vertical'} size={15}>
+        <Branding />
+        <View style={styles.buttonView}>
+          <RoundButton onPress={onCreateAccountPress} style={styles.button}>
+            Create Account
+          </RoundButton>
+          <RoundButton
+            mode="outlined"
+            onPress={onLoginPress}
+            style={styles.button}>
+            Login
+          </RoundButton>
+        </View>
+      </PaddedView>
+    </PaddedView>
   );
 }
 
 function Branding() {
   return (
-    <View style={styles.branding}>
-      <Image
-        source={require('../assets/logo/whichcard_logo.png')}
-        style={styles.logo}
-      />
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit={true}
-        style={[TextStyles.headerText, styles.appName]}>
-        <Text style={{color: themes.color.appNameSecondary}}>Which</Text>Card
-      </Text>
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit={true}
-        style={[TextStyles.subtitleText, styles.appSubtitle]}>
-        UNLOCKING YOUR CARD'S POTENTIAL
-      </Text>
+    <View style={styles.brandingContainer}>
+      <View style={styles.branding}>
+        <Image
+          source={require('../assets/logo/whichcard_logo.png')}
+          style={styles.logo}
+        />
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          style={[TextStyles.headerText, styles.appName]}>
+          <Text style={{color: themes.color.appNameSecondary}}>Which</Text>Card
+        </Text>
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          style={[TextStyles.subtitleText, styles.appSubtitle]}>
+          UNLOCKING YOUR CARD'S POTENTIAL
+        </Text>
+      </View>
+      <Padding size={1} />
     </View>
   );
 }
@@ -75,8 +78,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themes.color.appBackground,
   },
-  branding: {
+  brandingContainer: {
     flex: 7,
+  },
+  branding: {
+    flex: 5,
+    justifyContent: 'center',
   },
   logo: {
     width: scaledDimensions,

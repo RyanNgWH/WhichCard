@@ -19,29 +19,44 @@ export const Padding = (props: paddingProps) => {
 };
 
 /**
- * View for creating a screen. Padding is applied to the left and right of the screen.
+ * View with padding.
+ * Padding is applied to the left and right/top and bottom of the screen depending on direction.
+ * Children will take up middle 80% of screen.
  */
-type screenViewProps = {
+type paddedViewProps = {
   children: React.ReactNode;
   style?: ViewStyle;
+  size: number;
+  direction: 'horizontal' | 'vertical';
 };
 
-export const ScreenView = (props: screenViewProps) => {
+export const PaddedView = (props: paddedViewProps) => {
   return (
-    <View style={[styles.container, props.style]}>
+    <View
+      style={[
+        props.direction === 'horizontal'
+          ? styles(props).horizontalContainer
+          : styles(props).veritalContainer,
+        props.style,
+      ]}>
       <Padding size={1} />
-      <View style={styles.landing}>{props.children}</View>
+      <View style={styles(props).primaryView}>{props.children}</View>
       <Padding size={1} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  landing: {
-    flex: 8,
-  },
-});
+const styles = (props: paddedViewProps) =>
+  StyleSheet.create({
+    horizontalContainer: {
+      flexDirection: 'row',
+      flex: 1,
+    },
+    veritalContainer: {
+      flexDirection: 'column',
+      flex: 1,
+    },
+    primaryView: {
+      flex: props.size,
+    },
+  });
