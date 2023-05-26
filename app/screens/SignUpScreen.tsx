@@ -69,9 +69,13 @@ function Header() {
 function Body() {
   return (
     <View style={styles.body}>
-      <TextInputBox title="Full Name" placeholder="Jang Man Wol" />
-      <TextInputBox title="Email Address" />
-      <TextInputBox title="Password" />
+      <TextInputBox
+        title="Full Name"
+        placeholder="Jang Man Wol"
+        autoCorrect={false}
+      />
+      <TextInputBox title="Email Address" autoCorrect={false} />
+      <TextInputBox title="Password" maskText={true} autoCorrect={false} />
     </View>
   );
 }
