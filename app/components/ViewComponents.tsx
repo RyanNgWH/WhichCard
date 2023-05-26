@@ -24,7 +24,8 @@ export const Padding = (props: paddingProps) => {
  * Children will take up middle 80% of screen.
  */
 type paddedViewProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  containerStyle?: ViewStyle;
   style?: ViewStyle;
   size: number;
   direction: 'horizontal' | 'vertical';
@@ -37,10 +38,12 @@ export const PaddedView = (props: paddedViewProps) => {
         props.direction === 'horizontal'
           ? styles(props).horizontalContainer
           : styles(props).veritalContainer,
-        props.style,
+        props.containerStyle,
       ]}>
       <Padding size={1} />
-      <View style={styles(props).primaryView}>{props.children}</View>
+      <View style={[styles(props).primaryView, props.style]}>
+        {props.children}
+      </View>
       <Padding size={1} />
     </View>
   );
