@@ -17,6 +17,9 @@ export default StyleSheet.create({
   bodyText: {
     fontFamily: themes.font.body,
   },
+  bodyTextBold: {
+    fontFamily: themes.font.bodyBold,
+  },
   buttonText: {
     fontFamily: themes.font.button,
   },
