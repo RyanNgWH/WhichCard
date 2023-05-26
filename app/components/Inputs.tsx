@@ -17,6 +17,8 @@ type TextInputBoxProps = {
   title: string;
   placeholder?: string;
   style?: ViewStyle;
+  maskText?: boolean;
+  autoCorrect?: boolean;
 };
 
 function TextInputBox(props: TextInputBoxProps) {
@@ -65,6 +67,8 @@ function TextInputBox(props: TextInputBoxProps) {
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder={props.placeholder}
+        secureTextEntry={props.maskText}
+        autoCorrect={props.autoCorrect}
         style={[
           TextStyles.bodyText,
           styles.textInput,
