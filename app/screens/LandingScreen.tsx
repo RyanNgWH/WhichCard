@@ -26,8 +26,11 @@ function LandingPage() {
   };
 
   return (
-    <PaddedView direction={'horizontal'} size={8} style={styles.background}>
-      <PaddedView direction={'vertical'} size={15}>
+    <PaddedView
+      direction={'horizontal'}
+      size={themes.sizes.horizontalScreenSize}
+      containerStyle={styles.background}>
+      <PaddedView direction={'vertical'} size={themes.sizes.verticalScreenSize}>
         <Branding />
         <View style={styles.buttonView}>
           <RoundButton onPress={onCreateAccountPress} style={styles.button}>
