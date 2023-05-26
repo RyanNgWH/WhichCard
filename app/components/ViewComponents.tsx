@@ -4,7 +4,7 @@
  * @format
  */
 
-import {StyleSheet, View, ViewStyle} from 'react-native';
+import {ScrollView, StyleSheet, View, ViewStyle} from 'react-native';
 
 /**
  * View used to apply padding to a component.
@@ -15,7 +15,7 @@ type paddingProps = {
 };
 
 export const Padding = (props: paddingProps) => {
-  return <View style={[props.style, {flex: props.size}]} />;
+  return <View style={[{flex: props.size}, props.style]} />;
 };
 
 /**
@@ -37,15 +37,37 @@ export const PaddedView = (props: paddedViewProps) => {
       style={[
         props.direction === 'horizontal'
           ? styles(props).horizontalContainer
-          : styles(props).veritalContainer,
+          : styles(props).verticalContainer,
         props.containerStyle,
       ]}>
+      <PaddedViewGenerator {...props} />
+    </View>
+  );
+};
+
+export const PaddedScrollView = (props: paddedViewProps) => {
+  return (
+    <ScrollView
+      contentContainerStyle={[
+        props.direction === 'horizontal'
+          ? styles(props).horizontalContainer
+          : styles(props).verticalContainer,
+        props.containerStyle,
+      ]}>
+      <PaddedViewGenerator {...props} />
+    </ScrollView>
+  );
+};
+
+const PaddedViewGenerator = (props: paddedViewProps) => {
+  return (
+    <>
       <Padding size={1} />
       <View style={[styles(props).primaryView, props.style]}>
         {props.children}
       </View>
       <Padding size={1} />
-    </View>
+    </>
   );
 };
 
@@ -53,11 +75,11 @@ const styles = (props: paddedViewProps) =>
   StyleSheet.create({
     horizontalContainer: {
       flexDirection: 'row',
-      flex: 1,
+      flexGrow: 1,
     },
-    veritalContainer: {
+    verticalContainer: {
       flexDirection: 'column',
-      flex: 1,
+      flexGrow: 1,
     },
     primaryView: {
       flex: props.size,
