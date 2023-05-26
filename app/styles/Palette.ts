@@ -9,5 +9,5 @@ export const palette = {
   darkPurple: '#5c70ea',
   darkBlue: '#100d40',
   white: '#ffffff',
-  lightGray: '#f7f7f7',
+  lightGrey: '#ededed',
 };

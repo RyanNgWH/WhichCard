@@ -14,7 +14,8 @@ export const themes = {
     textDarkBackgound: palette.white,
     textLightBackground: palette.darkBlue,
     appNameSecondary: palette.darkPurple,
-    textInputColor: palette.lightGray,
+    textInputBorderColor: palette.lightGrey,
+    textInputFillColor: palette.lightGrey,
   },
   font: {
     header: 'Roxborough-CF-Bold',
