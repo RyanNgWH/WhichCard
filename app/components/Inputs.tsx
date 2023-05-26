@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   title: {
     paddingLeft: 5,
     paddingBottom: 10,
+    paddingTop: 10,
     color: themes.color.textLightBackground,
   },
   textInput: {
