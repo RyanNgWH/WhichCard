@@ -1,5 +1,5 @@
 /**
- * Create account/sign up page of the app
+ * Login page of the app
  *
  * @format
  */
@@ -17,7 +17,7 @@ import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
-function SignUpScreen() {
+function LoginScreen() {
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
       <PaddedScrollView
@@ -56,7 +56,7 @@ function Header() {
         numberOfLines={1}
         adjustsFontSizeToFit={true}
         style={[TextStyles.bodyTextBold, styles.headerText]}>
-        Create Account
+        Welcome Back!
       </Text>
     </PaddedView>
   );
@@ -66,15 +66,22 @@ function Header() {
  * Body of the sign up page
  */
 function Body() {
+  /**
+   * Forgot password text press handler
+   */
+  const onForgotPasswordPress = () => {
+    console.log('Forgot password text pressed');
+  };
+
   return (
     <View style={styles.body}>
-      <TextInputBox
-        title="Full Name"
-        placeholder="Jang Man Wol"
-        autoCorrect={false}
-      />
       <TextInputBox title="Email Address" autoCorrect={false} />
       <TextInputBox title="Password" maskText={true} autoCorrect={false} />
+      <Text
+        style={(TextStyles.bodyText, styles.forgotPassword)}
+        onPress={onForgotPasswordPress}>
+        Forgot Password?
+      </Text>
     </View>
   );
 }
@@ -84,29 +91,30 @@ function Body() {
  */
 function ButtonView() {
   /**
-   * Sign Up button press handler
+   * Sign Up text press handler
    */
   const onSignUpPress = () => {
-    console.log('Sign Up button pressed');
+    console.log('Sign Up text pressed');
   };
 
   /**
-   * Sign In text press handler
+   * Log In button press handler
    */
-  const onSignInPress = () => {
-    console.log('Sign In text pressed');
+  const onLogInPress = () => {
+    console.log('Log In button pressed');
   };
+
   return (
     <View style={styles.buttonView}>
-      <RoundButton mode="contained" onPress={onSignUpPress}>
-        Sign Up
+      <RoundButton mode="contained" onPress={onLogInPress}>
+        Log In
       </RoundButton>
       <Text style={[TextStyles.bodyText, styles.signInMessage]}>
-        Already have an account?{' '}
+        Don't have an account?{' '}
         <Text
           style={[TextStyles.bodyTextBold, styles.signInText]}
-          onPress={onSignInPress}>
-          Sign In
+          onPress={onSignUpPress}>
+          Sign Up
         </Text>
       </Text>
     </View>
@@ -140,7 +148,14 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingBottom: 20,
-    justifyContent: 'space-around',
+    gap: 15,
+    justifyContent: 'flex-start',
+  },
+  forgotPassword: {
+    textAlign: 'right',
+    color: themes.color.textLightBackground,
+    opacity: 0.5,
+    paddingRight: 5,
   },
   keyboardAvoidingView: {
     flexGrow: 1,
@@ -162,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreen;
+export default LoginScreen;
