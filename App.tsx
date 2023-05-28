@@ -3,9 +3,7 @@ import SignUpPage from './app/screens/SignUpScreen';
 import LoginPage from './app/screens/LoginScreen';
 
 function App() {
-  // return <LandingPage />;
-  // return <SignUpPage />;
-  return <LoginPage />
+  return <LandingPage />;
 }
 
 export default App;
