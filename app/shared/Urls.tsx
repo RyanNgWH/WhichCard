@@ -11,6 +11,4 @@ const URLs = {
     }
 }
 
-console.log(URLs.API_SERVER.USER);
-
 export default URLs;
