@@ -10,19 +10,19 @@ import {themes} from '../styles/themes';
 import RoundButton from '../components/RoundButton';
 import {PaddedView, Padding} from '../components/ViewComponents';
 
-function LandingPage() {
+function LandingScreen({navigation}) {
   /**
    * Create Account button press handler
    */
   const onCreateAccountPress = () => {
-    console.log('Create Account button pressed');
+    navigation.navigate('SignUp');
   };
 
   /**
    * Login button press handler
    */
   const onLoginPress = () => {
-    console.log('Login button Pressed');
+    navigation.navigate('Login');
   };
 
   return (
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LandingPage;
+export default LandingScreen;

@@ -4,7 +4,7 @@
  * @format
  */
 
-import { useState } from 'react';
+import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -15,10 +15,10 @@ import {
 
 import axios from 'axios';
 
-import { PaddedScrollView, PaddedView } from '../components/ViewComponents';
-import { themes } from '../styles/themes';
+import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
+import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
-import { TextInputBox } from '../components/Inputs';
+import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
@@ -28,6 +28,9 @@ type BodyProps = {
   setFullName: (text: string) => void;
   setEmail: (text: string) => void;
   setPassword: (text: string) => void;
+  fullName: string;
+  email: string;
+  password: string;
 };
 
 type ButtonViewProps = {
@@ -35,22 +38,21 @@ type ButtonViewProps = {
   onSignInPress: any;
 };
 
-function SignUpScreen() {
-
+function SignUpScreen({navigation}) {
   const [signUpError, setSignUpError] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const data = {
-    name: fullName, 
+    name: fullName,
     email,
-    password
+    password,
   };
 
   const onSignUpPress = async () => {
     try {
-      if (!fullName || !email || !password) { 
+      if (!fullName || !email || !password) {
         throw new Error('All fields are required.');
       }
 
@@ -58,25 +60,31 @@ function SignUpScreen() {
         method: 'POST',
         url: URLs.API_SERVER.USER.BASE,
         data,
-        validateStatus: () => true
+        validateStatus: () => true,
       });
 
       switch (resp.status) {
         case 201:
-          // TODO: Redirect to placeholder dashboard with user details.
+          navigation.navigate('Dashboard', {user: resp.data.data});
+          setFullName('');
+          setEmail('');
+          setPassword('');
+          break;
         case 422:
-          throw new Error("Email address in use.");
+          throw new Error('Email address in use.');
         default:
           throw new Error();
       }
-
     } catch (err: any) {
-      setSignUpError(err.message || 'Failed to sign up.')
+      setSignUpError(err.message || 'Failed to sign up.');
     }
   };
 
   const onSignInPress = async () => {
-    // TODO: Redirect to SignIn page
+    navigation.navigate('Login');
+    setFullName('');
+    setEmail('');
+    setPassword('');
   };
 
   return (
@@ -92,10 +100,21 @@ function SignUpScreen() {
             <Header />
           </View>
           <View style={styles.bodyContainer}>
-            <Body signUpError={signUpError} setFullName={setFullName} setEmail={setEmail} setPassword={setPassword} />
+            <Body
+              signUpError={signUpError}
+              setFullName={setFullName}
+              setEmail={setEmail}
+              setPassword={setPassword}
+              fullName={fullName}
+              email={email}
+              password={password}
+            />
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView onSignUpPress={onSignUpPress} onSignInPress={onSignInPress} />
+            <ButtonView
+              onSignUpPress={onSignUpPress}
+              onSignInPress={onSignInPress}
+            />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -127,8 +146,15 @@ function Header() {
  * Body of the sign up page
  */
 function Body(props: BodyProps) {
-
-  const { signUpError, setFullName, setEmail, setPassword } = props;
+  const {
+    signUpError,
+    setFullName,
+    setEmail,
+    setPassword,
+    fullName,
+    email,
+    password,
+  } = props;
 
   return (
     <View style={styles.body}>
@@ -137,14 +163,26 @@ function Body(props: BodyProps) {
         placeholder="Jang Man Wol"
         autoCorrect={false}
         onChangeText={setFullName}
+        value={fullName}
       />
-      <TextInputBox title="Email Address" autoCorrect={false} onChangeText={setEmail} />
-      <TextInputBox title="Password" maskText={true} autoCorrect={false} onChangeText={setPassword} />
-      {signUpError ?
+      <TextInputBox
+        title="Email Address"
+        autoCorrect={false}
+        onChangeText={setEmail}
+        value={email}
+      />
+      <TextInputBox
+        title="Password"
+        maskText={true}
+        autoCorrect={false}
+        onChangeText={setPassword}
+        value={password}
+      />
+      {signUpError ? (
         <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
           {signUpError}
-        </Text> : null}
-      
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -153,8 +191,7 @@ function Body(props: BodyProps) {
  * Button of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
-
-  const { onSignUpPress, onSignInPress } = props;
+  const {onSignUpPress, onSignInPress} = props;
 
   return (
     <View style={styles.buttonView}>
@@ -227,8 +264,8 @@ const styles = StyleSheet.create({
     color: themes.color.textLightBackground,
   },
   error: {
-    color: themes.color.errorTextFillColor
-  }
+    color: themes.color.errorTextFillColor,
+  },
 });
 
 export default SignUpScreen;
