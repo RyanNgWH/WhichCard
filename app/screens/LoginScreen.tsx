@@ -101,7 +101,7 @@ function ButtonView({navigation}) {
    * Log In button press handler
    */
   const onLogInPress = () => {
-    console.log('Log In button pressed');
+    navigation.navigate('Dashboard');
   };
 
   return (

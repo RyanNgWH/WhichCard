@@ -87,7 +87,7 @@ function ButtonView({navigation}) {
    * Sign Up button press handler
    */
   const onSignUpPress = () => {
-    console.log('Sign Up button pressed');
+    navigation.navigate('Dashboard');
   };
 
   /**
