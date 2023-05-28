@@ -12,7 +12,7 @@ type RootStackParamList = {
   Landing: undefined;
   SignUp: undefined;
   Login: undefined;
-  Dashboard: undefined;
+  Dashboard: {user: any};
 };
 
 // Create the stack navigator

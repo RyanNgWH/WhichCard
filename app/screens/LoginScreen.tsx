@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { useState } from 'react';
+import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -22,7 +22,6 @@ import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
 
-
 type BodyProps = {
   signInError: string;
   setEmail: (text: string) => void;
@@ -40,37 +39,38 @@ function LoginScreen({navigation}) {
   const [password, setPassword] = useState('');
 
   const onSignUpPress = async () => {
-    // TODO: Redirect to SignUp page
+    navigation.navigate('SignUp');
   };
 
   const onSignInPress = async () => {
     try {
-      if (!email || !password) { 
+      if (!email || !password) {
         throw new Error('All fields are required.');
       }
 
       const data = {
         email,
-        password
+        password,
       };
 
       const resp = await axios({
         method: 'POST',
         url: URLs.API_SERVER.USER.LOGIN,
         data,
-        validateStatus: () => true
+        validateStatus: () => true,
       });
+
       switch (resp.status) {
         case 200:
-          // TODO: Redirect to placeholder dashboard with user details.
+          navigation.navigate('Dashboard', {user: resp.data.data});
+          break;
         case 401:
-          throw new Error("Email address or password invalid.");
+          throw new Error('Email address or password invalid.');
         default:
           throw new Error();
       }
-
     } catch (err: any) {
-      setSignInError(err.message || 'Failed to sign in.')
+      setSignInError(err.message || 'Failed to sign in.');
     }
   };
 
@@ -87,10 +87,17 @@ function LoginScreen({navigation}) {
             <Header />
           </View>
           <View style={styles.bodyContainer}>
-            <Body signInError={signInError} setEmail={setEmail} setPassword={setPassword}/>
+            <Body
+              signInError={signInError}
+              setEmail={setEmail}
+              setPassword={setPassword}
+            />
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView onSignUpPress={onSignUpPress} onSignInPress={onSignInPress} navigation={navigation} />
+            <ButtonView
+              onSignUpPress={onSignUpPress}
+              onSignInPress={onSignInPress}
+            />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -122,8 +129,7 @@ function Header() {
  * Body of the sign up page
  */
 function Body(props: BodyProps) {
-
-  const { signInError, setEmail, setPassword } = props;
+  const {signInError, setEmail, setPassword} = props;
 
   /**
    * Forgot password text press handler
@@ -134,17 +140,27 @@ function Body(props: BodyProps) {
 
   return (
     <View style={styles.body}>
-      <TextInputBox title="Email Address" autoCorrect={false} onChangeText={setEmail} />
-      <TextInputBox title="Password" maskText={true} autoCorrect={false} onChangeText={setPassword} />
+      <TextInputBox
+        title="Email Address"
+        autoCorrect={false}
+        onChangeText={setEmail}
+      />
+      <TextInputBox
+        title="Password"
+        maskText={true}
+        autoCorrect={false}
+        onChangeText={setPassword}
+      />
       <Text
         style={(TextStyles.bodyText, styles.forgotPassword)}
         onPress={onForgotPasswordPress}>
         Forgot Password?
       </Text>
-      {signInError ?
+      {signInError ? (
         <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
           {signInError}
-        </Text> : null}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -153,7 +169,6 @@ function Body(props: BodyProps) {
  * Button of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
-
   const {onSignUpPress, onSignInPress} = props;
 
   return (
@@ -234,8 +249,8 @@ const styles = StyleSheet.create({
     color: themes.color.textLightBackground,
   },
   error: {
-    color: themes.color.errorTextFillColor
-  }
+    color: themes.color.errorTextFillColor,
+  },
 });
 
 export default LoginScreen;

@@ -4,7 +4,7 @@
  * @format
  */
 
-import { useState } from 'react';
+import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -15,10 +15,10 @@ import {
 
 import axios from 'axios';
 
-import { PaddedScrollView, PaddedView } from '../components/ViewComponents';
-import { themes } from '../styles/themes';
+import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
+import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
-import { TextInputBox } from '../components/Inputs';
+import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
@@ -36,21 +36,20 @@ type ButtonViewProps = {
 };
 
 function SignUpScreen({navigation}) {
-
   const [signUpError, setSignUpError] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const data = {
-    name: fullName, 
+    name: fullName,
     email,
-    password
+    password,
   };
 
   const onSignUpPress = async () => {
     try {
-      if (!fullName || !email || !password) { 
+      if (!fullName || !email || !password) {
         throw new Error('All fields are required.');
       }
 
@@ -58,25 +57,25 @@ function SignUpScreen({navigation}) {
         method: 'POST',
         url: URLs.API_SERVER.USER.BASE,
         data,
-        validateStatus: () => true
+        validateStatus: () => true,
       });
 
       switch (resp.status) {
         case 201:
-          // TODO: Redirect to placeholder dashboard with user details.
+          navigation.navigate('Dashboard', {user: resp.data.data});
+          break;
         case 422:
-          throw new Error("Email address in use.");
+          throw new Error('Email address in use.');
         default:
           throw new Error();
       }
-
     } catch (err: any) {
-      setSignUpError(err.message || 'Failed to sign up.')
+      setSignUpError(err.message || 'Failed to sign up.');
     }
   };
 
   const onSignInPress = async () => {
-    // TODO: Redirect to SignIn page
+    navigation.navigate('Login');
   };
 
   return (
@@ -92,10 +91,18 @@ function SignUpScreen({navigation}) {
             <Header />
           </View>
           <View style={styles.bodyContainer}>
-            <Body signUpError={signUpError} setFullName={setFullName} setEmail={setEmail} setPassword={setPassword} />
+            <Body
+              signUpError={signUpError}
+              setFullName={setFullName}
+              setEmail={setEmail}
+              setPassword={setPassword}
+            />
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView onSignUpPress={onSignUpPress} onSignInPress={onSignInPress} navigation={navigation} />
+            <ButtonView
+              onSignUpPress={onSignUpPress}
+              onSignInPress={onSignInPress}
+            />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -127,8 +134,7 @@ function Header() {
  * Body of the sign up page
  */
 function Body(props: BodyProps) {
-
-  const { signUpError, setFullName, setEmail, setPassword } = props;
+  const {signUpError, setFullName, setEmail, setPassword} = props;
 
   return (
     <View style={styles.body}>
@@ -138,13 +144,22 @@ function Body(props: BodyProps) {
         autoCorrect={false}
         onChangeText={setFullName}
       />
-      <TextInputBox title="Email Address" autoCorrect={false} onChangeText={setEmail} />
-      <TextInputBox title="Password" maskText={true} autoCorrect={false} onChangeText={setPassword} />
-      {signUpError ?
+      <TextInputBox
+        title="Email Address"
+        autoCorrect={false}
+        onChangeText={setEmail}
+      />
+      <TextInputBox
+        title="Password"
+        maskText={true}
+        autoCorrect={false}
+        onChangeText={setPassword}
+      />
+      {signUpError ? (
         <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
           {signUpError}
-        </Text> : null}
-      
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -153,8 +168,7 @@ function Body(props: BodyProps) {
  * Button of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
-
-  const { onSignUpPress, onSignInPress } = props;
+  const {onSignUpPress, onSignInPress} = props;
 
   return (
     <View style={styles.buttonView}>
@@ -227,8 +241,8 @@ const styles = StyleSheet.create({
     color: themes.color.textLightBackground,
   },
   error: {
-    color: themes.color.errorTextFillColor
-  }
+    color: themes.color.errorTextFillColor,
+  },
 });
 
 export default SignUpScreen;
