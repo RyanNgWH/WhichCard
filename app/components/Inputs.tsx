@@ -14,17 +14,19 @@ import {useState} from 'react';
  */
 type TextInputBoxProps = {
   title: string;
+  value?: string;
   placeholder?: string;
   style?: ViewStyle;
   maskText?: boolean;
   autoCorrect?: boolean;
+  onChangeText: (text: string) => void;
 };
 
 function TextInputBox(props: TextInputBoxProps) {
   /**
    * Text input for the text box
    */
-  const [text, setText] = useState('');
+  // const [text, setText] = useState('');
   /**
    * Text input filled state
    */
@@ -38,10 +40,10 @@ function TextInputBox(props: TextInputBoxProps) {
    * Handler for text box input change
    * @param input Input from the text box
    */
-  const handleTextChange = (input: string) => {
-    setText(input);
-    setIsFilled(input.length > 0);
-  };
+  // const handleTextChange = (input: string) => {
+  //   setText(input);
+  //   setIsFilled(input.length > 0);
+  // };
 
   /**
    * Handler for text box focus
@@ -61,13 +63,14 @@ function TextInputBox(props: TextInputBoxProps) {
     <View style={props.style}>
       <Text style={[TextStyles.bodyText, styles.title]}>{props.title}</Text>
       <TextInput
-        value={text}
-        onChangeText={handleTextChange}
+        value={props.value}
+        onChangeText={props.onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder={props.placeholder}
         secureTextEntry={props.maskText}
         autoCorrect={props.autoCorrect}
+        autoCapitalize='none'
         style={[
           TextStyles.bodyText,
           styles.textInput,
