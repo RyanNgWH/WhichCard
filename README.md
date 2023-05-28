@@ -40,13 +40,11 @@ The following commands should be executed from the <u>root folder</u> of this pr
 - (**for iOS**) <br/>
     `npx react-native run-ios`
 
-    Install iOS dependencies.
     Build and run this application in the iOS simulator.
     This command also launches Metro Bundler in a new terminal.
 
 - (**for Android**) <br/>
-    `npx react-native start` <br/> `npx react-native run-android` 
+    `npx react-native run-android` 
 
     Build and run this application in the Android simulator.
-    Launch a terminal and run the first command. Wait for the metro bundler menu page to be displayed.
-    Launch a separate terminal and run the second command.
+    This command also launches Metro Bundler in a new terminal.
