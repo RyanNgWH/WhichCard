@@ -3,7 +3,7 @@
  *
  * @format
  */
-
+import { useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -11,13 +11,69 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import axios from 'axios';
+
 import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
+import URLs from '../shared/Urls';
+
+
+type BodyProps = {
+  signInError: string;
+  setEmail: (text: string) => void;
+  setPassword: (text: string) => void;
+};
+
+type ButtonViewProps = {
+  onSignUpPress: any;
+  onSignInPress: any;
+};
+
 function LoginScreen({navigation}) {
+  const [signInError, setSignInError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSignUpPress = async () => {
+    // TODO: Redirect to SignUp page
+  };
+
+  const onSignInPress = async () => {
+    try {
+      if (!email || !password) { 
+        throw new Error('All fields are required.');
+      }
+
+      const data = {
+        email,
+        password
+      };
+
+      const resp = await axios({
+        method: 'POST',
+        url: URLs.API_SERVER.USER.LOGIN,
+        data,
+        validateStatus: () => true
+      });
+      switch (resp.status) {
+        case 200:
+          // TODO: Redirect to placeholder dashboard with user details.
+        case 401:
+          throw new Error("Email address or password invalid.");
+        default:
+          throw new Error();
+      }
+
+    } catch (err: any) {
+      setSignInError(err.message || 'Failed to sign in.')
+    }
+  };
+
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
       <PaddedScrollView
@@ -31,10 +87,10 @@ function LoginScreen({navigation}) {
             <Header />
           </View>
           <View style={styles.bodyContainer}>
-            <Body />
+            <Body signInError={signInError} setEmail={setEmail} setPassword={setPassword}/>
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView navigation={navigation} />
+            <ButtonView onSignUpPress={onSignUpPress} onSignInPress={onSignInPress} navigation={navigation} />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -65,7 +121,10 @@ function Header() {
 /**
  * Body of the sign up page
  */
-function Body() {
+function Body(props: BodyProps) {
+
+  const { signInError, setEmail, setPassword } = props;
+
   /**
    * Forgot password text press handler
    */
@@ -75,13 +134,17 @@ function Body() {
 
   return (
     <View style={styles.body}>
-      <TextInputBox title="Email Address" autoCorrect={false} />
-      <TextInputBox title="Password" maskText={true} autoCorrect={false} />
+      <TextInputBox title="Email Address" autoCorrect={false} onChangeText={setEmail} />
+      <TextInputBox title="Password" maskText={true} autoCorrect={false} onChangeText={setPassword} />
       <Text
         style={(TextStyles.bodyText, styles.forgotPassword)}
         onPress={onForgotPasswordPress}>
         Forgot Password?
       </Text>
+      {signInError ?
+        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+          {signInError}
+        </Text> : null}
     </View>
   );
 }
@@ -89,24 +152,13 @@ function Body() {
 /**
  * Button of the sign up page
  */
-function ButtonView({navigation}) {
-  /**
-   * Sign Up text press handler
-   */
-  const onSignUpPress = () => {
-    navigation.navigate('SignUp');
-  };
+function ButtonView(props: ButtonViewProps) {
 
-  /**
-   * Log In button press handler
-   */
-  const onLogInPress = () => {
-    navigation.navigate('Dashboard');
-  };
+  const {onSignUpPress, onSignInPress} = props;
 
   return (
     <View style={styles.buttonView}>
-      <RoundButton mode="contained" onPress={onLogInPress}>
+      <RoundButton mode="contained" onPress={onSignInPress}>
         Log In
       </RoundButton>
       <Text style={[TextStyles.bodyText, styles.signInMessage]}>
@@ -175,6 +227,15 @@ const styles = StyleSheet.create({
   signInText: {
     textDecorationLine: 'underline',
   },
+  title: {
+    paddingLeft: 5,
+    paddingBottom: 10,
+    paddingTop: 10,
+    color: themes.color.textLightBackground,
+  },
+  error: {
+    color: themes.color.errorTextFillColor
+  }
 });
 
 export default LoginScreen;

@@ -10,4 +10,5 @@ export const palette = {
   darkBlue: '#100d40',
   white: '#ffffff',
   lightGrey: '#ededed',
+  darkRed: '#8b0000'
 };
