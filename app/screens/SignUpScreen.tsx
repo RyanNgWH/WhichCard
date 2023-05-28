@@ -17,7 +17,7 @@ import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
-function SignUpScreen() {
+function SignUpScreen({navigation}) {
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
       <PaddedScrollView
@@ -34,7 +34,7 @@ function SignUpScreen() {
             <Body />
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView />
+            <ButtonView navigation={navigation} />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -82,7 +82,7 @@ function Body() {
 /**
  * Button of the sign up page
  */
-function ButtonView() {
+function ButtonView({navigation}) {
   /**
    * Sign Up button press handler
    */
@@ -94,7 +94,7 @@ function ButtonView() {
    * Sign In text press handler
    */
   const onSignInPress = () => {
-    console.log('Sign In text pressed');
+    navigation.navigate('Login');
   };
   return (
     <View style={styles.buttonView}>
