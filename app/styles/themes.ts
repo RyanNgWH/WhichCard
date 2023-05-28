@@ -18,7 +18,7 @@ export const themes = {
     textInputFillColor: palette.lightGrey,
   },
   font: {
-    header: 'Roxborough-CF-Bold',
+    header: 'Roxborough CF Bold',
     subtitle: 'Alata',
     body: 'Poppins-Regular',
     bodyBold: 'Poppins-SemiBold',
