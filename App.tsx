@@ -22,10 +22,26 @@ function App() {
   return (
     <NavigationContainer>
       <RootStack.Navigator initialRouteName="Landing">
-        <RootStack.Screen name="Landing" component={LandingScreen} />
-        <RootStack.Screen name="SignUp" component={SignUpScreen} />
-        <RootStack.Screen name="Login" component={LoginScreen} />
-        <RootStack.Screen name="Dashboard" component={DashboardScreen} />
+        <RootStack.Screen
+          name="Landing"
+          component={LandingScreen}
+          options={{headerShown: false}}
+        />
+        <RootStack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{headerShown: false}}
+        />
+        <RootStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{headerShown: false}}
+        />
+        <RootStack.Screen
+          name="Dashboard"
+          component={DashboardScreen}
+          options={{headerShown: false}}
+        />
       </RootStack.Navigator>
     </NavigationContainer>
   );
