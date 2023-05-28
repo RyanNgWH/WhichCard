@@ -4,16 +4,26 @@ import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from './app/screens/LoginScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 
-const Stack = createNativeStackNavigator();
+/**
+ * RootStackParamList defines the types of the parameters that can be passed to each screen
+ */
+type RootStackParamList = {
+  Landing: undefined;
+  SignUp: undefined;
+  Login: undefined;
+};
+
+// Create the stack navigator
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
-        <Stack.Screen name="Landing" component={LandingScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-      </Stack.Navigator>
+      <RootStack.Navigator initialRouteName="Landing">
+        <RootStack.Screen name="Landing" component={LandingScreen} />
+        <RootStack.Screen name="SignUp" component={SignUpScreen} />
+        <RootStack.Screen name="Login" component={LoginScreen} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
