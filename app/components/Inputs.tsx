@@ -24,10 +24,6 @@ type TextInputBoxProps = {
 
 function TextInputBox(props: TextInputBoxProps) {
   /**
-   * Text input for the text box
-   */
-  // const [text, setText] = useState('');
-  /**
    * Text input filled state
    */
   const [isFilled, setIsFilled] = useState(false);
@@ -35,15 +31,6 @@ function TextInputBox(props: TextInputBoxProps) {
    * Text input is focused state
    */
   const [isFocused, setIsFocused] = useState(false);
-
-  /**
-   * Handler for text box input change
-   * @param input Input from the text box
-   */
-  // const handleTextChange = (input: string) => {
-  //   setText(input);
-  //   setIsFilled(input.length > 0);
-  // };
 
   /**
    * Handler for text box focus
