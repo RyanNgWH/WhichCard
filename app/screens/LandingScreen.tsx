@@ -60,7 +60,8 @@ function Branding() {
           numberOfLines={1}
           adjustsFontSizeToFit={true}
           style={[TextStyles.headerText, styles.appName]}>
-          <Text style={{color: themes.color.appNameSecondary}}>Which</Text>Card
+          <Text style={{color: themes.color.appNameSecondary}}>Which</Text>
+          Card
         </Text>
         <Text
           numberOfLines={1}

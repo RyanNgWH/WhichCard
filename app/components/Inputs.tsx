@@ -5,7 +5,6 @@
  */
 
 import {View, Text, TextInput, StyleSheet, ViewStyle} from 'react-native';
-import {TestRendererOptions} from 'react-test-renderer';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
 import {useState} from 'react';
