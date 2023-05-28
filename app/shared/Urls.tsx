@@ -1,12 +1,19 @@
 import Config from 'react-native-config';
+import {Platform} from 'react-native';
 
-const {API_SERVER_BASE_URL} = Config;
+const {API_SERVER_BASE_URL_IOS, API_SERVER_BASE_URL_ANDROID} = Config;
 
 const URLs = {
   API_SERVER: {
     USER: {
-      BASE: API_SERVER_BASE_URL + '/users',
-      LOGIN: API_SERVER_BASE_URL + '/users' + '/login',
+      BASE:
+        Platform.OS === 'ios'
+          ? API_SERVER_BASE_URL_IOS + '/users'
+          : API_SERVER_BASE_URL_ANDROID + '/users',
+      LOGIN:
+        Platform.OS === 'ios'
+          ? API_SERVER_BASE_URL_IOS + '/users' + '/login'
+          : API_SERVER_BASE_URL_ANDROID + '/users' + '/login',
     },
   },
 };
