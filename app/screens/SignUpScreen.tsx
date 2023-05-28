@@ -28,6 +28,9 @@ type BodyProps = {
   setFullName: (text: string) => void;
   setEmail: (text: string) => void;
   setPassword: (text: string) => void;
+  fullName: string;
+  email: string;
+  password: string;
 };
 
 type ButtonViewProps = {
@@ -63,6 +66,9 @@ function SignUpScreen({navigation}) {
       switch (resp.status) {
         case 201:
           navigation.navigate('Dashboard', {user: resp.data.data});
+          setFullName('');
+          setEmail('');
+          setPassword('');
           break;
         case 422:
           throw new Error('Email address in use.');
@@ -76,6 +82,9 @@ function SignUpScreen({navigation}) {
 
   const onSignInPress = async () => {
     navigation.navigate('Login');
+    setFullName('');
+    setEmail('');
+    setPassword('');
   };
 
   return (
@@ -96,6 +105,9 @@ function SignUpScreen({navigation}) {
               setFullName={setFullName}
               setEmail={setEmail}
               setPassword={setPassword}
+              fullName={fullName}
+              email={email}
+              password={password}
             />
           </View>
           <View style={styles.buttonViewContainer}>
@@ -134,7 +146,15 @@ function Header() {
  * Body of the sign up page
  */
 function Body(props: BodyProps) {
-  const {signUpError, setFullName, setEmail, setPassword} = props;
+  const {
+    signUpError,
+    setFullName,
+    setEmail,
+    setPassword,
+    fullName,
+    email,
+    password,
+  } = props;
 
   return (
     <View style={styles.body}>
@@ -143,17 +163,20 @@ function Body(props: BodyProps) {
         placeholder="Jang Man Wol"
         autoCorrect={false}
         onChangeText={setFullName}
+        value={fullName}
       />
       <TextInputBox
         title="Email Address"
         autoCorrect={false}
         onChangeText={setEmail}
+        value={email}
       />
       <TextInputBox
         title="Password"
         maskText={true}
         autoCorrect={false}
         onChangeText={setPassword}
+        value={password}
       />
       {signUpError ? (
         <Text style={[TextStyles.bodyText, styles.title, styles.error]}>

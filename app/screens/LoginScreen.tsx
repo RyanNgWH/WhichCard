@@ -24,6 +24,8 @@ import URLs from '../shared/Urls';
 
 type BodyProps = {
   signInError: string;
+  email: string;
+  password: string;
   setEmail: (text: string) => void;
   setPassword: (text: string) => void;
 };
@@ -40,6 +42,8 @@ function LoginScreen({navigation}) {
 
   const onSignUpPress = async () => {
     navigation.navigate('SignUp');
+    setEmail('');
+    setPassword('');
   };
 
   const onSignInPress = async () => {
@@ -63,6 +67,8 @@ function LoginScreen({navigation}) {
       switch (resp.status) {
         case 200:
           navigation.navigate('Dashboard', {user: resp.data.data});
+          setEmail('');
+          setPassword('');
           break;
         case 401:
           throw new Error('Email address or password invalid.');
@@ -91,6 +97,8 @@ function LoginScreen({navigation}) {
               signInError={signInError}
               setEmail={setEmail}
               setPassword={setPassword}
+              email={email}
+              password={password}
             />
           </View>
           <View style={styles.buttonViewContainer}>
@@ -129,7 +137,7 @@ function Header() {
  * Body of the sign up page
  */
 function Body(props: BodyProps) {
-  const {signInError, setEmail, setPassword} = props;
+  const {signInError, setEmail, setPassword, email, password} = props;
 
   /**
    * Forgot password text press handler
@@ -144,12 +152,14 @@ function Body(props: BodyProps) {
         title="Email Address"
         autoCorrect={false}
         onChangeText={setEmail}
+        value={email}
       />
       <TextInputBox
         title="Password"
         maskText={true}
         autoCorrect={false}
         onChangeText={setPassword}
+        value={password}
       />
       <Text
         style={(TextStyles.bodyText, styles.forgotPassword)}
