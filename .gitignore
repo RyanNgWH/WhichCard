@@ -68,3 +68,6 @@ yarn-error.log
 # Default React-native files
 DefaultApp.tsx
 __tests__/DefaultApp-test.tsx
+
+# Ruby configurations
+.ruby-version
