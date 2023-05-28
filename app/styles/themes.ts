@@ -16,7 +16,7 @@ export const themes = {
     appNameSecondary: palette.darkPurple,
     textInputBorderColor: palette.lightGrey,
     textInputFillColor: palette.lightGrey,
-    errorTextFillColor: palette.darkRed
+    errorTextFillColor: palette.darkRed,
   },
   font: {
     header: 'Roxborough-CF-Bold',
