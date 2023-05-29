@@ -7,6 +7,7 @@ This project is developed using the <u>React Native</u> open-source UI software 
 ### Setting up your environment
 
 - Follow the official React Native CLI Quickstart [documentation](https://reactnative.dev/docs/environment-setup?guide=native) to setup your development environment.
+- As of this writing, this project uses <u>Node.js LTS 18.16.0</u>.
 
 > ***IMPORTANT (for iOS):*** A Mac is required to run and test iOS applications.
 
