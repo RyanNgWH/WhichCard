@@ -90,13 +90,13 @@ function SignUpScreen({navigation}) {
 
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
-      <PaddedScrollView
-        direction="vertical"
-        size={themes.sizes.verticalScreenSize}>
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={styles.keyboardAvoidingView}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200}>
+        <PaddedScrollView
+          direction="vertical"
+          size={themes.sizes.verticalScreenSize}>
           <View style={styles.headerContainer}>
             <Header />
           </View>
@@ -117,8 +117,8 @@ function SignUpScreen({navigation}) {
               onSignInPress={onSignInPress}
             />
           </View>
-        </KeyboardAvoidingView>
-      </PaddedScrollView>
+        </PaddedScrollView>
+      </KeyboardAvoidingView>
     </PaddedView>
   );
 }
