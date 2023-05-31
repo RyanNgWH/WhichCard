@@ -78,12 +78,12 @@
       "sha1": "193eb4a66d90b17d1c2c1d96e5f218aa018e59b6"
     },
     {
-      "path": "app/assets/fonts/Roxborough-CF-Bold.ttf",
-      "sha1": "bd7abd9ebb7fe009fc79ae87fd5b5117e9d28cbe"
+      "path": "app/assets/fonts/Roxborough CF Bold.otf",
+      "sha1": "279fbba1836fb544a69e2f6f46ef065c1e0e50eb"
     },
     {
-      "path": "app/assets/fonts/Roxborough-CF.ttf",
-      "sha1": "5e3963b13bba04cb56f3e64c01ac61afe66036a8"
+      "path": "app/assets/fonts/Roxborough CF Regular.otf",
+      "sha1": "06915478306398599a530321fdb5a3f761c2ead2"
     }
   ]
 }

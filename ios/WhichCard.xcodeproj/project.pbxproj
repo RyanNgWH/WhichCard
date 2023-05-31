@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* WhichCardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* WhichCardTests.m */; };
-		05D3B3642A237DA7008CB830 /* RoxboroughCF-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 05D3B3622A237DA7008CB830 /* RoxboroughCF-Regular.otf */; };
-		05D3B3652A237DA7008CB830 /* RoxboroughCF-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 05D3B3632A237DA7008CB830 /* RoxboroughCF-Bold.otf */; };
 		09AC63F13DE34AC78B65EBF5 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 236CFD8C4CF945E58934992D /* Poppins-ExtraBoldItalic.ttf */; };
 		0C7D53E91A234BE38944DE4C /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AB0C9B13ABD45E490D35AE0 /* Poppins-SemiBold.ttf */; };
 		0C80B921A6F3F58F76C31292 /* libPods-WhichCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-WhichCard.a */; };
@@ -35,6 +33,8 @@
 		D4A8D59312BD484988048B80 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B895B0414CB4459B8EFF6125 /* Poppins-Bold.ttf */; };
 		E8CBE5258A474E978643E4B1 /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 512EC5D1F5404EC29DCCE23A /* Poppins-ExtraBold.ttf */; };
 		EBB60392239C4F6CACC6F127 /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DB959229A12047579B47C91D /* Poppins-LightItalic.ttf */; };
+		E7DE7C1D378D4CABAA1704E8 /* Roxborough CF Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 31A65174AF2A461882427495 /* Roxborough CF Bold.otf */; };
+		D1FAB2DFA5E542ADB44D585D /* Roxborough CF Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 15FC750B96E348349259E61C /* Roxborough CF Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,8 +51,6 @@
 		00E356EE1AD99517003FC87E /* WhichCardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhichCardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* WhichCardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhichCardTests.m; sourceTree = "<group>"; };
-		05D3B3622A237DA7008CB830 /* RoxboroughCF-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "RoxboroughCF-Regular.otf"; path = "../app/assets/fonts/RoxboroughCF-Regular.otf"; sourceTree = "<group>"; };
-		05D3B3632A237DA7008CB830 /* RoxboroughCF-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "RoxboroughCF-Bold.otf"; path = "../app/assets/fonts/RoxboroughCF-Bold.otf"; sourceTree = "<group>"; };
 		0B7A919B3164418EAB8089F0 /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLightItalic.ttf"; path = "../app/assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* WhichCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhichCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = WhichCard/AppDelegate.h; sourceTree = "<group>"; };
@@ -86,6 +84,8 @@
 		DB959229A12047579B47C91D /* Poppins-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-LightItalic.ttf"; path = "../app/assets/fonts/Poppins-LightItalic.ttf"; sourceTree = "<group>"; };
 		E66D4B3928CA418090697F05 /* Poppins-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Black.ttf"; path = "../app/assets/fonts/Poppins-Black.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		31A65174AF2A461882427495 /* Roxborough CF Bold.otf */ = {isa = PBXFileReference; name = "Roxborough CF Bold.otf"; path = "../app/assets/fonts/Roxborough CF Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		15FC750B96E348349259E61C /* Roxborough CF Regular.otf */ = {isa = PBXFileReference; name = "Roxborough CF Regular.otf"; path = "../app/assets/fonts/Roxborough CF Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,8 +128,6 @@
 		0EAE795091C643B9897C0298 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				05D3B3632A237DA7008CB830 /* RoxboroughCF-Bold.otf */,
-				05D3B3622A237DA7008CB830 /* RoxboroughCF-Regular.otf */,
 				5FF8A1B63350477AA85C29C6 /* Alata.ttf */,
 				E66D4B3928CA418090697F05 /* Poppins-Black.ttf */,
 				50678325DF144706AA30536A /* Poppins-BlackItalic.ttf */,
@@ -149,6 +147,8 @@
 				BB16EC28489446B680629C59 /* Poppins-SemiBoldItalic.ttf */,
 				357A2BD0A7E9497EA1D691DB /* Poppins-Thin.ttf */,
 				1D536C9174AF4DC091E353AD /* Poppins-ThinItalic.ttf */,
+				31A65174AF2A461882427495 /* Roxborough CF Bold.otf */,
+				15FC750B96E348349259E61C /* Roxborough CF Regular.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -321,7 +321,6 @@
 				D4A8D59312BD484988048B80 /* Poppins-Bold.ttf in Resources */,
 				D14B2CFA603744E48EDD6ED2 /* Poppins-BoldItalic.ttf in Resources */,
 				E8CBE5258A474E978643E4B1 /* Poppins-ExtraBold.ttf in Resources */,
-				05D3B3652A237DA7008CB830 /* RoxboroughCF-Bold.otf in Resources */,
 				09AC63F13DE34AC78B65EBF5 /* Poppins-ExtraBoldItalic.ttf in Resources */,
 				8977B02865D8497393E35DC0 /* Poppins-ExtraLight.ttf in Resources */,
 				BEEB2965869D439289DA4317 /* Poppins-ExtraLightItalic.ttf in Resources */,
@@ -330,12 +329,13 @@
 				EBB60392239C4F6CACC6F127 /* Poppins-LightItalic.ttf in Resources */,
 				14BE24ECB2F8451AA87CB87E /* Poppins-Medium.ttf in Resources */,
 				24BC463F2E774AACAC384AE8 /* Poppins-MediumItalic.ttf in Resources */,
-				05D3B3642A237DA7008CB830 /* RoxboroughCF-Regular.otf in Resources */,
 				2EFEE5D445FD47158EA747C0 /* Poppins-Regular.ttf in Resources */,
 				0C7D53E91A234BE38944DE4C /* Poppins-SemiBold.ttf in Resources */,
 				6F800CDD1C294CC6918C699E /* Poppins-SemiBoldItalic.ttf in Resources */,
 				2AF6DEE31313454EB6AB8B87 /* Poppins-Thin.ttf in Resources */,
 				4371F1A2D81D4C1CBDE6C443 /* Poppins-ThinItalic.ttf in Resources */,
+				E7DE7C1D378D4CABAA1704E8 /* Roxborough CF Bold.otf in Resources */,
+				D1FAB2DFA5E542ADB44D585D /* Roxborough CF Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
