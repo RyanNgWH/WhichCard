@@ -4,6 +4,7 @@
  * @format
  */
 
+import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -11,13 +12,81 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import axios from 'axios';
+
 import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
-function SignUpScreen() {
+import URLs from '../shared/Urls';
+
+type BodyProps = {
+  signUpError: string;
+  setFullName: (text: string) => void;
+  setEmail: (text: string) => void;
+  setPassword: (text: string) => void;
+  fullName: string;
+  email: string;
+  password: string;
+};
+
+type ButtonViewProps = {
+  onSignUpPress: any;
+  onSignInPress: any;
+};
+
+function SignUpScreen({navigation}) {
+  const [signUpError, setSignUpError] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const data = {
+    name: fullName,
+    email,
+    password,
+  };
+
+  const onSignUpPress = async () => {
+    try {
+      if (!fullName || !email || !password) {
+        throw new Error('All fields are required.');
+      }
+
+      const resp = await axios({
+        method: 'POST',
+        url: URLs.API_SERVER.USER.BASE,
+        data,
+        validateStatus: () => true,
+      });
+
+      switch (resp.status) {
+        case 201:
+          navigation.navigate('Dashboard', {user: resp.data.data});
+          setFullName('');
+          setEmail('');
+          setPassword('');
+          break;
+        case 422:
+          throw new Error('Email address in use.');
+        default:
+          throw new Error();
+      }
+    } catch (err: any) {
+      setSignUpError(err.message || 'Failed to sign up.');
+    }
+  };
+
+  const onSignInPress = async () => {
+    navigation.navigate('Login');
+    setFullName('');
+    setEmail('');
+    setPassword('');
+  };
+
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
       <PaddedScrollView
@@ -31,10 +100,21 @@ function SignUpScreen() {
             <Header />
           </View>
           <View style={styles.bodyContainer}>
-            <Body />
+            <Body
+              signUpError={signUpError}
+              setFullName={setFullName}
+              setEmail={setEmail}
+              setPassword={setPassword}
+              fullName={fullName}
+              email={email}
+              password={password}
+            />
           </View>
           <View style={styles.buttonViewContainer}>
-            <ButtonView />
+            <ButtonView
+              onSignUpPress={onSignUpPress}
+              onSignInPress={onSignInPress}
+            />
           </View>
         </KeyboardAvoidingView>
       </PaddedScrollView>
@@ -65,16 +145,44 @@ function Header() {
 /**
  * Body of the sign up page
  */
-function Body() {
+function Body(props: BodyProps) {
+  const {
+    signUpError,
+    setFullName,
+    setEmail,
+    setPassword,
+    fullName,
+    email,
+    password,
+  } = props;
+
   return (
     <View style={styles.body}>
       <TextInputBox
         title="Full Name"
         placeholder="Jang Man Wol"
         autoCorrect={false}
+        onChangeText={setFullName}
+        value={fullName}
       />
-      <TextInputBox title="Email Address" autoCorrect={false} />
-      <TextInputBox title="Password" maskText={true} autoCorrect={false} />
+      <TextInputBox
+        title="Email Address"
+        autoCorrect={false}
+        onChangeText={setEmail}
+        value={email}
+      />
+      <TextInputBox
+        title="Password"
+        maskText={true}
+        autoCorrect={false}
+        onChangeText={setPassword}
+        value={password}
+      />
+      {signUpError ? (
+        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+          {signUpError}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -82,20 +190,9 @@ function Body() {
 /**
  * Button of the sign up page
  */
-function ButtonView() {
-  /**
-   * Sign Up button press handler
-   */
-  const onSignUpPress = () => {
-    console.log('Sign Up button pressed');
-  };
+function ButtonView(props: ButtonViewProps) {
+  const {onSignUpPress, onSignInPress} = props;
 
-  /**
-   * Sign In text press handler
-   */
-  const onSignInPress = () => {
-    console.log('Sign In text pressed');
-  };
   return (
     <View style={styles.buttonView}>
       <RoundButton mode="contained" onPress={onSignUpPress}>
@@ -159,6 +256,15 @@ const styles = StyleSheet.create({
   },
   signInText: {
     textDecorationLine: 'underline',
+  },
+  title: {
+    paddingLeft: 5,
+    paddingBottom: 10,
+    paddingTop: 10,
+    color: themes.color.textLightBackground,
+  },
+  error: {
+    color: themes.color.errorTextFillColor,
   },
 });
 
