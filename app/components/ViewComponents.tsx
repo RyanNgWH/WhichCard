@@ -53,7 +53,8 @@ export const PaddedScrollView = (props: paddedViewProps) => {
           ? styles(props).horizontalContainer
           : styles(props).verticalContainer,
         props.containerStyle,
-      ]}>
+      ]}
+      keyboardShouldPersistTaps="handled">
       <PaddedViewGenerator {...props} />
     </ScrollView>
   );
