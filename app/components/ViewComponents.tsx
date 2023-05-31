@@ -5,6 +5,7 @@
  */
 
 import {
+  LayoutChangeEvent,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -27,6 +28,7 @@ type paddedViewProps = {
   style?: ViewStyle;
   size: number;
   direction: 'horizontal' | 'vertical';
+  onLayout?: (event: LayoutChangeEvent) => void;
 };
 
 // Props for safe area view global components
@@ -93,7 +95,9 @@ const PaddedViewGenerator = (props: paddedViewProps) => {
   return (
     <>
       <Padding size={1} />
-      <View style={[paddedViewStyles(props).primaryView, props.style]}>
+      <View
+        style={[paddedViewStyles(props).primaryView, props.style]}
+        onLayout={props.onLayout}>
         {props.children}
       </View>
       <Padding size={1} />

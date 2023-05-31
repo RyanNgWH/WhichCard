@@ -2,14 +2,20 @@
  * Dashboard of the app
  */
 
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
+import {useState} from 'react';
 
 // Props for the header
 type headerProps = {
   name: string;
+};
+
+// Props for the header styles
+type headerStylesProps = {
+  containerHeight: number;
 };
 
 // TODO: Add type for user
@@ -36,27 +42,37 @@ function DashboardScreen({route, navigation}) {
  * @returns Header of the dashboard
  */
 function Header(props: headerProps) {
+  // Container width
+  const [headerContainerHeight, setHeaderContainerHeight] = useState(0);
+
+  const headerStyleProps = {
+    containerHeight: headerContainerHeight,
+  };
+
   return (
     <PaddedView
       direction="horizontal"
       size={themes.sizes.horizontalScreenSize}
-      style={headerStyles().header}>
+      style={headerStyles(headerStyleProps).header}
+      onLayout={(event: LayoutChangeEvent) => {
+        setHeaderContainerHeight(event.nativeEvent.layout.height);
+      }}>
       <Image
         source={require('../assets/logo/whichcard_logo.png')}
-        style={headerStyles().logo}
+        style={headerStyles({containerHeight: headerContainerHeight}).logo}
       />
-      <View style={headerStyles().headerTextContainer}>
+      <View style={headerStyles(headerStyleProps).headerTextContainer}>
         <Text
           style={[
-            TextStyles({theme: 'light'}).bodyText,
-            headerStyles().welcomeText,
+            TextStyles({theme: 'light'}).bodySubText,
+            headerStyles(headerStyleProps).welcomeText,
           ]}>
           Welcome Back
         </Text>
         <Text
           style={[
             TextStyles({theme: 'light'}).bodyTextBold,
-            headerStyles().nameText,
+            headerStyles(headerStyleProps).nameText,
           ]}>
           {props.name}
         </Text>
@@ -85,11 +101,11 @@ const styles = () =>
   StyleSheet.create({
     screen: {
       flex: 1,
-      backgroundColor: themes.color.appBackground,
+      backgroundColor: themes.colors.appBackground,
     },
     headerContainer: {
       flex: 2.5,
-      backgroundColor: themes.color.appBackground,
+      backgroundColor: themes.colors.appBackground,
     },
     bodyContainer: {
       flex: 10,
@@ -101,15 +117,15 @@ const styles = () =>
     },
   });
 
-const headerStyles = () =>
+const headerStyles = (props: headerStylesProps) =>
   StyleSheet.create({
     header: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     logo: {
-      width: 100,
-      height: 100,
+      width: props.containerHeight,
+      height: props.containerHeight,
       resizeMode: 'contain',
       flex: 1,
     },
@@ -119,6 +135,7 @@ const headerStyles = () =>
     welcomeText: {
       textAlign: 'right',
       fontSize: 16,
+      opacity: 0.5,
     },
     nameText: {
       textAlign: 'right',
