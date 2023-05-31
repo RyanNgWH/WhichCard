@@ -4,11 +4,22 @@
  * @format
  */
 
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 import TextStyles from '../styles/TextStyles';
 import {themes} from '../styles/themes';
 import RoundButton from '../components/RoundButton';
-import {PaddedView, Padding} from '../components/ViewComponents';
+import {
+  PaddedView,
+  Padding,
+  SafeAreaViewGlobal,
+} from '../components/ViewComponents';
 
 function LandingScreen({navigation}) {
   /**
@@ -26,25 +37,32 @@ function LandingScreen({navigation}) {
   };
 
   return (
-    <PaddedView
-      direction={'horizontal'}
-      size={themes.sizes.horizontalScreenSize}
-      containerStyle={styles().background}>
-      <PaddedView direction={'vertical'} size={themes.sizes.verticalScreenSize}>
-        <Branding />
-        <View style={styles().buttonView}>
-          <RoundButton onPress={onCreateAccountPress} style={styles().button}>
-            Create Account
-          </RoundButton>
-          <RoundButton
-            mode="outlined"
-            onPress={onLoginPress}
-            style={styles().button}>
-            Login
-          </RoundButton>
-        </View>
+    <>
+      <StatusBar
+        translucent={true}
+        backgroundColor={'transparent'}
+        barStyle={'dark-content'}
+      />
+      <PaddedView
+        direction={'horizontal'}
+        size={themes.sizes.horizontalScreenSize}
+        containerStyle={styles().background}>
+        <SafeAreaViewGlobal>
+          <Branding />
+          <View style={styles().buttonView}>
+            <RoundButton onPress={onCreateAccountPress} style={styles().button}>
+              Create Account
+            </RoundButton>
+            <RoundButton
+              mode="outlined"
+              onPress={onLoginPress}
+              style={styles().button}>
+              Login
+            </RoundButton>
+          </View>
+        </SafeAreaViewGlobal>
       </PaddedView>
-    </PaddedView>
+    </>
   );
 }
 

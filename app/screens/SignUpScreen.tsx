@@ -8,6 +8,7 @@ import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,7 +16,11 @@ import {
 
 import axios from 'axios';
 
-import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
+import {
+  PaddedScrollView,
+  PaddedView,
+  SafeAreaViewGlobal,
+} from '../components/ViewComponents';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
@@ -89,35 +94,35 @@ function SignUpScreen({navigation}) {
 
   return (
     <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
-      <PaddedScrollView
-        direction="vertical"
-        size={themes.sizes.verticalScreenSize}>
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={styles.keyboardAvoidingView}
-          keyboardVerticalOffset={-200}>
-          <View style={styles.headerContainer}>
-            <Header />
-          </View>
-          <View style={styles.bodyContainer}>
-            <Body
-              signUpError={signUpError}
-              setFullName={setFullName}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              fullName={fullName}
-              email={email}
-              password={password}
-            />
-          </View>
-          <View style={styles.buttonViewContainer}>
-            <ButtonView
-              onSignUpPress={onSignUpPress}
-              onSignInPress={onSignInPress}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </PaddedScrollView>
+      <SafeAreaViewGlobal>
+        <ScrollView contentContainerStyle={styles.screen}>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={styles.keyboardAvoidingView}
+            keyboardVerticalOffset={-200}>
+            <View style={styles.headerContainer}>
+              <Header />
+            </View>
+            <View style={styles.bodyContainer}>
+              <Body
+                signUpError={signUpError}
+                setFullName={setFullName}
+                setEmail={setEmail}
+                setPassword={setPassword}
+                fullName={fullName}
+                email={email}
+                password={password}
+              />
+            </View>
+            <View style={styles.buttonViewContainer}>
+              <ButtonView
+                onSignUpPress={onSignUpPress}
+                onSignInPress={onSignInPress}
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </SafeAreaViewGlobal>
     </PaddedView>
   );
 }
@@ -217,7 +222,7 @@ function ButtonView(props: ButtonViewProps) {
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  screen: {
     flexGrow: 1,
   },
   headerContainer: {
