@@ -57,7 +57,7 @@ function TextInputBox(props: TextInputBoxProps) {
         placeholder={props.placeholder}
         secureTextEntry={props.maskText}
         autoCorrect={props.autoCorrect}
-        autoCapitalize='none'
+        autoCapitalize="none"
         style={[
           TextStyles.bodyText,
           styles.textInput,
