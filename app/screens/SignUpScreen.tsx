@@ -8,6 +8,7 @@ import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   View,
@@ -95,7 +96,7 @@ function SignUpScreen({navigation}) {
         <KeyboardAvoidingView
           behavior="padding"
           style={styles.keyboardAvoidingView}
-          keyboardVerticalOffset={-200}>
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200}>
           <View style={styles.headerContainer}>
             <Header />
           </View>
