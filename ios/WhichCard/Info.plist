@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleGetInfoString</key>
+	<string/>
+	<key>LSApplicationCategoryType</key>
+	<string/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -53,8 +57,6 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Roxborough-CF-Bold.ttf</string>
-		<string>Roxborough-CF.ttf</string>
 		<string>Alata.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
@@ -74,6 +76,8 @@
 		<string>Poppins-SemiBoldItalic.ttf</string>
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
+		<string>Roxborough CF Bold.otf</string>
+		<string>Roxborough CF Regular.otf</string>
 	</array>
 </dict>
 </plist>
