@@ -7,7 +7,7 @@
 import {palette} from './Palette';
 
 export const themes = {
-  color: {
+  colors: {
     appBackground: palette.purple,
     buttonBackgroundPrimary: palette.darkBlue,
     buttonBackgroundSecondary: palette.white,
@@ -18,11 +18,12 @@ export const themes = {
     textInputFillColor: palette.lightGrey,
     errorTextFillColor: palette.darkRed,
   },
-  font: {
+  fonts: {
     header: 'Roxborough CF Bold',
     subtitle: 'Alata',
     body: 'Poppins-Regular',
     bodyBold: 'Poppins-SemiBold',
+    bodyMedium: 'Poppins-Medium',
     button: 'Poppins-SemiBold',
   },
   sizes: {

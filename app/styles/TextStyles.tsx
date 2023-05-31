@@ -13,29 +13,33 @@ type styleProps = {
 
 const themeFontColor = (theme: 'light' | 'dark') =>
   theme === 'light'
-    ? themes.color.textLightBackground
-    : themes.color.textDarkBackground;
+    ? themes.colors.textLightBackground
+    : themes.colors.textDarkBackground;
 
 export default (props: styleProps) =>
   StyleSheet.create({
     headerText: {
-      fontFamily: themes.font.header,
+      fontFamily: themes.fonts.header,
       color: themeFontColor(props.theme),
     },
     subtitleText: {
-      fontFamily: themes.font.subtitle,
+      fontFamily: themes.fonts.subtitle,
       color: themeFontColor(props.theme),
     },
     bodyText: {
-      fontFamily: themes.font.body,
+      fontFamily: themes.fonts.body,
       color: themeFontColor(props.theme),
     },
     bodyTextBold: {
-      fontFamily: themes.font.bodyBold,
+      fontFamily: themes.fonts.bodyBold,
+      color: themeFontColor(props.theme),
+    },
+    bodySubText: {
+      fontFamily: themes.fonts.bodyMedium,
       color: themeFontColor(props.theme),
     },
     buttonText: {
-      fontFamily: themes.font.button,
+      fontFamily: themes.fonts.button,
       color: themeFontColor(props.theme),
     },
   });

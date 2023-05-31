@@ -67,7 +67,7 @@ function TextInputBox(props: TextInputBoxProps) {
             backgroundColor:
               isFilled || isFocused
                 ? 'transparent'
-                : themes.color.textInputFillColor,
+                : themes.colors.textInputFillColor,
           },
         ]}
       />
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 2,
-    borderColor: themes.color.textInputBorderColor,
+    borderColor: themes.colors.textInputBorderColor,
     borderRadius: 5,
     padding: 10,
   },

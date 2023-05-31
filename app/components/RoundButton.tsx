@@ -44,24 +44,24 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 25,
     padding: 12,
-    backgroundColor: themes.color.buttonBackgroundPrimary,
+    backgroundColor: themes.colors.buttonBackgroundPrimary,
     borderWidth: 1,
   },
   outlined: {
     backgroundColor: 'transparent',
-    borderColor: themes.color.buttonBackgroundPrimary,
+    borderColor: themes.colors.buttonBackgroundPrimary,
   },
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
   },
   outlinedText: {
-    color: themes.color.textLightBackground,
+    color: themes.colors.textLightBackground,
   },
   pressed: {
     opacity: 0.75,
     borderRadius: 25,
-    backgroundColor: themes.color.buttonBackgroundSecondary,
+    backgroundColor: themes.colors.buttonBackgroundSecondary,
   },
 });
 

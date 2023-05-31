@@ -78,7 +78,7 @@ function Branding() {
           numberOfLines={1}
           adjustsFontSizeToFit={true}
           style={[TextStyles({theme: 'light'}).headerText, styles().appName]}>
-          <Text style={{color: themes.color.appNameSecondary}}>Which</Text>
+          <Text style={{color: themes.colors.appNameSecondary}}>Which</Text>
           Card
         </Text>
         <Text
@@ -106,7 +106,7 @@ const styles = () =>
     },
     background: {
       flexGrow: 1,
-      backgroundColor: themes.color.appBackground,
+      backgroundColor: themes.colors.appBackground,
     },
     brandingContainer: {
       flexGrow: 7,

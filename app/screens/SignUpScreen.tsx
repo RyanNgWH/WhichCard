@@ -16,11 +16,7 @@ import {
 
 import axios from 'axios';
 
-import {
-  PaddedScrollView,
-  PaddedView,
-  SafeAreaViewGlobal,
-} from '../components/ViewComponents';
+import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {themes} from '../styles/themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
@@ -272,7 +268,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   error: {
-    color: themes.color.errorTextFillColor,
+    color: themes.colors.errorTextFillColor,
   },
 });
 
