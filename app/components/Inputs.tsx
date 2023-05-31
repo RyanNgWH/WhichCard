@@ -48,7 +48,9 @@ function TextInputBox(props: TextInputBoxProps) {
 
   return (
     <View style={props.style}>
-      <Text style={[TextStyles.bodyText, styles.title]}>{props.title}</Text>
+      <Text style={[TextStyles({theme: 'light'}).bodyText, styles.title]}>
+        {props.title}
+      </Text>
       <TextInput
         value={props.value}
         onChangeText={props.onChangeText}
@@ -59,7 +61,7 @@ function TextInputBox(props: TextInputBoxProps) {
         autoCorrect={props.autoCorrect}
         autoCapitalize="none"
         style={[
-          TextStyles.bodyText,
+          TextStyles({theme: 'light'}).bodyText,
           styles.textInput,
           {
             backgroundColor:
@@ -78,14 +80,12 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   textInput: {
     borderWidth: 2,
     borderColor: themes.color.textInputBorderColor,
     borderRadius: 5,
     padding: 10,
-    color: themes.color.textLightBackground,
   },
 });
 

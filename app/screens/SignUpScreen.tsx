@@ -135,7 +135,7 @@ function Header() {
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit={true}
-        style={[TextStyles.bodyTextBold, styles.headerText]}>
+        style={[TextStyles({theme: 'light'}).bodyTextBold, styles.headerText]}>
         Create Account
       </Text>
     </PaddedView>
@@ -179,7 +179,12 @@ function Body(props: BodyProps) {
         value={password}
       />
       {signUpError ? (
-        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+        <Text
+          style={[
+            TextStyles({theme: 'light'}).bodyText,
+            styles.title,
+            styles.error,
+          ]}>
           {signUpError}
         </Text>
       ) : null}
@@ -198,10 +203,11 @@ function ButtonView(props: ButtonViewProps) {
       <RoundButton mode="contained" onPress={onSignUpPress}>
         Sign Up
       </RoundButton>
-      <Text style={[TextStyles.bodyText, styles.signInMessage]}>
+      <Text
+        style={[TextStyles({theme: 'light'}).bodyText, styles.signInMessage]}>
         Already have an account?{' '}
         <Text
-          style={[TextStyles.bodyTextBold, styles.signInText]}
+          style={[TextStyles({theme: 'light'}).bodyTextBold, styles.signInText]}
           onPress={onSignInPress}>
           Sign In
         </Text>
@@ -229,7 +235,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     flex: 1,
-    color: themes.color.textLightBackground,
   },
   bodyContainer: {
     flexGrow: 4,
@@ -252,7 +257,6 @@ const styles = StyleSheet.create({
   },
   signInMessage: {
     textAlign: 'center',
-    color: themes.color.textLightBackground,
   },
   signInText: {
     textDecorationLine: 'underline',
@@ -261,7 +265,6 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   error: {
     color: themes.color.errorTextFillColor,

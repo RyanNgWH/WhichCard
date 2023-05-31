@@ -35,6 +35,11 @@ type ButtonViewProps = {
   onSignInPress: any;
 };
 
+/**
+ * Login screen
+ * @param navigation Navigation object
+ * @returns Login screen component
+ */
 function LoginScreen({navigation}) {
   const [signInError, setSignInError] = useState('');
   const [email, setEmail] = useState('');
@@ -115,6 +120,7 @@ function LoginScreen({navigation}) {
 
 /**
  * Header of the sign up page
+ * @returns Header component of the sign up page
  */
 function Header() {
   return (
@@ -126,7 +132,7 @@ function Header() {
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit={true}
-        style={[TextStyles.bodyTextBold, styles.headerText]}>
+        style={[TextStyles({theme: 'light'}).bodyTextBold, styles.headerText]}>
         Welcome Back!
       </Text>
     </PaddedView>
@@ -135,6 +141,7 @@ function Header() {
 
 /**
  * Body of the sign up page
+ * @returns Body component of the sign up page
  */
 function Body(props: BodyProps) {
   const {signInError, setEmail, setPassword, email, password} = props;
@@ -142,6 +149,7 @@ function Body(props: BodyProps) {
   /**
    * Forgot password text press handler
    */
+  // TODO: Implement forgot password functionality
   const onForgotPasswordPress = () => {
     console.log('Forgot password text pressed');
   };
@@ -162,12 +170,17 @@ function Body(props: BodyProps) {
         value={password}
       />
       <Text
-        style={(TextStyles.bodyText, styles.forgotPassword)}
+        style={(TextStyles({theme: 'light'}).bodyText, styles.forgotPassword)}
         onPress={onForgotPasswordPress}>
         Forgot Password?
       </Text>
       {signInError ? (
-        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+        <Text
+          style={[
+            TextStyles({theme: 'light'}).bodyText,
+            styles.title,
+            styles.error,
+          ]}>
           {signInError}
         </Text>
       ) : null}
@@ -176,7 +189,8 @@ function Body(props: BodyProps) {
 }
 
 /**
- * Button of the sign up page
+ * Button view of the sign up page
+ * @returns Button view component of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
   const {onSignUpPress, onSignInPress} = props;
@@ -186,10 +200,11 @@ function ButtonView(props: ButtonViewProps) {
       <RoundButton mode="contained" onPress={onSignInPress}>
         Log In
       </RoundButton>
-      <Text style={[TextStyles.bodyText, styles.signInMessage]}>
+      <Text
+        style={[TextStyles({theme: 'light'}).bodyText, styles.signInMessage]}>
         Don't have an account?{' '}
         <Text
-          style={[TextStyles.bodyTextBold, styles.signInText]}
+          style={[TextStyles({theme: 'light'}).bodyTextBold, styles.signInText]}
           onPress={onSignUpPress}>
           Sign Up
         </Text>
@@ -217,7 +232,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     flex: 1,
-    color: themes.color.textLightBackground,
   },
   bodyContainer: {
     flexGrow: 4,
@@ -230,7 +244,6 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     textAlign: 'right',
-    color: themes.color.textLightBackground,
     opacity: 0.5,
     paddingRight: 5,
   },
@@ -247,7 +260,6 @@ const styles = StyleSheet.create({
   },
   signInMessage: {
     textAlign: 'center',
-    color: themes.color.textLightBackground,
   },
   signInText: {
     textDecorationLine: 'underline',
@@ -256,7 +268,6 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   error: {
     color: themes.color.errorTextFillColor,

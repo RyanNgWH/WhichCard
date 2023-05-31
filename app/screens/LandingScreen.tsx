@@ -29,17 +29,17 @@ function LandingScreen({navigation}) {
     <PaddedView
       direction={'horizontal'}
       size={themes.sizes.horizontalScreenSize}
-      containerStyle={styles.background}>
+      containerStyle={styles().background}>
       <PaddedView direction={'vertical'} size={themes.sizes.verticalScreenSize}>
         <Branding />
-        <View style={styles.buttonView}>
-          <RoundButton onPress={onCreateAccountPress} style={styles.button}>
+        <View style={styles().buttonView}>
+          <RoundButton onPress={onCreateAccountPress} style={styles().button}>
             Create Account
           </RoundButton>
           <RoundButton
             mode="outlined"
             onPress={onLoginPress}
-            style={styles.button}>
+            style={styles().button}>
             Login
           </RoundButton>
         </View>
@@ -50,23 +50,26 @@ function LandingScreen({navigation}) {
 
 function Branding() {
   return (
-    <View style={styles.brandingContainer}>
-      <View style={styles.branding}>
+    <View style={styles().brandingContainer}>
+      <View style={styles().branding}>
         <Image
           source={require('../assets/logo/whichcard_logo.png')}
-          style={styles.logo}
+          style={styles().logo}
         />
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit={true}
-          style={[TextStyles.headerText, styles.appName]}>
+          style={[TextStyles({theme: 'light'}).headerText, styles().appName]}>
           <Text style={{color: themes.color.appNameSecondary}}>Which</Text>
           Card
         </Text>
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit={true}
-          style={[TextStyles.subtitleText, styles.appSubtitle]}>
+          style={[
+            TextStyles({theme: 'light'}).subtitleText,
+            styles().appSubtitle,
+          ]}>
           UNLOCKING YOUR CARD'S POTENTIAL
         </Text>
       </View>
@@ -77,41 +80,44 @@ function Branding() {
 
 const scaledDimensions = Dimensions.get('window').width * 0.8;
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    backgroundColor: themes.color.appBackground,
-  },
-  brandingContainer: {
-    flex: 7,
-  },
-  branding: {
-    flex: 5,
-    justifyContent: 'center',
-  },
-  logo: {
-    width: scaledDimensions,
-    height: scaledDimensions,
-    alignSelf: 'center',
-  },
-  appName: {
-    fontSize: 100,
-    textAlign: 'center',
-    color: themes.color.textLightBackground,
-  },
-  appSubtitle: {
-    fontSize: 100,
-    textAlign: 'center',
-    color: themes.color.textLightBackground,
-  },
-  buttonView: {
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 75,
-  },
-  button: {
-    marginVertical: 8,
-  },
-});
+const styles = () =>
+  StyleSheet.create({
+    screen: {
+      flexGrow: 1,
+      backgroundColor: 'yellow',
+    },
+    background: {
+      flexGrow: 1,
+      backgroundColor: themes.color.appBackground,
+    },
+    brandingContainer: {
+      flexGrow: 7,
+    },
+    branding: {
+      flexGrow: 5,
+      justifyContent: 'center',
+    },
+    logo: {
+      width: scaledDimensions,
+      height: scaledDimensions,
+      alignSelf: 'center',
+    },
+    appName: {
+      fontSize: 100,
+      textAlign: 'center',
+    },
+    appSubtitle: {
+      fontSize: 100,
+      textAlign: 'center',
+    },
+    buttonView: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      minHeight: 75,
+    },
+    button: {
+      marginVertical: 8,
+    },
+  });
 
 export default LandingScreen;
