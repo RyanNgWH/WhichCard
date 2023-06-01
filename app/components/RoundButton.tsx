@@ -14,6 +14,7 @@ type RoundButtonProps = {
   children: React.ReactNode;
   onPress: () => void;
   style?: ViewStyle;
+  contentContainerStyle?: ViewStyle;
   mode?: 'contained' | 'outlined';
 };
 
@@ -37,11 +38,15 @@ function RoundButton(props: RoundButtonProps) {
       onPress={props.onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[isPressed && roundButtonStyles().pressed, props.style]}>
+      style={[
+        isPressed && roundButtonStyles().pressed,
+        props.contentContainerStyle,
+      ]}>
       <View
         style={[
           roundButtonStyles().button,
           props.mode === 'outlined' && roundButtonStyles().outlined,
+          props.style,
         ]}>
         <Text
           style={[
