@@ -9,6 +9,7 @@ import {Themes} from './Themes';
 
 type styleProps = {
   theme: 'light' | 'dark';
+  size?: number;
 };
 
 const themeFontColor = (theme: 'light' | 'dark') =>
@@ -21,25 +22,31 @@ export default (props: styleProps) =>
     headerText: {
       fontFamily: Themes.fonts.header,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
     subtitleText: {
       fontFamily: Themes.fonts.subtitle,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
     bodyText: {
       fontFamily: Themes.fonts.body,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
     bodyTextBold: {
       fontFamily: Themes.fonts.bodyBold,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
     bodySubText: {
       fontFamily: Themes.fonts.bodyMedium,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
     buttonText: {
       fontFamily: Themes.fonts.button,
       color: themeFontColor(props.theme),
+      fontSize: props.size,
     },
   });
