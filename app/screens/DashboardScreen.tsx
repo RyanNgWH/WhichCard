@@ -238,6 +238,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       justifyContent: 'center',
       borderStyle: 'dashed',
       borderWidth: 2,
+      borderRadius: 9,
     },
   });
 
