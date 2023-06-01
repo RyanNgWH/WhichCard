@@ -54,6 +54,7 @@ const searchBarStyles = () =>
       borderRadius: 30,
       height: 60,
       marginVertical: 10,
+      backgroundColor: Themes.colors.appComponentBackground,
     },
     icon: {
       padding: 10,
