@@ -10,6 +10,7 @@ import {useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
+import NavigationBar from '../components/NavigationBar';
 
 // Props for the header
 type headerProps = {
@@ -98,8 +99,13 @@ function Header(props: headerProps) {
 function Body() {
   // TODO: Implement search bar functionality
   return (
-    <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
-      <SearchBar placeholder="Search Merchants" />
+    <PaddedView
+      direction="horizontal"
+      size={Themes.sizes.horizontalScreenSizeWide}>
+      <SearchBar
+        placeholder="Search Merchants"
+        style={bodyStyles().searchBar}
+      />
       <CardView />
     </PaddedView>
   );
@@ -110,7 +116,7 @@ function Body() {
  * @returns Footer of the dashboard
  */
 function Footer() {
-  return <View />;
+  return <NavigationBar />;
 }
 
 /**
@@ -136,7 +142,7 @@ function CardView() {
   };
 
   return (
-    <>
+    <View style={cardViewStyles(cardViewStyleProps).cardViewContainer}>
       <View
         style={cardViewStyles(cardViewStyleProps).cardViewHeader}
         onLayout={(event: LayoutChangeEvent) =>
@@ -152,7 +158,7 @@ function CardView() {
         </Text>
       </View>
       <CardViewEmpty {...cardViewStyleProps} />
-    </>
+    </View>
   );
 }
 
@@ -171,6 +177,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
     <RoundButton
       mode="outlined"
       onPress={onAddCreditCardPress}
+      borderRadius={9}
       style={cardViewStyles(props).cardViewEmptyContainer}>
       <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
       <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
@@ -197,7 +204,6 @@ const screenStyles = () =>
     },
     footerContainer: {
       flex: 1,
-      backgroundColor: 'red',
     },
   });
 
@@ -226,13 +232,34 @@ const headerStyles = (props: headerStylesProps) =>
     },
   });
 
+// Styles for the body
+const bodyStyles = () =>
+  StyleSheet.create({
+    searchBar: {
+      shadowColor: Themes.colors.shadow,
+      shadowRadius: 1,
+      shadowOpacity: 0.1,
+      elevation: 2,
+    },
+  });
+
 // Styles for the card view
 const cardViewStyles = (props: cardViewStyleProps) =>
   StyleSheet.create({
+    cardViewContainer: {
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      borderRadius: 9,
+      shadowColor: Themes.colors.shadow,
+      shadowRadius: 1,
+      shadowOpacity: 0.1,
+      elevation: 2,
+    },
     cardViewHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginVertical: 10,
+      marginBottom: 10,
     },
     cardViewEmptyContainer: {
       width: props.cardWidth,
@@ -240,7 +267,6 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       justifyContent: 'center',
       borderStyle: 'dashed',
       borderWidth: 2,
-      borderRadius: 9,
     },
   });
 
