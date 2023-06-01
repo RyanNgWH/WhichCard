@@ -142,9 +142,11 @@ function CardView() {
         onLayout={(event: LayoutChangeEvent) =>
           setCardWidth(event.nativeEvent.layout.width)
         }>
-        <Text style={TextStyles({theme: 'light'}).bodySubText}>Your Cards</Text>
+        <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
+          Your Cards
+        </Text>
         <Text
-          style={TextStyles({theme: 'light'}).bodySubText}
+          style={TextStyles({theme: 'light', size: 16}).bodySubText}
           onPress={onViewAllPress}>
           View All
         </Text>
