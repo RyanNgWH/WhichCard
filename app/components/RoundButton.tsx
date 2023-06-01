@@ -16,6 +16,7 @@ type RoundButtonProps = {
   style?: ViewStyle;
   contentContainerStyle?: ViewStyle;
   mode?: 'contained' | 'outlined';
+  borderRadius?: number;
 };
 
 // Round button component
@@ -39,19 +40,19 @@ function RoundButton(props: RoundButtonProps) {
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={[
-        isPressed && roundButtonStyles().pressed,
+        isPressed && roundButtonStyles(props).pressed,
         props.contentContainerStyle,
       ]}>
       <View
         style={[
-          roundButtonStyles().button,
-          props.mode === 'outlined' && roundButtonStyles().outlined,
+          roundButtonStyles(props).button,
+          props.mode === 'outlined' && roundButtonStyles(props).outlined,
           props.style,
         ]}>
         <Text
           style={[
             TextStyles({theme: 'dark', size: 16}).buttonText,
-            roundButtonStyles().buttonText,
+            roundButtonStyles(props).buttonText,
             props.mode === 'outlined' &&
               TextStyles({theme: 'light', size: 16}).buttonText,
           ]}>
@@ -63,10 +64,10 @@ function RoundButton(props: RoundButtonProps) {
 }
 
 // Styles for round button
-const roundButtonStyles = () =>
+const roundButtonStyles = (props: RoundButtonProps) =>
   StyleSheet.create({
     button: {
-      borderRadius: 25,
+      borderRadius: props.borderRadius ? props.borderRadius : 25,
       padding: 12,
       backgroundColor: Themes.colors.buttonBackgroundPrimary,
       borderWidth: 1,
@@ -82,9 +83,9 @@ const roundButtonStyles = () =>
       color: Themes.colors.textLightBackground,
     },
     pressed: {
-      opacity: 0.75,
-      borderRadius: 25,
-      backgroundColor: Themes.colors.buttonBackgroundSecondary,
+      opacity: 0.5,
+      borderRadius: props.borderRadius ? props.borderRadius : 25,
+      backgroundColor: Themes.colors.buttonPressed,
     },
   });
 
