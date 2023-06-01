@@ -44,6 +44,7 @@ function TextInputBox(props: TextInputBoxProps) {
    */
   const handleBlur = () => {
     setIsFocused(false);
+    setIsFilled(props.value ? true : false);
   };
 
   return (
@@ -63,12 +64,7 @@ function TextInputBox(props: TextInputBoxProps) {
         style={[
           TextStyles({theme: 'light'}).bodyText,
           styles.textInput,
-          {
-            backgroundColor:
-              isFilled || isFocused
-                ? 'transparent'
-                : Themes.colors.textInputFillColor,
-          },
+          !(isFilled || isFocused) && styles.inputEmpty,
         ]}
       />
     </View>
@@ -82,10 +78,17 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   textInput: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: Themes.colors.textInputBorderColor,
     borderRadius: 5,
     padding: 10,
+  },
+  inputFilled: {
+    backgroundColor: 'transparent',
+  },
+  inputEmpty: {
+    backgroundColor: Themes.colors.textInputFillColor,
+    borderWidth: 0,
   },
 });
 
