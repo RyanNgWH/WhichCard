@@ -45,10 +45,10 @@ function RoundButton(props: RoundButtonProps) {
         ]}>
         <Text
           style={[
-            TextStyles({theme: 'dark'}).buttonText,
+            TextStyles({theme: 'dark', size: 16}).buttonText,
             roundButtonStyles().buttonText,
             props.mode === 'outlined' &&
-              TextStyles({theme: 'light'}).buttonText,
+              TextStyles({theme: 'light', size: 16}).buttonText,
           ]}>
           {props.children}
         </Text>
@@ -72,7 +72,6 @@ const roundButtonStyles = () =>
     },
     buttonText: {
       textAlign: 'center',
-      fontSize: 16,
     },
     outlinedText: {
       color: Themes.colors.textLightBackground,

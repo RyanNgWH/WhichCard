@@ -133,7 +133,10 @@ function Header() {
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit={true}
-        style={[TextStyles({theme: 'light'}).bodyTextBold, styles.headerText]}>
+        style={[
+          TextStyles({theme: 'light', size: 25}).bodyTextBold,
+          styles.headerText,
+        ]}>
         Welcome Back!
       </Text>
     </PaddedView>
@@ -231,7 +234,6 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   headerText: {
-    fontSize: 25,
     flex: 1,
   },
   bodyContainer: {

@@ -77,7 +77,10 @@ function Branding() {
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit={true}
-          style={[TextStyles({theme: 'light'}).headerText, styles().appName]}>
+          style={[
+            TextStyles({theme: 'light', size: 100}).headerText,
+            styles().appName,
+          ]}>
           <Text style={{color: Themes.colors.appNameSecondary}}>Which</Text>
           Card
         </Text>
@@ -85,7 +88,7 @@ function Branding() {
           numberOfLines={1}
           adjustsFontSizeToFit={true}
           style={[
-            TextStyles({theme: 'light'}).subtitleText,
+            TextStyles({theme: 'light', size: 100}).subtitleText,
             styles().appSubtitle,
           ]}>
           UNLOCKING YOUR CARD'S POTENTIAL
@@ -121,11 +124,9 @@ const styles = () =>
       alignSelf: 'center',
     },
     appName: {
-      fontSize: 100,
       textAlign: 'center',
     },
     appSubtitle: {
-      fontSize: 100,
       textAlign: 'center',
     },
     buttonView: {

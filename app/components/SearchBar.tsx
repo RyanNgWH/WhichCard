@@ -35,7 +35,7 @@ function SearchBar(props: searchBarProps) {
         autoCorrect={false}
         underlineColorAndroid="transparent"
         style={[
-          TextStyles({theme: 'light'}).bodyText,
+          TextStyles({theme: 'light', size: 12}).bodyText,
           searchBarStyles().textInput,
         ]}
       />
@@ -61,7 +61,6 @@ const searchBarStyles = () =>
     textInput: {
       flex: 1,
       paddingLeft: 0,
-      fontSize: 12,
       opacity: 0.75,
     },
   });
