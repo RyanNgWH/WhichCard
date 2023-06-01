@@ -9,12 +9,13 @@ import {Palette} from './Palette';
 export const Themes = {
   colors: {
     appBackground: Palette.purple,
+    appBackgroundSecondary: Palette.white,
     buttonBackgroundPrimary: Palette.darkBlue,
     buttonBackgroundSecondary: Palette.white,
     textDarkBackground: Palette.white,
     textLightBackground: Palette.darkBlue,
     appNameSecondary: Palette.darkPurple,
-    textInputBorderColor: Palette.lightGrey,
+    textInputBorderColor: Palette.mediumGrey,
     textInputFillColor: Palette.lightGrey,
     errorTextFillColor: Palette.darkRed,
   },
