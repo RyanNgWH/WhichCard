@@ -50,13 +50,15 @@ function LandingScreen({navigation}) {
         <SafeAreaViewGlobal>
           <Branding />
           <View style={styles().buttonView}>
-            <RoundButton onPress={onCreateAccountPress} style={styles().button}>
+            <RoundButton
+              onPress={onCreateAccountPress}
+              contentContainerStyle={styles().button}>
               Create Account
             </RoundButton>
             <RoundButton
               mode="outlined"
               onPress={onLoginPress}
-              style={styles().button}>
+              contentContainerStyle={styles().button}>
               Login
             </RoundButton>
           </View>
