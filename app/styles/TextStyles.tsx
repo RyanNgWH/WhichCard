@@ -5,7 +5,7 @@
  */
 
 import {StyleSheet} from 'react-native';
-import {themes} from './themes';
+import {Themes} from './Themes';
 
 type styleProps = {
   theme: 'light' | 'dark';
@@ -13,33 +13,33 @@ type styleProps = {
 
 const themeFontColor = (theme: 'light' | 'dark') =>
   theme === 'light'
-    ? themes.colors.textLightBackground
-    : themes.colors.textDarkBackground;
+    ? Themes.colors.textLightBackground
+    : Themes.colors.textDarkBackground;
 
 export default (props: styleProps) =>
   StyleSheet.create({
     headerText: {
-      fontFamily: themes.fonts.header,
+      fontFamily: Themes.fonts.header,
       color: themeFontColor(props.theme),
     },
     subtitleText: {
-      fontFamily: themes.fonts.subtitle,
+      fontFamily: Themes.fonts.subtitle,
       color: themeFontColor(props.theme),
     },
     bodyText: {
-      fontFamily: themes.fonts.body,
+      fontFamily: Themes.fonts.body,
       color: themeFontColor(props.theme),
     },
     bodyTextBold: {
-      fontFamily: themes.fonts.bodyBold,
+      fontFamily: Themes.fonts.bodyBold,
       color: themeFontColor(props.theme),
     },
     bodySubText: {
-      fontFamily: themes.fonts.bodyMedium,
+      fontFamily: Themes.fonts.bodyMedium,
       color: themeFontColor(props.theme),
     },
     buttonText: {
-      fontFamily: themes.fonts.button,
+      fontFamily: Themes.fonts.button,
       color: themeFontColor(props.theme),
     },
   });

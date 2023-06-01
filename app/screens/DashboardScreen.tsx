@@ -4,7 +4,7 @@
 
 import {Image, LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {useState} from 'react';
 
@@ -18,7 +18,7 @@ type headerStylesProps = {
   containerHeight: number;
 };
 
-// TODO: Add type for user
+// TODO: Add type for route and navigation
 function DashboardScreen({route, navigation}) {
   return (
     <View style={styles().screen}>
@@ -52,7 +52,7 @@ function Header(props: headerProps) {
   return (
     <PaddedView
       direction="horizontal"
-      size={themes.sizes.horizontalScreenSize}
+      size={Themes.sizes.horizontalScreenSize}
       style={headerStyles(headerStyleProps).header}
       onLayout={(event: LayoutChangeEvent) => {
         setHeaderContainerHeight(event.nativeEvent.layout.height);
@@ -101,11 +101,11 @@ const styles = () =>
   StyleSheet.create({
     screen: {
       flex: 1,
-      backgroundColor: themes.colors.appBackground,
+      backgroundColor: Themes.colors.appBackground,
     },
     headerContainer: {
       flex: 2.5,
-      backgroundColor: themes.colors.appBackground,
+      backgroundColor: Themes.colors.appBackground,
     },
     bodyContainer: {
       flex: 10,

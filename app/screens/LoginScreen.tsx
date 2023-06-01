@@ -16,7 +16,7 @@ import {
 import axios from 'axios';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
@@ -87,7 +87,7 @@ function LoginScreen({navigation}) {
   };
 
   return (
-    <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
+    <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
         <ScrollView contentContainerStyle={styles.screen}>
           <KeyboardAvoidingView
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   error: {
-    color: themes.colors.errorTextFillColor,
+    color: Themes.colors.errorTextFillColor,
   },
 });
 

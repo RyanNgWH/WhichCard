@@ -4,19 +4,19 @@
  * @format
  */
 
-import {palette} from './Palette';
+import {Palette} from './Palette';
 
-export const themes = {
+export const Themes = {
   colors: {
-    appBackground: palette.purple,
-    buttonBackgroundPrimary: palette.darkBlue,
-    buttonBackgroundSecondary: palette.white,
-    textDarkBackground: palette.white,
-    textLightBackground: palette.darkBlue,
-    appNameSecondary: palette.darkPurple,
-    textInputBorderColor: palette.lightGrey,
-    textInputFillColor: palette.lightGrey,
-    errorTextFillColor: palette.darkRed,
+    appBackground: Palette.purple,
+    buttonBackgroundPrimary: Palette.darkBlue,
+    buttonBackgroundSecondary: Palette.white,
+    textDarkBackground: Palette.white,
+    textLightBackground: Palette.darkBlue,
+    appNameSecondary: Palette.darkPurple,
+    textInputBorderColor: Palette.lightGrey,
+    textInputFillColor: Palette.lightGrey,
+    errorTextFillColor: Palette.darkRed,
   },
   fonts: {
     header: 'Roxborough CF Bold',

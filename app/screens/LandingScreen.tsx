@@ -13,7 +13,7 @@ import {
   StatusBar,
 } from 'react-native';
 import TextStyles from '../styles/TextStyles';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 import RoundButton from '../components/RoundButton';
 import {
   PaddedView,
@@ -45,7 +45,7 @@ function LandingScreen({navigation}) {
       />
       <PaddedView
         direction={'horizontal'}
-        size={themes.sizes.horizontalScreenSize}
+        size={Themes.sizes.horizontalScreenSize}
         containerStyle={styles().background}>
         <SafeAreaViewGlobal>
           <Branding />
@@ -78,7 +78,7 @@ function Branding() {
           numberOfLines={1}
           adjustsFontSizeToFit={true}
           style={[TextStyles({theme: 'light'}).headerText, styles().appName]}>
-          <Text style={{color: themes.colors.appNameSecondary}}>Which</Text>
+          <Text style={{color: Themes.colors.appNameSecondary}}>Which</Text>
           Card
         </Text>
         <Text
@@ -106,7 +106,7 @@ const styles = () =>
     },
     background: {
       flexGrow: 1,
-      backgroundColor: themes.colors.appBackground,
+      backgroundColor: Themes.colors.appBackground,
     },
     brandingContainer: {
       flexGrow: 7,

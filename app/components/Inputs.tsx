@@ -5,7 +5,7 @@
  */
 
 import {View, Text, TextInput, StyleSheet, ViewStyle} from 'react-native';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {useState} from 'react';
 
@@ -67,7 +67,7 @@ function TextInputBox(props: TextInputBoxProps) {
             backgroundColor:
               isFilled || isFocused
                 ? 'transparent'
-                : themes.colors.textInputFillColor,
+                : Themes.colors.textInputFillColor,
           },
         ]}
       />
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 2,
-    borderColor: themes.colors.textInputBorderColor,
+    borderColor: Themes.colors.textInputBorderColor,
     borderRadius: 5,
     padding: 10,
   },

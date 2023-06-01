@@ -4,7 +4,7 @@
  * @format
  */
 
-export const palette = {
+export const Palette = {
   purple: '#efe3fb',
   darkPurple: '#5c70ea',
   darkBlue: '#100d40',

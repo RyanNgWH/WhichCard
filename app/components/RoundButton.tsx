@@ -6,7 +6,7 @@
 
 import {Text, ViewStyle, Pressable, View, StyleSheet} from 'react-native';
 import TextStyles from '../styles/TextStyles';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 
 // Props for round button
 type RoundButtonProps = {
@@ -44,24 +44,24 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 25,
     padding: 12,
-    backgroundColor: themes.colors.buttonBackgroundPrimary,
+    backgroundColor: Themes.colors.buttonBackgroundPrimary,
     borderWidth: 1,
   },
   outlined: {
     backgroundColor: 'transparent',
-    borderColor: themes.colors.buttonBackgroundPrimary,
+    borderColor: Themes.colors.buttonBackgroundPrimary,
   },
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
   },
   outlinedText: {
-    color: themes.colors.textLightBackground,
+    color: Themes.colors.textLightBackground,
   },
   pressed: {
     opacity: 0.75,
     borderRadius: 25,
-    backgroundColor: themes.colors.buttonBackgroundSecondary,
+    backgroundColor: Themes.colors.buttonBackgroundSecondary,
   },
 });
 
