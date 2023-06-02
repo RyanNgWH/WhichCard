@@ -4,29 +4,35 @@
  * @format
  */
 
-import {palette} from './Palette';
+import {Palette} from './Palette';
 
-export const themes = {
-  color: {
-    appBackground: palette.purple,
-    buttonBackgroundPrimary: palette.darkBlue,
-    buttonBackgroundSecondary: palette.white,
-    textDarkBackgound: palette.white,
-    textLightBackground: palette.darkBlue,
-    appNameSecondary: palette.darkPurple,
-    textInputBorderColor: palette.lightGrey,
-    textInputFillColor: palette.lightGrey,
-    errorTextFillColor: palette.darkRed,
+export const Themes = {
+  colors: {
+    appBackground: Palette.purple,
+    appBackgroundSecondary: Palette.whiteGrey,
+    appComponentBackground: Palette.white,
+    buttonBackgroundPrimary: Palette.darkBlue,
+    buttonBackgroundSecondary: Palette.white,
+    buttonPressed: Palette.darkGrey,
+    textDarkBackground: Palette.white,
+    textLightBackground: Palette.darkBlue,
+    appNameSecondary: Palette.darkPurple,
+    textInputBorderColor: Palette.mediumGrey,
+    textInputFillColor: Palette.lightGrey,
+    errorTextFillColor: Palette.darkRed,
+    shadow: Palette.darkGrey,
   },
-  font: {
+  fonts: {
     header: 'Roxborough CF Bold',
     subtitle: 'Alata',
     body: 'Poppins-Regular',
     bodyBold: 'Poppins-SemiBold',
+    bodyMedium: 'Poppins-Medium',
     button: 'Poppins-SemiBold',
   },
   sizes: {
     horizontalScreenSize: 8,
+    horizontalScreenSizeWide: 15,
     verticalScreenSize: 15,
   },
 };

@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,8 +16,8 @@ import {
 
 import axios from 'axios';
 
-import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
-import {themes} from '../styles/themes';
+import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
@@ -36,6 +37,11 @@ type ButtonViewProps = {
   onSignInPress: any;
 };
 
+/**
+ * Login screen
+ * @param navigation Navigation object
+ * @returns Login screen component
+ */
 function LoginScreen({navigation}) {
   const [signInError, setSignInError] = useState('');
   const [email, setEmail] = useState('');
@@ -82,40 +88,41 @@ function LoginScreen({navigation}) {
   };
 
   return (
-    <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
-      <KeyboardAvoidingView
-        behavior="padding"
-        style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200}>
-        <PaddedScrollView
-          direction="vertical"
-          size={themes.sizes.verticalScreenSize}>
-          <View style={styles.headerContainer}>
-            <Header />
-          </View>
-          <View style={styles.bodyContainer}>
-            <Body
-              signInError={signInError}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              email={email}
-              password={password}
-            />
-          </View>
-          <View style={styles.buttonViewContainer}>
-            <ButtonView
-              onSignUpPress={onSignUpPress}
-              onSignInPress={onSignInPress}
-            />
-          </View>
-        </PaddedScrollView>
-      </KeyboardAvoidingView>
+    <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
+      <SafeAreaViewGlobal>
+        <ScrollView contentContainerStyle={styles.screen}>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={styles.keyboardAvoidingView}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -250}>
+            <View style={styles.headerContainer}>
+              <Header />
+            </View>
+            <View style={styles.bodyContainer}>
+              <Body
+                signInError={signInError}
+                setEmail={setEmail}
+                setPassword={setPassword}
+                email={email}
+                password={password}
+              />
+            </View>
+            <View style={styles.buttonViewContainer}>
+              <ButtonView
+                onSignUpPress={onSignUpPress}
+                onSignInPress={onSignInPress}
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </SafeAreaViewGlobal>
     </PaddedView>
   );
 }
 
 /**
  * Header of the sign up page
+ * @returns Header component of the sign up page
  */
 function Header() {
   return (
@@ -127,7 +134,10 @@ function Header() {
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit={true}
-        style={[TextStyles.bodyTextBold, styles.headerText]}>
+        style={[
+          TextStyles({theme: 'light', size: 25}).bodyTextBold,
+          styles.headerText,
+        ]}>
         Welcome Back!
       </Text>
     </PaddedView>
@@ -136,6 +146,7 @@ function Header() {
 
 /**
  * Body of the sign up page
+ * @returns Body component of the sign up page
  */
 function Body(props: BodyProps) {
   const {signInError, setEmail, setPassword, email, password} = props;
@@ -143,6 +154,7 @@ function Body(props: BodyProps) {
   /**
    * Forgot password text press handler
    */
+  // TODO: Implement forgot password functionality
   const onForgotPasswordPress = () => {
     console.log('Forgot password text pressed');
   };
@@ -163,12 +175,17 @@ function Body(props: BodyProps) {
         value={password}
       />
       <Text
-        style={(TextStyles.bodyText, styles.forgotPassword)}
+        style={(TextStyles({theme: 'light'}).bodyText, styles.forgotPassword)}
         onPress={onForgotPasswordPress}>
         Forgot Password?
       </Text>
       {signInError ? (
-        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+        <Text
+          style={[
+            TextStyles({theme: 'light'}).bodyText,
+            styles.title,
+            styles.error,
+          ]}>
           {signInError}
         </Text>
       ) : null}
@@ -177,7 +194,8 @@ function Body(props: BodyProps) {
 }
 
 /**
- * Button of the sign up page
+ * Button view of the sign up page
+ * @returns Button view component of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
   const {onSignUpPress, onSignInPress} = props;
@@ -187,10 +205,11 @@ function ButtonView(props: ButtonViewProps) {
       <RoundButton mode="contained" onPress={onSignInPress}>
         Log In
       </RoundButton>
-      <Text style={[TextStyles.bodyText, styles.signInMessage]}>
+      <Text
+        style={[TextStyles({theme: 'light'}).bodyText, styles.signInMessage]}>
         Don't have an account?{' '}
         <Text
-          style={[TextStyles.bodyTextBold, styles.signInText]}
+          style={[TextStyles({theme: 'light'}).bodyTextBold, styles.signInText]}
           onPress={onSignUpPress}>
           Sign Up
         </Text>
@@ -200,7 +219,7 @@ function ButtonView(props: ButtonViewProps) {
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  screen: {
     flexGrow: 1,
   },
   headerContainer: {
@@ -216,9 +235,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   headerText: {
-    fontSize: 25,
     flex: 1,
-    color: themes.color.textLightBackground,
   },
   bodyContainer: {
     flexGrow: 4,
@@ -231,7 +248,6 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     textAlign: 'right',
-    color: themes.color.textLightBackground,
     opacity: 0.5,
     paddingRight: 5,
   },
@@ -248,7 +264,6 @@ const styles = StyleSheet.create({
   },
   signInMessage: {
     textAlign: 'center',
-    color: themes.color.textLightBackground,
   },
   signInText: {
     textDecorationLine: 'underline',
@@ -257,10 +272,9 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   error: {
-    color: themes.color.errorTextFillColor,
+    color: Themes.colors.errorTextFillColor,
   },
 });
 

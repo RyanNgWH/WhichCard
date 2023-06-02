@@ -4,11 +4,14 @@
  * @format
  */
 
-export const palette = {
+export const Palette = {
   purple: '#efe3fb',
   darkPurple: '#5c70ea',
   darkBlue: '#100d40',
   white: '#ffffff',
-  lightGrey: '#ededed',
+  whiteGrey: '#f8f8f8',
+  lightGrey: '#e0e0e0',
+  mediumGrey: '#d4d4d4',
+  darkGrey: '#aeaeae',
   darkRed: '#8b0000',
 };
