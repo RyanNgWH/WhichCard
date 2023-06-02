@@ -5,22 +5,48 @@
  */
 
 import {StyleSheet} from 'react-native';
-import {themes} from './themes';
+import {Themes} from './Themes';
 
-export default StyleSheet.create({
-  headerText: {
-    fontFamily: themes.font.header,
-  },
-  subtitleText: {
-    fontFamily: themes.font.subtitle,
-  },
-  bodyText: {
-    fontFamily: themes.font.body,
-  },
-  bodyTextBold: {
-    fontFamily: themes.font.bodyBold,
-  },
-  buttonText: {
-    fontFamily: themes.font.button,
-  },
-});
+type styleProps = {
+  theme: 'light' | 'dark';
+  size?: number;
+};
+
+const themeFontColor = (theme: 'light' | 'dark') =>
+  theme === 'light'
+    ? Themes.colors.textLightBackground
+    : Themes.colors.textDarkBackground;
+
+export default (props: styleProps) =>
+  StyleSheet.create({
+    headerText: {
+      fontFamily: Themes.fonts.header,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+    subtitleText: {
+      fontFamily: Themes.fonts.subtitle,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+    bodyText: {
+      fontFamily: Themes.fonts.body,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+    bodyTextBold: {
+      fontFamily: Themes.fonts.bodyBold,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+    bodySubText: {
+      fontFamily: Themes.fonts.bodyMedium,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+    buttonText: {
+      fontFamily: Themes.fonts.button,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
+  });

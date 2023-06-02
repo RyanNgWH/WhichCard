@@ -5,7 +5,7 @@
  */
 
 import {View, Text, TextInput, StyleSheet, ViewStyle} from 'react-native';
-import {themes} from '../styles/themes';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {useState} from 'react';
 
@@ -44,11 +44,14 @@ function TextInputBox(props: TextInputBoxProps) {
    */
   const handleBlur = () => {
     setIsFocused(false);
+    setIsFilled(props.value ? true : false);
   };
 
   return (
     <View style={props.style}>
-      <Text style={[TextStyles.bodyText, styles.title]}>{props.title}</Text>
+      <Text style={[TextStyles({theme: 'light'}).bodyText, styles.title]}>
+        {props.title}
+      </Text>
       <TextInput
         value={props.value}
         onChangeText={props.onChangeText}
@@ -59,14 +62,9 @@ function TextInputBox(props: TextInputBoxProps) {
         autoCorrect={props.autoCorrect}
         autoCapitalize="none"
         style={[
-          TextStyles.bodyText,
+          TextStyles({theme: 'light'}).bodyText,
           styles.textInput,
-          {
-            backgroundColor:
-              isFilled || isFocused
-                ? 'transparent'
-                : themes.color.textInputFillColor,
-          },
+          !(isFilled || isFocused) && styles.inputEmpty,
         ]}
       />
     </View>
@@ -78,14 +76,19 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   textInput: {
-    borderWidth: 2,
-    borderColor: themes.color.textInputBorderColor,
+    borderWidth: 1,
+    borderColor: Themes.colors.textInputBorderColor,
     borderRadius: 5,
     padding: 10,
-    color: themes.color.textLightBackground,
+  },
+  inputFilled: {
+    backgroundColor: 'transparent',
+  },
+  inputEmpty: {
+    backgroundColor: Themes.colors.textInputFillColor,
+    borderWidth: 0,
   },
 });
 

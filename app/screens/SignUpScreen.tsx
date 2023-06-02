@@ -8,6 +8,7 @@ import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,8 +16,8 @@ import {
 
 import axios from 'axios';
 
-import {PaddedScrollView, PaddedView} from '../components/ViewComponents';
-import {themes} from '../styles/themes';
+import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
+import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
@@ -88,36 +89,36 @@ function SignUpScreen({navigation}) {
   };
 
   return (
-    <PaddedView direction="horizontal" size={themes.sizes.horizontalScreenSize}>
-      <PaddedScrollView
-        direction="vertical"
-        size={themes.sizes.verticalScreenSize}>
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={styles.keyboardAvoidingView}
-          keyboardVerticalOffset={-200}>
-          <View style={styles.headerContainer}>
-            <Header />
-          </View>
-          <View style={styles.bodyContainer}>
-            <Body
-              signUpError={signUpError}
-              setFullName={setFullName}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              fullName={fullName}
-              email={email}
-              password={password}
-            />
-          </View>
-          <View style={styles.buttonViewContainer}>
-            <ButtonView
-              onSignUpPress={onSignUpPress}
-              onSignInPress={onSignInPress}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </PaddedScrollView>
+    <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
+      <SafeAreaViewGlobal>
+        <ScrollView contentContainerStyle={styles.screen}>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={styles.keyboardAvoidingView}
+            keyboardVerticalOffset={-200}>
+            <View style={styles.headerContainer}>
+              <Header />
+            </View>
+            <View style={styles.bodyContainer}>
+              <Body
+                signUpError={signUpError}
+                setFullName={setFullName}
+                setEmail={setEmail}
+                setPassword={setPassword}
+                fullName={fullName}
+                email={email}
+                password={password}
+              />
+            </View>
+            <View style={styles.buttonViewContainer}>
+              <ButtonView
+                onSignUpPress={onSignUpPress}
+                onSignInPress={onSignInPress}
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </SafeAreaViewGlobal>
     </PaddedView>
   );
 }
@@ -135,7 +136,10 @@ function Header() {
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit={true}
-        style={[TextStyles.bodyTextBold, styles.headerText]}>
+        style={[
+          TextStyles({theme: 'light', size: 25}).bodyTextBold,
+          styles.headerText,
+        ]}>
         Create Account
       </Text>
     </PaddedView>
@@ -179,7 +183,12 @@ function Body(props: BodyProps) {
         value={password}
       />
       {signUpError ? (
-        <Text style={[TextStyles.bodyText, styles.title, styles.error]}>
+        <Text
+          style={[
+            TextStyles({theme: 'light'}).bodyText,
+            styles.title,
+            styles.error,
+          ]}>
           {signUpError}
         </Text>
       ) : null}
@@ -198,10 +207,11 @@ function ButtonView(props: ButtonViewProps) {
       <RoundButton mode="contained" onPress={onSignUpPress}>
         Sign Up
       </RoundButton>
-      <Text style={[TextStyles.bodyText, styles.signInMessage]}>
+      <Text
+        style={[TextStyles({theme: 'light'}).bodyText, styles.signInMessage]}>
         Already have an account?{' '}
         <Text
-          style={[TextStyles.bodyTextBold, styles.signInText]}
+          style={[TextStyles({theme: 'light'}).bodyTextBold, styles.signInText]}
           onPress={onSignInPress}>
           Sign In
         </Text>
@@ -211,7 +221,7 @@ function ButtonView(props: ButtonViewProps) {
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  screen: {
     flexGrow: 1,
   },
   headerContainer: {
@@ -227,9 +237,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   headerText: {
-    fontSize: 25,
     flex: 1,
-    color: themes.color.textLightBackground,
   },
   bodyContainer: {
     flexGrow: 4,
@@ -252,7 +260,6 @@ const styles = StyleSheet.create({
   },
   signInMessage: {
     textAlign: 'center',
-    color: themes.color.textLightBackground,
   },
   signInText: {
     textDecorationLine: 'underline',
@@ -261,10 +268,9 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 10,
     paddingTop: 10,
-    color: themes.color.textLightBackground,
   },
   error: {
-    color: themes.color.errorTextFillColor,
+    color: Themes.colors.errorTextFillColor,
   },
 });
 
