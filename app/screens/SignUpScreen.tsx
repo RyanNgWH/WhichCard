@@ -8,6 +8,7 @@ import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -91,11 +92,13 @@ function SignUpScreen({navigation}) {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
-        <ScrollView contentContainerStyle={styles.screen}>
-          <KeyboardAvoidingView
-            behavior="padding"
-            style={styles.keyboardAvoidingView}
-            keyboardVerticalOffset={-200}>
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={styles.keyboardAvoidingView}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -250}>
+          <ScrollView
+            contentContainerStyle={styles.screen}
+            keyboardShouldPersistTaps="handled">
             <View style={styles.headerContainer}>
               <Header />
             </View>
@@ -116,8 +119,8 @@ function SignUpScreen({navigation}) {
                 onSignInPress={onSignInPress}
               />
             </View>
-          </KeyboardAvoidingView>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaViewGlobal>
     </PaddedView>
   );
