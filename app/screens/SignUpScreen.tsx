@@ -92,7 +92,9 @@ function SignUpScreen({navigation}) {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
-        <ScrollView contentContainerStyle={styles.screen}>
+        <ScrollView
+          contentContainerStyle={styles.screen}
+          keyboardShouldPersistTaps="handled">
           <KeyboardAvoidingView
             behavior="padding"
             style={styles.keyboardAvoidingView}
