@@ -17,6 +17,7 @@ type TextInputBoxProps = {
   value?: string;
   placeholder?: string;
   style?: ViewStyle;
+  textAlign?: 'left' | 'center' | 'right';
   maskText?: boolean;
   autoCorrect?: boolean;
   onChangeText: (text: string) => void;
@@ -60,6 +61,7 @@ function TextInputBox(props: TextInputBoxProps) {
         placeholder={props.placeholder}
         secureTextEntry={props.maskText}
         autoCorrect={props.autoCorrect}
+        textAlign={props.textAlign}
         autoCapitalize="none"
         style={[
           TextStyles({theme: 'light'}).bodyText,
