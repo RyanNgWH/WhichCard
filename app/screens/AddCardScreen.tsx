@@ -9,7 +9,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
@@ -63,9 +62,10 @@ function InputsView() {
           title="Expiry Date"
           placeholder="MM / YY"
           autoCorrect={false}
+          textAlign="center"
           onChangeText={setExpiryDate}
           value={expiryDate}
-          style={inputsViewStyles().expiryBox}
+          style={inputsViewStyles().expiryBoxContainer}
         />
         <View style={inputsViewStyles().expiryPadding} />
       </View>
@@ -112,7 +112,7 @@ const inputsViewStyles = () =>
     expiryView: {
       flexDirection: 'row',
     },
-    expiryBox: {
+    expiryBoxContainer: {
       flex: 1,
     },
     expiryPadding: {
