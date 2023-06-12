@@ -27,7 +27,7 @@ function AddCardScreen() {
         <KeyboardAvoidingView
           behavior="padding"
           style={screenStyles().keyboardAvoidingView}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -250}>
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : -250}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={screenStyles().screen}>
