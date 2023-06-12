@@ -31,6 +31,7 @@ type DropdownBoxProps = {
   onOpen: () => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   zIndex?: number;
+  placeholder?: string;
 };
 
 // Item for the dropdown box component
@@ -127,6 +128,9 @@ function DropdownBox(props: DropdownBoxProps) {
         style={dropdownBoxStyles(props).dropdown}
         dropDownContainerStyle={dropdownBoxStyles(props).dropdownContainer}
         textStyle={TextStyles({theme: 'light'}).bodyText}
+        placeholderStyle={dropdownBoxStyles(props).dropdownPlaceholder}
+        placeholder={props.placeholder}
+        arrowIconStyle={dropdownBoxStyles(props).arrow}
       />
     </View>
   );
@@ -177,6 +181,12 @@ const dropdownBoxStyles = (props: DropdownBoxProps) =>
       borderWidth: 1,
       borderColor: Themes.colors.dropdownBorderColor,
       borderRadius: 5,
+    },
+    dropdownPlaceholder: {
+      opacity: 0.5,
+    },
+    arrow: {
+      opacity: 0.5,
     },
   });
 

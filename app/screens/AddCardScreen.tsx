@@ -62,6 +62,7 @@ function InputsView() {
   };
 
   // TODO: Get card type from backend
+  // TODO: Add card icons
   return (
     <Pressable
       style={inputsViewStyles().container}
@@ -102,6 +103,7 @@ function InputsView() {
           {label: 'OCBC', value: 'ocbc'},
           {label: 'DBS', value: 'dbs'},
         ]}
+        placeholder="Select Card Issuer"
         open={cardIssuerOpen}
         setOpen={setCardIssuerOpen}
         onOpen={onCardIssuerOpen}
@@ -113,6 +115,7 @@ function InputsView() {
           {label: 'OCBC 365', value: 'ocbc365'},
           {label: 'Frank Credit', value: 'ocbcFrankCredit'},
         ]}
+        placeholder="Select Card Type"
         open={cardTypeOpen}
         setOpen={setCardTypeOpen}
         onOpen={onCardTypeOpen}
