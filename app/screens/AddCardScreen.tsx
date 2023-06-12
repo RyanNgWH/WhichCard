@@ -7,13 +7,14 @@
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
-import {TextInputBox} from '../components/Inputs';
+import {DropdownBox, TextInputBox} from '../components/Inputs';
 import {useState} from 'react';
 import RoundButton from '../components/RoundButton';
 
@@ -47,15 +48,37 @@ function InputsView() {
   // States for the View
   const [cardName, setCardName] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
+  const [cardIssuerOpen, setCardIssuerOpen] = useState(false);
+  const [cardTypeOpen, setCardTypeOpen] = useState(false);
 
+  // Handler for the card issuer dropdown
+  const onCardIssuerOpen = () => {
+    setCardTypeOpen(false);
+  };
+
+  // Handler for the card type dropdown
+  const onCardTypeOpen = () => {
+    setCardIssuerOpen(false);
+  };
+
+  // TODO: Get card type from backend
   return (
-    <>
+    <Pressable
+      style={inputsViewStyles().container}
+      onPress={() => {
+        setCardIssuerOpen(false);
+        setCardTypeOpen(false);
+      }}>
       <TextInputBox
         title="Card Name"
         placeholder="Enter Card Name"
         autoCorrect={false}
         onChangeText={setCardName}
         value={cardName}
+        onFocus={() => {
+          setCardIssuerOpen(false);
+          setCardTypeOpen(false);
+        }}
       />
       <View style={inputsViewStyles().expiryView}>
         <TextInputBox
@@ -66,10 +89,36 @@ function InputsView() {
           onChangeText={setExpiryDate}
           value={expiryDate}
           style={inputsViewStyles().expiryBoxContainer}
+          onFocus={() => {
+            setCardIssuerOpen(false);
+            setCardTypeOpen(false);
+          }}
         />
         <View style={inputsViewStyles().expiryPadding} />
       </View>
-    </>
+      <DropdownBox
+        title="Card Issuer"
+        items={[
+          {label: 'OCBC', value: 'ocbc'},
+          {label: 'DBS', value: 'dbs'},
+        ]}
+        open={cardIssuerOpen}
+        setOpen={setCardIssuerOpen}
+        onOpen={onCardIssuerOpen}
+        zIndex={2000}
+      />
+      <DropdownBox
+        title="Card Type"
+        items={[
+          {label: 'OCBC 365', value: 'ocbc365'},
+          {label: 'Frank Credit', value: 'ocbcFrankCredit'},
+        ]}
+        open={cardTypeOpen}
+        setOpen={setCardTypeOpen}
+        onOpen={onCardTypeOpen}
+        zIndex={1000}
+      />
+    </Pressable>
   );
 }
 
@@ -97,18 +146,20 @@ const screenStyles = () =>
     },
     inputsContainer: {
       flex: 9,
-      justifyContent: 'space-between',
-      backgroundColor: 'yellow',
+      marginBottom: 20,
     },
     buttonContainer: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: 'red',
     },
   });
 
 const inputsViewStyles = () =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 20,
+    },
     expiryView: {
       flexDirection: 'row',
     },
