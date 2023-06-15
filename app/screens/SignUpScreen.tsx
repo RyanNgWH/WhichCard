@@ -14,6 +14,14 @@ import {
   Text,
   View,
 } from 'react-native';
+import {useAppSelector, useAppDispatch} from '../state/hooks';
+import {
+  setSignUpErrStr,
+  setFullName,
+  setEmail,
+  setPassword,
+  setInitialState,
+} from '../state/features/signUp';
 
 import axios from 'axios';
 
@@ -25,70 +33,11 @@ import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
 
-type BodyProps = {
-  signUpError: string;
-  setFullName: (text: string) => void;
-  setEmail: (text: string) => void;
-  setPassword: (text: string) => void;
-  fullName: string;
-  email: string;
-  password: string;
-};
-
 type ButtonViewProps = {
-  onSignUpPress: any;
-  onSignInPress: any;
+  navigation: any;
 };
 
 function SignUpScreen({navigation}) {
-  const [signUpError, setSignUpError] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const data = {
-    name: fullName,
-    email,
-    password,
-  };
-
-  const onSignUpPress = async () => {
-    try {
-      if (!fullName || !email || !password) {
-        throw new Error('All fields are required.');
-      }
-
-      const resp = await axios({
-        method: 'POST',
-        url: URLs.API_SERVER.USER.BASE,
-        data,
-        validateStatus: () => true,
-      });
-
-      switch (resp.status) {
-        case 201:
-          navigation.navigate('Dashboard', {user: resp.data.data});
-          setFullName('');
-          setEmail('');
-          setPassword('');
-          break;
-        case 422:
-          throw new Error('Email address in use.');
-        default:
-          throw new Error();
-      }
-    } catch (err: any) {
-      setSignUpError(err.message || 'Failed to sign up.');
-    }
-  };
-
-  const onSignInPress = async () => {
-    navigation.navigate('Login');
-    setFullName('');
-    setEmail('');
-    setPassword('');
-  };
-
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
@@ -103,21 +52,10 @@ function SignUpScreen({navigation}) {
               <Header />
             </View>
             <View style={styles.bodyContainer}>
-              <Body
-                signUpError={signUpError}
-                setFullName={setFullName}
-                setEmail={setEmail}
-                setPassword={setPassword}
-                fullName={fullName}
-                email={email}
-                password={password}
-              />
+              <Body />
             </View>
             <View style={styles.buttonViewContainer}>
-              <ButtonView
-                onSignUpPress={onSignUpPress}
-                onSignInPress={onSignInPress}
-              />
+              <ButtonView navigation={navigation} />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -152,16 +90,21 @@ function Header() {
 /**
  * Body of the sign up page
  */
-function Body(props: BodyProps) {
-  const {
-    signUpError,
-    setFullName,
-    setEmail,
-    setPassword,
-    fullName,
-    email,
-    password,
-  } = props;
+function Body() {
+  // const {
+  //   signUpError,
+  //   setFullName,
+  //   setEmail,
+  //   setPassword,
+  //   fullName,
+  //   email,
+  //   password,
+  // } = props;
+
+  const dispatch = useAppDispatch();
+  const {signUpErrStr, fullName, email, password} = useAppSelector(
+    state => state.signUp,
+  );
 
   return (
     <View style={styles.body}>
@@ -169,30 +112,30 @@ function Body(props: BodyProps) {
         title="Full Name"
         placeholder="Jang Man Wol"
         autoCorrect={false}
-        onChangeText={setFullName}
+        onChangeText={fullName => dispatch(setFullName(fullName))}
         value={fullName}
       />
       <TextInputBox
         title="Email Address"
         autoCorrect={false}
-        onChangeText={setEmail}
+        onChangeText={email => dispatch(setEmail(email))}
         value={email}
       />
       <TextInputBox
         title="Password"
         maskText={true}
         autoCorrect={false}
-        onChangeText={setPassword}
+        onChangeText={password => dispatch(setPassword(password))}
         value={password}
       />
-      {signUpError ? (
+      {signUpErrStr ? (
         <Text
           style={[
             TextStyles({theme: 'light'}).bodyText,
             styles.title,
             styles.error,
           ]}>
-          {signUpError}
+          {signUpErrStr}
         </Text>
       ) : null}
     </View>
@@ -203,7 +146,50 @@ function Body(props: BodyProps) {
  * Button of the sign up page
  */
 function ButtonView(props: ButtonViewProps) {
-  const {onSignUpPress, onSignInPress} = props;
+  const {navigation} = props;
+  const dispatch = useAppDispatch();
+  const {fullName, email, password} = useAppSelector(state => state.signUp);
+
+  const onSignUpPress = async () => {
+    try {
+      const data = {
+        name: fullName,
+        email,
+        password,
+      };
+
+      const resp = await axios({
+        method: 'POST',
+        url: URLs.API_SERVER.BASE + URLs.API_SERVER.USER.BASE,
+        data,
+        validateStatus: () => true,
+      });
+
+      switch (resp.status) {
+        case 201:
+          navigation.navigate('Dashboard', {user: resp.data.data});
+          break;
+        default:
+          if (resp.data.data && resp.data.data.error) {
+            throw new Error(resp.data.data.error);
+          } else if (resp.data.error) {
+            throw new Error(resp.data.error);
+          } else if (resp.data.errors) {
+            throw new Error(
+              resp.data.errors.map(error => error.msg).join('\n'),
+            );
+          }
+          break;
+      }
+    } catch (err: any) {
+      dispatch(setSignUpErrStr(err.message || 'Failed to sign up.'));
+    }
+  };
+
+  const onSignInPress = async () => {
+    navigation.navigate('SignIn');
+    dispatch(setInitialState());
+  };
 
   return (
     <View style={styles.buttonView}>

@@ -1,7 +1,11 @@
+import {Provider} from 'react-redux';
+
+import {store} from './app/state/store';
+
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingScreen from './app/screens/LandingScreen';
 import {NavigationContainer} from '@react-navigation/native';
-import LoginScreen from './app/screens/LoginScreen';
+import SignInScreen from './app/screens/SignInScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 import DashboardScreen from './app/screens/DashboardScreen';
 
@@ -11,7 +15,7 @@ import DashboardScreen from './app/screens/DashboardScreen';
 type RootStackParamList = {
   Landing: undefined;
   SignUp: undefined;
-  Login: undefined;
+  SignIn: undefined;
   Dashboard: {user: any};
 };
 
@@ -20,30 +24,32 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator initialRouteName="Landing">
-        <RootStack.Screen
-          name="Landing"
-          component={LandingScreen}
-          options={{headerShown: false}}
-        />
-        <RootStack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{headerShown: false}}
-        />
-        <RootStack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{headerShown: false}}
-        />
-        <RootStack.Screen
-          name="Dashboard"
-          component={DashboardScreen}
-          options={{headerShown: false}}
-        />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <RootStack.Navigator initialRouteName="Landing">
+          <RootStack.Screen
+            name="Landing"
+            component={LandingScreen}
+            options={{headerShown: false}}
+          />
+          <RootStack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{headerShown: false}}
+          />
+          <RootStack.Screen
+            name="SignIn"
+            component={SignInScreen}
+            options={{headerShown: false}}
+          />
+          <RootStack.Screen
+            name="Dashboard"
+            component={DashboardScreen}
+            options={{headerShown: false}}
+          />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
