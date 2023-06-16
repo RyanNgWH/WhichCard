@@ -12,6 +12,7 @@ const URLs = {
     USER: {
       BASE: '/users',
       LOGIN: '/login',
+      CARDS: '/cards'
     },
   },
 };

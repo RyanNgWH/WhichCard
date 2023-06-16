@@ -3,7 +3,6 @@
  *
  * @format
  */
-import {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -13,15 +12,17 @@ import {
   Text,
   View,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+
 import {useAppSelector, useAppDispatch} from '../state/hooks';
 import {
-  setSignInErrStr,
+  setErrStr,
   setEmail,
   setPassword,
-  setInitialState,
-} from '../state/features/signIn';
-
-import axios from 'axios';
+  setInitialState as setSignInInitialState,
+} from '../state/features/auth/signIn';
+import {setInitialState as setUserInitialState} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -31,20 +32,12 @@ import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
 
-type ButtonViewProps = {
-  navigation: any;
-};
-
 /**
  * Login screen
  * @param navigation Navigation object
  * @returns Login screen component
  */
-function LoginScreen({navigation}) {
-  // const [signInErrStr, setSignInErrStr] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-
+function LoginScreen() {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
@@ -62,7 +55,7 @@ function LoginScreen({navigation}) {
               <Body />
             </View>
             <View style={styles.buttonViewContainer}>
-              <ButtonView navigation={navigation} />
+              <ButtonView />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -101,7 +94,7 @@ function Header() {
  */
 function Body() {
   const dispatch = useAppDispatch();
-  const {signInErrStr, email, password} = useAppSelector(state => state.signIn);
+  const {errStr, email, password} = useAppSelector(state => state.signIn);
   /**
    * Forgot password text press handler
    */
@@ -130,16 +123,14 @@ function Body() {
         onPress={onForgotPasswordPress}>
         Forgot Password?
       </Text>
-      {signInErrStr ? (
-        <Text
-          style={[
-            TextStyles({theme: 'light'}).bodyText,
-            styles.title,
-            styles.error,
-          ]}>
-          {signInErrStr}
-        </Text>
-      ) : null}
+      <Text
+        style={[
+          TextStyles({theme: 'light'}).bodyText,
+          styles.title,
+          styles.error,
+        ]}>
+        {errStr || ''}
+      </Text>
     </View>
   );
 }
@@ -148,15 +139,14 @@ function Body() {
  * Button view of the sign up page
  * @returns Button view component of the sign up page
  */
-function ButtonView(props: ButtonViewProps) {
-  const {navigation} = props;
-
+function ButtonView() {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const {email, password} = useAppSelector(state => state.signIn);
 
   const onSignUpPress = async () => {
+    dispatch(setSignInInitialState());
     navigation.navigate('SignUp');
-    dispatch(setInitialState());
   };
 
   const onSignInPress = async () => {
@@ -178,8 +168,9 @@ function ButtonView(props: ButtonViewProps) {
 
       switch (resp.status) {
         case 200:
-          navigation.navigate('Dashboard', {user: resp.data.data});
-          dispatch(setInitialState());
+          dispatch(setUserInitialState(resp.data.data));
+          dispatch(setSignInInitialState());
+          navigation.navigate('Dashboard');
           break;
         default:
           if (resp.data.data && resp.data.data.error) {
@@ -194,7 +185,7 @@ function ButtonView(props: ButtonViewProps) {
           break;
       }
     } catch (err: any) {
-      dispatch(setSignInErrStr(err.message || 'Failed to sign in.'));
+      dispatch(setErrStr(err.message || 'Failed to sign in.'));
     }
   };
 

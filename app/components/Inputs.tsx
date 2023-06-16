@@ -4,11 +4,11 @@
  * @format
  */
 
-import {View, Text, TextInput, StyleSheet, ViewStyle} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ViewStyle, Image} from 'react-native';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {Dispatch, SetStateAction, useState} from 'react';
-import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
 // Props for the text input box component
 type TextInputBoxProps = {
@@ -23,6 +23,7 @@ type TextInputBoxProps = {
   onFocus?: () => void;
 };
 
+
 // Props for the dropdown box component
 type DropdownBoxProps = {
   title: string;
@@ -32,12 +33,15 @@ type DropdownBoxProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
   zIndex?: number;
   placeholder?: string;
+  value: string,
+  onSelectItem: (item: ItemType<string>) => void;
 };
 
 // Item for the dropdown box component
-type DropdownItem = {
+export type DropdownItem = {
   label: string;
   value: string;
+  icon?: () => React.ReactElement<typeof Image>;
 };
 
 /**
@@ -105,7 +109,7 @@ function TextInputBox(props: TextInputBoxProps) {
  * @returns Dropdown box component with title
  */
 function DropdownBox(props: DropdownBoxProps) {
-  const [value, setValue] = useState(null);
+  const { value, onSelectItem } = props;
   const [items, setItems] = useState(props.items);
 
   return (
@@ -123,7 +127,7 @@ function DropdownBox(props: DropdownBoxProps) {
         items={items}
         setOpen={props.setOpen}
         onOpen={props.onOpen}
-        setValue={setValue}
+        onSelectItem={onSelectItem}
         setItems={setItems}
         style={dropdownBoxStyles(props).dropdown}
         dropDownContainerStyle={dropdownBoxStyles(props).dropdownContainer}
