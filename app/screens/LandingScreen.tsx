@@ -33,7 +33,7 @@ function LandingScreen({navigation}) {
    * Login button press handler
    */
   const onLoginPress = () => {
-    navigation.navigate('Login');
+    navigation.navigate('SignIn');
   };
 
   return (
