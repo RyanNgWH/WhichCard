@@ -3,8 +3,16 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 // type AllowedCardIssuers = 'ocbc' | 'dbs' | '';
 // type AllowedCardTypes = '365 credit' | '';
 
+export interface DbCard {
+  issuer: string,
+  type: string
+}
+
 interface AddCardState {
   errStr: string;
+
+  dbCards: DbCard[];
+
   cardName: string;
   expiryDate: string;
   cardIssuer: string;
@@ -15,6 +23,9 @@ interface AddCardState {
 
 const initialState: AddCardState = {
   errStr: '',
+
+  dbCards: [],
+
   cardName: '',
   expiryDate: '',
   cardIssuer: '',
@@ -30,6 +41,11 @@ export const addCardSlice = createSlice({
     setErrStr: (state, action: PayloadAction<string>) => {
       state.errStr = action.payload;
     },
+
+    setDbCards: (state, action: PayloadAction<DbCard[]>) => {
+      state.dbCards = action.payload;
+    },
+
     setCardName: (state, action: PayloadAction<string>) => {
       state.cardName = action.payload;
     },
@@ -54,6 +70,9 @@ export const addCardSlice = createSlice({
 
 export const {
   setErrStr,
+
+  setDbCards,
+
   setCardName,
   setExpDate,
   setCardIssuer,

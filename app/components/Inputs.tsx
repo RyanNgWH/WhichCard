@@ -110,7 +110,6 @@ function TextInputBox(props: TextInputBoxProps) {
  */
 function DropdownBox(props: DropdownBoxProps) {
   const { value, onSelectItem } = props;
-  const [items, setItems] = useState(props.items);
 
   return (
     <View style={dropdownBoxStyles(props).container}>
@@ -124,11 +123,10 @@ function DropdownBox(props: DropdownBoxProps) {
       <DropDownPicker
         open={props.open}
         value={value}
-        items={items}
+        items={props.items}
         setOpen={props.setOpen}
         onOpen={props.onOpen}
         onSelectItem={onSelectItem}
-        setItems={setItems}
         style={dropdownBoxStyles(props).dropdown}
         dropDownContainerStyle={dropdownBoxStyles(props).dropdownContainer}
         textStyle={TextStyles({theme: 'light'}).bodyText}

@@ -11,7 +11,8 @@ import {
   Pressable,
   StyleSheet,
   View,
-  Text
+  Text,
+  ImageSourcePropType
 } from 'react-native';
 import axios from 'axios';
 
@@ -24,7 +25,9 @@ import {
   setCardIssuerOpen,
   setCardTypeOpen,
   setErrStr,
-  setInitialState
+  setInitialState,
+  setDbCards,
+  DbCard
 } from '../state/features/card/addCard';
 
 import {Themes} from '../styles/Themes';
@@ -38,6 +41,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { ItemType } from 'react-native-dropdown-picker';
 import URLs from '../shared/Urls';
 import { useNavigation } from '@react-navigation/native';
+import { useGetCardsQuery } from '../state/features/api/slice';
 
 function AddCardScreen() {
   const dispatch = useDispatch();
@@ -75,6 +79,14 @@ function AddCardScreen() {
 
 function InputsView() {
 
+  const {
+    data,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetCardsQuery(null);
+
   const dispatch = useDispatch();
   const {
     cardName,
@@ -85,12 +97,73 @@ function InputsView() {
     cardTypeOpen,
   } = useAppSelector(state => state.addCard);
 
+  // console.log(data);
+  // console.log(dbCards);
+
   const onCardIssuerOpen = () => {
     dispatch(setCardTypeOpen(false));
   };
 
   const onCardTypeOpen = () => {
     dispatch(setCardIssuerOpen(false));
+  };
+
+  const getDbCardIssuerItems = (dbCards: DbCard[]) => {
+    return dbCards.map(card => {
+      const {issuer} = card;
+      let hasLogo = true;
+      let logoSrc: ImageSourcePropType;
+      switch (issuer) {
+        case 'ocbc':
+          logoSrc = require('../assets/logo/issuers/ocbc/ocbc.png');
+          break;
+        case 'dbs':
+          logoSrc = require('../assets/logo/issuers/dbs/dbs.png');
+          break;
+        default:
+          hasLogo = false;
+          break;
+      }
+      return {
+        label: issuer.toUpperCase(),
+        value: issuer,
+        ...(hasLogo ? {icon: () => (
+          <Image
+            source={logoSrc}
+            style={inputsViewStyles().cardIssuerItemIcon}
+          />
+        )} : {})
+      };
+    });
+  };
+
+  const getDbCardTypeItems = (dbCards: DbCard[]) => {
+    return dbCards.map(card => {
+      const {issuer, type} = card;
+
+      let hasLogo = true;
+      let logoSrc: ImageSourcePropType;
+      switch (`${issuer}_${type}`) {
+        case 'ocbc_365':
+          logoSrc = require('../assets/logo/issuers/ocbc/365.png');
+        case 'ocbc_frank_credit':
+          logoSrc = require('../assets/logo/issuers/ocbc/frank_credit.png');
+        default:
+          hasLogo = false;
+          break;
+      }
+
+      return {
+        label: `${issuer} ${type}`.toUpperCase(),
+        value: type,
+        ...(hasLogo ? {icon: () => (
+          <Image
+            source={logoSrc}
+            style={inputsViewStyles().cardTypeItemIcon}
+          />
+        )} : {}),
+      };
+    });
   };
 
   const closeAllDropdown = () => {
@@ -140,28 +213,7 @@ function InputsView() {
       </View>
       <DropdownBox
         title="Card Issuer"
-        items={[
-          {
-            label: 'OCBC',
-            value: 'ocbc',
-            icon: () => (
-              <Image
-                source={require('../assets/logo/issuers/ocbc/ocbc.png')}
-                style={inputsViewStyles().cardIssuerItemIcon}
-              />
-            ),
-          },
-          {
-            label: 'DBS',
-            value: 'dbs',
-            icon: () => (
-              <Image
-                source={require('../assets/logo/issuers/dbs/dbs.png')}
-                style={inputsViewStyles().cardIssuerItemIcon}
-              />
-            ),
-          },
-        ]}
+        items={isSuccess ? getDbCardIssuerItems(data.data) : []}
         placeholder="Select Card Issuer"
         open={cardIssuerOpen}
         setOpen={() => dispatch(setCardIssuerOpen(true))}
@@ -175,28 +227,7 @@ function InputsView() {
       />
       <DropdownBox
         title="Card Type"
-        items={[
-          {
-            label: 'OCBC 365',
-            value: 'ocbc365',
-            icon: () => (
-              <Image
-                source={require('../assets/logo/issuers/ocbc/ocbc365.png')}
-                style={inputsViewStyles().cardTypeItemIcon}
-              />
-            ),
-          },
-          {
-            label: 'Frank Credit',
-            value: 'ocbcFrankCredit',
-            icon: () => (
-              <Image
-                source={require('../assets/logo/issuers/ocbc/ocbcFrankCredit.png')}
-                style={inputsViewStyles().cardTypeItemIcon}
-              />
-            ),
-          },
-        ]}
+        items={isSuccess ? getDbCardTypeItems(data.data) : []}
         placeholder="Select Card Type"
         open={cardTypeOpen}
         setOpen={() => dispatch(setCardTypeOpen(true))}
