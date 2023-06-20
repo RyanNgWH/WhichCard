@@ -22,7 +22,7 @@ import {
   setPassword,
   setInitialState as setSignInInitialState,
 } from '../state/features/auth/signIn';
-import {setInitialState as setUserInitialState} from '../state/features/user/user';
+import {setUserState as setUserInitialState} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';

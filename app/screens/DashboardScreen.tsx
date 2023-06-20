@@ -2,7 +2,7 @@
  * Dashboard of the app
  */
 
-import {Image, LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
+import {Image, LayoutChangeEvent, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 import {useAppSelector} from '../state/hooks';
@@ -15,6 +15,7 @@ import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
 import NavigationBar from '../components/NavigationBar';
+import { UserCardState } from '../state/features/user/user';
 
 // Props for the header
 type headerProps = {
@@ -167,31 +168,55 @@ function CardView() {
     </View>
   );
 }
-
 /**
  * Empty card view
  * @returns Empty card view
  */
 function CardViewEmpty(props: cardViewStyleProps) {
   const navigation = useNavigation();
+  const { cards } = useAppSelector(state => state.user);
+  const { cardWidth, cardHeight } = props;
 
   // Handler for add credit card button
   const onAddCreditCardPress = () => {
     navigation.navigate("AddCard");
   };
 
-  return (
-    <RoundButton
-      mode="outlined"
-      onPress={onAddCreditCardPress}
-      borderRadius={9}
-      style={cardViewStyles(props).cardViewEmptyContainer}>
-      <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
-      <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
-        Add Credit Card
-      </Text>
-    </RoundButton>
-  );
+  const renderCards = (cards: UserCardState[]) => {
+    const jsxCards = [
+      <RoundButton
+        mode="outlined"
+        onPress={onAddCreditCardPress}
+        borderRadius={9}
+        style={cardViewStyles(props).cardViewEmptyContainer}>
+        <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
+        <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
+          Add Credit Card
+        </Text>
+      </RoundButton>,
+    ];
+
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      jsxCards.push(
+        <>
+          <Text style={[TextStyles({theme: 'light', size: 15}).bodySubText, {marginBottom: 10}]}>
+            {card.cardName}
+          </Text>
+          <Image
+                source={require('../assets/logo/issuers/ocbc/365.png')} style={{ width: cardWidth, height: cardHeight}}
+              />
+        </>,
+      );
+    }
+    return jsxCards;
+  };
+
+  return <ScrollView>
+    {
+      renderCards(cards)
+    }
+  </ScrollView>;
 }
 
 // Styles for the dashboard screen
@@ -274,6 +299,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       justifyContent: 'center',
       borderStyle: 'dashed',
       borderWidth: 2,
+      marginBottom: 15
     },
   });
 

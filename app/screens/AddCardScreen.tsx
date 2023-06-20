@@ -25,10 +25,12 @@ import {
   setCardIssuerOpen,
   setCardTypeOpen,
   setErrStr,
-  setInitialState,
-  setDbCards,
+  setInitialState as setInitialAddCardState,
   DbCard,
 } from '../state/features/card/addCard';
+import {
+  setUserCards
+} from '../state/features/user/user';
 
 import {Themes} from '../styles/Themes';
 
@@ -57,7 +59,7 @@ function AddCardScreen() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : -250}>
           <HeaderView
             name="Add Card"
-            callback={() => dispatch(setInitialState())}
+            callback={() => dispatch(setInitialAddCardState())}
           />
           <View style={screenStyles().screen}>
             <View style={screenStyles().inputsContainer}>
@@ -251,7 +253,7 @@ function ButtonView() {
   const {cardName, expiryDate, cardIssuer, cardType} = useAppSelector(
     state => state.addCard,
   );
-  const {_id: userId} = useAppSelector(state => state.user);
+  const {_id: userId, cards} = useAppSelector(state => state.user);
 
   const formatCardExpiryDate = (expiryDate: string) => {
     const parts = expiryDate.split(' / ');
@@ -263,11 +265,13 @@ function ButtonView() {
 
   const saveCard = async () => {
     try {
+
+      const formattedCardExpiry = formatCardExpiryDate(expiryDate);
       const data = {
         type: cardType,
         issuer: cardIssuer,
         cardName: cardName,
-        cardExpiry: formatCardExpiryDate(expiryDate),
+        cardExpiry: formattedCardExpiry,
       };
 
       const url = `${URLs.API_SERVER.BASE}${URLs.API_SERVER.USER.BASE}/${userId}${URLs.API_SERVER.USER.CARDS}`;
@@ -280,7 +284,15 @@ function ButtonView() {
 
       switch (resp.status) {
         case 200:
-          dispatch(setInitialState());
+          dispatch(setUserCards([
+            ...cards,
+            {
+              cardName: cardName,
+              cardExpiry: formattedCardExpiry,
+              card: resp.data._id
+            }
+          ]));
+          dispatch(setInitialAddCardState());
           navigation.navigate('Dashboard');
           break;
         default:

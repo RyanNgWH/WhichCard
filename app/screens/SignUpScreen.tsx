@@ -26,7 +26,7 @@ import {
   setInitialState as setSignUpInitialState,
 } from '../state/features/auth/signUp';
 import {
-  setInitialState as setUserInitialState
+  setUserState as setUserInitialState
 } from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
