@@ -26,14 +26,22 @@ function LandingScreen({navigation}) {
    * Create Account button press handler
    */
   const onCreateAccountPress = () => {
-    navigation.navigate('SignUp');
+    // Reset the navigation stack (Prevent users from going back to the landing page)
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'SignUp'}],
+    });
   };
 
   /**
    * Login button press handler
    */
   const onLoginPress = () => {
-    navigation.navigate('Login');
+    // Reset the navigation stack (Prevent users from going back to the landing page)
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Login'}],
+    });
   };
 
   return (
