@@ -12,7 +12,7 @@ import {
   StyleSheet,
   View,
   Text,
-  ImageSourcePropType
+  ImageSourcePropType,
 } from 'react-native';
 import axios from 'axios';
 
@@ -27,7 +27,7 @@ import {
   setErrStr,
   setInitialState,
   setDbCards,
-  DbCard
+  DbCard,
 } from '../state/features/card/addCard';
 
 import {Themes} from '../styles/Themes';
@@ -37,15 +37,15 @@ import HeaderView from '../components/HeaderView';
 import {DropdownBox, TextInputBox} from '../components/Inputs';
 import TextStyles from '../styles/TextStyles';
 import RoundButton from '../components/RoundButton';
-import {useDispatch, useSelector} from 'react-redux';
-import { ItemType } from 'react-native-dropdown-picker';
+import {useDispatch} from 'react-redux';
+import {ItemType} from 'react-native-dropdown-picker';
 import URLs from '../shared/Urls';
-import { useNavigation } from '@react-navigation/native';
-import { useGetCardsQuery } from '../state/features/api/slice';
+import {useNavigation} from '@react-navigation/native';
+import {useGetCardsQuery} from '../state/features/api/slice';
 
 function AddCardScreen() {
   const dispatch = useDispatch();
-  const { errStr } = useAppSelector(state => state.addCard);
+  const {errStr} = useAppSelector(state => state.addCard);
   return (
     <SafeAreaViewGlobal>
       <PaddedView
@@ -55,16 +55,15 @@ function AddCardScreen() {
           behavior="padding"
           style={screenStyles().keyboardAvoidingView}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : -250}>
-          <HeaderView name="Add Card" callback={() => dispatch(setInitialState())}/>
+          <HeaderView
+            name="Add Card"
+            callback={() => dispatch(setInitialState())}
+          />
           <View style={screenStyles().screen}>
             <View style={screenStyles().inputsContainer}>
               <InputsView />
             </View>
-            <Text
-              style={[
-                TextStyles({theme: 'light'}).bodyText,
-                errStyles()
-              ]}>
+            <Text style={[TextStyles({theme: 'light'}).bodyText, errStyles()]}>
               {errStr || ''}
             </Text>
             <View style={screenStyles().buttonContainer}>
@@ -78,14 +77,7 @@ function AddCardScreen() {
 }
 
 function InputsView() {
-
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetCardsQuery(null);
+  const {data, isSuccess} = useGetCardsQuery(null);
 
   const dispatch = useDispatch();
   const {
@@ -96,9 +88,6 @@ function InputsView() {
     cardIssuerOpen,
     cardTypeOpen,
   } = useAppSelector(state => state.addCard);
-
-  // console.log(data);
-  // console.log(dbCards);
 
   const onCardIssuerOpen = () => {
     dispatch(setCardTypeOpen(false));
@@ -127,49 +116,64 @@ function InputsView() {
       return {
         label: issuer.toUpperCase(),
         value: issuer,
-        ...(hasLogo ? {icon: () => (
-          <Image
-            source={logoSrc}
-            style={inputsViewStyles().cardIssuerItemIcon}
-          />
-        )} : {})
+        ...(hasLogo
+          ? {
+              icon: () => (
+                <Image
+                  source={logoSrc}
+                  style={inputsViewStyles().cardIssuerItemIcon}
+                />
+              ),
+            }
+          : {}),
       };
     });
   };
 
-  const getDbCardTypeItems = (dbCards: DbCard[]) => {
-    return dbCards.map(card => {
+  const getDbCardTypeItems = (dbCards: DbCard[], cardIssuer: string) => {
+    const items = [];
+    for (const card of dbCards) {
       const {issuer, type} = card;
 
-      let hasLogo = true;
-      let logoSrc: ImageSourcePropType;
-      switch (`${issuer}_${type}`) {
-        case 'ocbc_365':
-          logoSrc = require('../assets/logo/issuers/ocbc/365.png');
-        case 'ocbc_frank_credit':
-          logoSrc = require('../assets/logo/issuers/ocbc/frank_credit.png');
-        default:
-          hasLogo = false;
-          break;
-      }
+      if (card.issuer === cardIssuer) {
+        let hasLogo = true;
+        let logoSrc: ImageSourcePropType;
 
-      return {
-        label: `${issuer} ${type}`.toUpperCase(),
-        value: type,
-        ...(hasLogo ? {icon: () => (
-          <Image
-            source={logoSrc}
-            style={inputsViewStyles().cardTypeItemIcon}
-          />
-        )} : {}),
-      };
-    });
+        switch (`${issuer}_${type}`) {
+          case 'ocbc_365':
+            logoSrc = require('../assets/logo/issuers/ocbc/365.png');
+            break;
+          case 'ocbc_frank_credit':
+            logoSrc = require('../assets/logo/issuers/ocbc/frank_credit.png');
+            break;
+          default:
+            hasLogo = false;
+            break;
+        }
+
+        items.push({
+          label: `${issuer} ${type}`.toUpperCase(),
+          value: type,
+          ...(hasLogo
+            ? {
+                icon: () => (
+                  <Image
+                    source={logoSrc}
+                    style={inputsViewStyles().cardTypeItemIcon}
+                  />
+                ),
+              }
+            : {}),
+        });
+      }
+    }
+    return items;
   };
 
   const closeAllDropdown = () => {
     dispatch(setCardIssuerOpen(false));
     dispatch(setCardTypeOpen(false));
-  }
+  };
 
   const validateCardExpiryDate = (expiryDate: string) => {
     const formattedText = expiryDate.replace(/[^0-9]/g, '').substring(0, 4);
@@ -185,9 +189,7 @@ function InputsView() {
   };
 
   return (
-    <Pressable
-      style={inputsViewStyles().container}
-      onPress={closeAllDropdown}>
+    <Pressable style={inputsViewStyles().container} onPress={closeAllDropdown}>
       <TextInputBox
         title="Card Name"
         placeholder="Enter Card Name"
@@ -221,13 +223,13 @@ function InputsView() {
         zIndex={3000}
         value={cardIssuer}
         onSelectItem={(item: ItemType<string>) => {
-          dispatch(setCardIssuer(item.value || ""));
+          dispatch(setCardIssuer(item.value || ''));
           setTimeout(closeAllDropdown, 0);
         }}
       />
       <DropdownBox
         title="Card Type"
-        items={isSuccess ? getDbCardTypeItems(data.data) : []}
+        items={isSuccess ? getDbCardTypeItems(data.data, cardIssuer) : []}
         placeholder="Select Card Type"
         open={cardTypeOpen}
         setOpen={() => dispatch(setCardTypeOpen(true))}
@@ -235,7 +237,7 @@ function InputsView() {
         zIndex={2000}
         value={cardType}
         onSelectItem={(item: ItemType<string>) => {
-          dispatch(setCardType(item.value || ""));
+          dispatch(setCardType(item.value || ''));
           setTimeout(closeAllDropdown, 0);
         }}
       />
@@ -244,26 +246,20 @@ function InputsView() {
 }
 
 function ButtonView() {
-
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {
-    cardName,
-    expiryDate,
-    cardIssuer,
-    cardType
-  } = useAppSelector(state => state.addCard);
-  const {
-    _id: userId
-  } = useAppSelector(state => state.user);
+  const {cardName, expiryDate, cardIssuer, cardType} = useAppSelector(
+    state => state.addCard,
+  );
+  const {_id: userId} = useAppSelector(state => state.user);
 
-  const formatCardExpiryDate =(expiryDate: string) => {
+  const formatCardExpiryDate = (expiryDate: string) => {
     const parts = expiryDate.split(' / ');
     const month = parts[0];
     const year = parts[1];
-  
+
     return `20${year}-${month}-01`;
-  }
+  };
 
   const saveCard = async () => {
     try {
@@ -275,7 +271,6 @@ function ButtonView() {
       };
 
       const url = `${URLs.API_SERVER.BASE}${URLs.API_SERVER.USER.BASE}/${userId}${URLs.API_SERVER.USER.CARDS}`;
-      console.log(url);
       const resp = await axios({
         url,
         method: 'POST',
@@ -347,21 +342,20 @@ const inputsViewStyles = () =>
     },
     cardIssuerItemIcon: {
       width: 29,
-      height: 29
+      height: 29,
     },
     cardTypeItemIcon: {
       width: 45,
-      height: 29
-    }
+      height: 29,
+    },
   });
 
-const errStyles = () =>
-  ({
-    paddingLeft: 5,
-    paddingBottom: 10,
-    paddingTop: 10,
-    color: Themes.colors.errorTextFillColor,
-    zIndex: -1
+const errStyles = () => ({
+  paddingLeft: 5,
+  paddingBottom: 10,
+  paddingTop: 10,
+  color: Themes.colors.errorTextFillColor,
+  zIndex: -1,
 });
 
 export default AddCardScreen;
