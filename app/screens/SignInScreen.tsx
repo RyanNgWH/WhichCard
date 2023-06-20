@@ -33,11 +33,10 @@ import RoundButton from '../components/RoundButton';
 import URLs from '../shared/Urls';
 
 /**
- * Login screen
- * @param navigation Navigation object
- * @returns Login screen component
+ * Sign in screen
+ * @returns Sign in screen component
  */
-function LoginScreen() {
+function SignInScreen() {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
@@ -267,4 +266,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignInScreen;

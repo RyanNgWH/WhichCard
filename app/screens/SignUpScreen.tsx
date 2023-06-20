@@ -37,6 +37,10 @@ import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
 
+/**
+ * Sign up screen
+ * @returns Sign up screen component
+ */
 function SignUpScreen() {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
@@ -91,15 +95,6 @@ function Header() {
  * Body of the sign up page
  */
 function Body() {
-  // const {
-  //   signUpError,
-  //   setFullName,
-  //   setEmail,
-  //   setPassword,
-  //   fullName,
-  //   email,
-  //   password,
-  // } = props;
 
   const dispatch = useAppDispatch();
   const {errStr, fullName, email, password} = useAppSelector(

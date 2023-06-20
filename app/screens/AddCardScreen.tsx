@@ -44,7 +44,12 @@ import {ItemType} from 'react-native-dropdown-picker';
 import URLs from '../shared/Urls';
 import {useNavigation} from '@react-navigation/native';
 import {useGetCardsQuery} from '../state/features/api/slice';
+import { getCardIssuerLogo, getCardTypeLogo } from '../state/features/card/card';
 
+/**
+ * Add card screen
+ * @returns add card screen component
+ */
 function AddCardScreen() {
   const dispatch = useDispatch();
   const {errStr} = useAppSelector(state => state.addCard);
@@ -90,6 +95,7 @@ function InputsView() {
     cardIssuerOpen,
     cardTypeOpen,
   } = useAppSelector(state => state.addCard);
+  console.log(cardIssuer, cardType);
 
   const onCardIssuerOpen = () => {
     dispatch(setCardTypeOpen(false));
@@ -102,23 +108,12 @@ function InputsView() {
   const getDbCardIssuerItems = (dbCards: DbCard[]) => {
     return dbCards.map(card => {
       const {issuer} = card;
-      let hasLogo = true;
-      let logoSrc: ImageSourcePropType;
-      switch (issuer) {
-        case 'ocbc':
-          logoSrc = require('../assets/logo/issuers/ocbc/ocbc.png');
-          break;
-        case 'dbs':
-          logoSrc = require('../assets/logo/issuers/dbs/dbs.png');
-          break;
-        default:
-          hasLogo = false;
-          break;
-      }
+      let logoSrc: ImageSourcePropType = getCardIssuerLogo(issuer);
+      
       return {
         label: issuer.toUpperCase(),
         value: issuer,
-        ...(hasLogo
+        ...(logoSrc
           ? {
               icon: () => (
                 <Image
@@ -138,25 +133,12 @@ function InputsView() {
       const {issuer, type} = card;
 
       if (card.issuer === cardIssuer) {
-        let hasLogo = true;
-        let logoSrc: ImageSourcePropType;
-
-        switch (`${issuer}_${type}`) {
-          case 'ocbc_365':
-            logoSrc = require('../assets/logo/issuers/ocbc/365.png');
-            break;
-          case 'ocbc_frank_credit':
-            logoSrc = require('../assets/logo/issuers/ocbc/frank_credit.png');
-            break;
-          default:
-            hasLogo = false;
-            break;
-        }
+        let logoSrc: ImageSourcePropType = getCardTypeLogo(issuer, type);
 
         items.push({
           label: `${issuer} ${type}`.toUpperCase(),
           value: type,
-          ...(hasLogo
+          ...(logoSrc
             ? {
                 icon: () => (
                   <Image

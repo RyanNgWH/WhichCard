@@ -109,8 +109,6 @@ function TextInputBox(props: TextInputBoxProps) {
  * @returns Dropdown box component with title
  */
 function DropdownBox(props: DropdownBoxProps) {
-  const { value, onSelectItem } = props;
-
   return (
     <View style={dropdownBoxStyles(props).container}>
       <Text
@@ -122,11 +120,11 @@ function DropdownBox(props: DropdownBoxProps) {
       </Text>
       <DropDownPicker
         open={props.open}
-        value={value}
+        value={props.value}
         items={props.items}
         setOpen={props.setOpen}
         onOpen={props.onOpen}
-        onSelectItem={onSelectItem}
+        onSelectItem={props.onSelectItem}
         style={dropdownBoxStyles(props).dropdown}
         dropDownContainerStyle={dropdownBoxStyles(props).dropdownContainer}
         textStyle={TextStyles({theme: 'light'}).bodyText}

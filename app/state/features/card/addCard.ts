@@ -41,7 +41,6 @@ export const addCardSlice = createSlice({
     setErrStr: (state, action: PayloadAction<string>) => {
       state.errStr = action.payload;
     },
-
     setDbCards: (state, action: PayloadAction<DbCard[]>) => {
       state.dbCards = action.payload;
     },
