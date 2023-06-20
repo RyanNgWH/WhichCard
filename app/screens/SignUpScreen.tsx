@@ -67,7 +67,19 @@ function SignUpScreen({navigation}) {
 
       switch (resp.status) {
         case 201:
-          navigation.navigate('Dashboard', {user: resp.data.data});
+          // Reset the navigation stack (Prevent users from going back to the sign up screen)
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'HomeStack',
+                params: {
+                  screen: 'Dashboard',
+                  params: {user: resp.data.data},
+                },
+              },
+            ],
+          });
           setFullName('');
           setEmail('');
           setPassword('');
