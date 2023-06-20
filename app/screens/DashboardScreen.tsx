@@ -39,9 +39,6 @@ function DashboardScreen({route, navigation}) {
         <View style={screenStyles().bodyContainer}>
           <Body />
         </View>
-        <View style={screenStyles().footerContainer}>
-          <Footer />
-        </View>
       </SafeAreaViewGlobal>
     </View>
   );
@@ -109,14 +106,6 @@ function Body() {
       <CardView />
     </PaddedView>
   );
-}
-
-/**
- * Footer of the dashboard
- * @returns Footer of the dashboard
- */
-function Footer() {
-  return <NavigationBar />;
 }
 
 /**
@@ -201,9 +190,6 @@ const screenStyles = () =>
     bodyContainer: {
       flex: 10,
       backgroundColor: Themes.colors.appBackgroundSecondary,
-    },
-    footerContainer: {
-      flex: 1,
     },
   });
 
