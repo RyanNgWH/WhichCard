@@ -7,6 +7,11 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AddCardScreen from '../../screens/AddCardScreen';
 import HomeTabScreen from './HomeTab';
+import {Pressable} from 'react-native';
+import {Themes} from '../../styles/Themes';
+import TextStyles from '../../styles/TextStyles';
+import Icon from '../../styles/Icons';
+import {useNavigation} from '@react-navigation/native';
 
 /**
  * HomeStackPramList defines the types of the parameters that can be passed to each screen
@@ -26,7 +31,17 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>();
  */
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator initialRouteName="HomeTab">
+    <HomeStack.Navigator
+      initialRouteName="HomeTab"
+      screenOptions={{
+        headerShadowVisible: false,
+        headerTransparent: true,
+        headerTintColor: Themes.colors.textLightBackground,
+        headerTitleAlign: 'center',
+        headerTitleStyle: TextStyles({theme: 'light', size: 20}).bodyTextBold,
+        headerBackTitleVisible: false,
+        headerLeft: HeaderBackButton,
+      }}>
       <HomeStack.Screen
         name="HomeTab"
         component={HomeTabScreen}
@@ -35,9 +50,31 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="AddCard"
         component={AddCardScreen}
-        options={{headerShown: false}}
+        options={{
+          title: 'Add Card',
+        }}
       />
     </HomeStack.Navigator>
+  );
+}
+
+function HeaderBackButton() {
+  const navigation = useNavigation();
+  const onBackPress = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  };
+
+  return (
+    <Pressable onPress={onBackPress}>
+      <Icon
+        name="chevron-left"
+        source="Feather"
+        size={30}
+        color={Themes.colors.textLightBackground}
+      />
+    </Pressable>
   );
 }
 

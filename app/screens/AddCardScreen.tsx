@@ -60,10 +60,6 @@ function AddCardScreen() {
           behavior="padding"
           style={screenStyles().keyboardAvoidingView}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : -250}>
-          <HeaderView
-            name="Add Card"
-            callback={() => dispatch(setInitialAddCardState())}
-          />
           <View style={screenStyles().screen}>
             <View style={screenStyles().inputsContainer}>
               <InputsView />
@@ -93,7 +89,6 @@ function InputsView() {
     cardIssuerOpen,
     cardTypeOpen,
   } = useAppSelector(state => state.addCard);
-  console.log(cardIssuer, cardType);
 
   const onCardIssuerOpen = () => {
     dispatch(setCardTypeOpen(false));
