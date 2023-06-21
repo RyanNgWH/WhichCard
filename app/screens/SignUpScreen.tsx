@@ -13,16 +13,19 @@ import {
   Text,
   View,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+
 import {useAppSelector, useAppDispatch} from '../state/hooks';
+
 import {
-  setSignUpErrStr,
+  setErrStr,
   setFullName,
   setEmail,
   setPassword,
-  setInitialState,
-} from '../state/features/signUp';
-
-import axios from 'axios';
+  setInitialState as setSignUpInitialState,
+} from '../state/features/auth/signUp';
+import {setUserState as setUserInitialState} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -32,11 +35,11 @@ import RoundButton from '../components/RoundButton';
 
 import URLs from '../shared/Urls';
 
-type ButtonViewProps = {
-  navigation: any;
-};
-
-function SignUpScreen({navigation}) {
+/**
+ * Sign up screen
+ * @returns Sign up screen component
+ */
+function SignUpScreen() {
   return (
     <PaddedView direction="horizontal" size={Themes.sizes.horizontalScreenSize}>
       <SafeAreaViewGlobal>
@@ -54,7 +57,7 @@ function SignUpScreen({navigation}) {
               <Body />
             </View>
             <View style={styles.buttonViewContainer}>
-              <ButtonView navigation={navigation} />
+              <ButtonView />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -90,18 +93,8 @@ function Header() {
  * Body of the sign up page
  */
 function Body() {
-  // const {
-  //   signUpError,
-  //   setFullName,
-  //   setEmail,
-  //   setPassword,
-  //   fullName,
-  //   email,
-  //   password,
-  // } = props;
-
   const dispatch = useAppDispatch();
-  const {signUpErrStr, fullName, email, password} = useAppSelector(
+  const {errStr, fullName, email, password} = useAppSelector(
     state => state.signUp,
   );
 
@@ -127,16 +120,14 @@ function Body() {
         onChangeText={password => dispatch(setPassword(password))}
         value={password}
       />
-      {signUpErrStr ? (
-        <Text
-          style={[
-            TextStyles({theme: 'light'}).bodyText,
-            styles.title,
-            styles.error,
-          ]}>
-          {signUpErrStr}
-        </Text>
-      ) : null}
+      <Text
+        style={[
+          TextStyles({theme: 'light'}).bodyText,
+          styles.title,
+          styles.error,
+        ]}>
+        {errStr || ''}
+      </Text>
     </View>
   );
 }
@@ -144,8 +135,8 @@ function Body() {
 /**
  * Button of the sign up page
  */
-function ButtonView(props: ButtonViewProps) {
-  const {navigation} = props;
+function ButtonView() {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const {fullName, email, password} = useAppSelector(state => state.signUp);
 
@@ -166,6 +157,8 @@ function ButtonView(props: ButtonViewProps) {
 
       switch (resp.status) {
         case 201:
+          dispatch(setUserInitialState(resp.data.data));
+          dispatch(setSignUpInitialState());
           // Reset the navigation stack (Prevent users from going back to the sign up screen)
           navigation.reset({
             index: 0,
@@ -173,7 +166,7 @@ function ButtonView(props: ButtonViewProps) {
               {
                 name: 'HomeStack',
                 params: {
-                  screen: 'Dashboard',
+                  screen: 'HomeTab',
                   params: {user: resp.data.data},
                 },
               },
@@ -193,13 +186,13 @@ function ButtonView(props: ButtonViewProps) {
           break;
       }
     } catch (err: any) {
-      dispatch(setSignUpErrStr(err.message || 'Failed to sign up.'));
+      dispatch(setErrStr(err.message || 'Failed to sign up.'));
     }
   };
 
   const onSignInPress = async () => {
+    dispatch(setSignUpInitialState());
     navigation.navigate('SignIn');
-    dispatch(setInitialState());
   };
 
   return (
