@@ -3,6 +3,10 @@
  */
 
 import {Image, LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
+import { useNavigation } from "@react-navigation/native";
+
+import {useAppSelector} from '../state/hooks';
+
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
@@ -29,15 +33,17 @@ type cardViewStyleProps = {
 };
 
 // TODO: Add type for route and navigation
-function DashboardScreen({route, navigation}) {
+function DashboardScreen() {
+  const {name} = useAppSelector(state => state.user);
+
   return (
     <View style={screenStyles().screen}>
       <SafeAreaViewGlobal>
         <View style={screenStyles().headerContainer}>
-          <Header name={route.params.user.name} />
+          <Header name={name} />
         </View>
         <View style={screenStyles().bodyContainer}>
-          <Body />
+          <Body/>
         </View>
         <View style={screenStyles().footerContainer}>
           <Footer />
@@ -167,10 +173,11 @@ function CardView() {
  * @returns Empty card view
  */
 function CardViewEmpty(props: cardViewStyleProps) {
+  const navigation = useNavigation();
+
   // Handler for add credit card button
   const onAddCreditCardPress = () => {
-    // TODO: Implement add credit card functionality
-    console.log('Add credit card pressed');
+    navigation.navigate("AddCard");
   };
 
   return (

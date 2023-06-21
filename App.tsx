@@ -8,6 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import SignInScreen from './app/screens/SignInScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 import DashboardScreen from './app/screens/DashboardScreen';
+import AddCardScreen from './app/screens/AddCardScreen';
 
 /**
  * RootStackParamList defines the types of the parameters that can be passed to each screen
@@ -16,7 +17,8 @@ type RootStackParamList = {
   Landing: undefined;
   SignUp: undefined;
   SignIn: undefined;
-  Dashboard: {user: any};
+  Dashboard: undefined;
+  AddCard: undefined;
 };
 
 // Create the stack navigator
@@ -45,6 +47,11 @@ function App() {
           <RootStack.Screen
             name="Dashboard"
             component={DashboardScreen}
+            options={{headerShown: false}}
+          />
+          <RootStack.Screen
+            name="AddCard"
+            component={AddCardScreen}
             options={{headerShown: false}}
           />
         </RootStack.Navigator>

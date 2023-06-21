@@ -30,6 +30,7 @@ export const Themes = {
     bodyMedium: 'Poppins-Medium',
     button: 'Poppins-SemiBold',
     header: 'Roxborough CF Bold',
+    screenHeader: 'Poppins-Light',
     subtitle: 'Alata',
   },
   sizes: {

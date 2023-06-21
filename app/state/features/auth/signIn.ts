@@ -1,14 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-interface signInState {
-    signInErrStr: string,
+interface SignInState {
+    errStr: string,
     email: string,
     password: string
 }
 
-const initialState: signInState = {
-    signInErrStr: "",
+const initialState: SignInState = {
+    errStr: "",
     email: "",
     password: ""
 };
@@ -17,29 +17,29 @@ export const signInSlice = createSlice({
     name: 'signIn',
     initialState,
     reducers: {
-      setSignInErrStr: (state: signInState, action: PayloadAction<string>) => {
+      setErrStr: (state: SignInState, action: PayloadAction<string>) => {
         return {
             ...state,
-            signInErrStr: action.payload
+            errStr: action.payload
         }
       },
-      setEmail: (state: signInState, action: PayloadAction<string>) => {
+      setEmail: (state: SignInState, action: PayloadAction<string>) => {
         return {
             ...state,
             email: action.payload
         }
       },
-      setPassword: (state: signInState, action: PayloadAction<string>) => {
+      setPassword: (state: SignInState, action: PayloadAction<string>) => {
         return {
             ...state,
             password: action.payload
         }
       },
-      setInitialState: (state: signInState) => initialState
+      setInitialState: (state: SignInState) => initialState
     }
 });
   
   // Action creators are generated for each case reducer function
-export const { setSignInErrStr, setEmail, setPassword, setInitialState } = signInSlice.actions
+export const { setErrStr, setEmail, setPassword, setInitialState } = signInSlice.actions
   
 export default signInSlice.reducer

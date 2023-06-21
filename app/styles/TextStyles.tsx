@@ -24,6 +24,11 @@ export default (props: styleProps) =>
       color: themeFontColor(props.theme),
       fontSize: props.size,
     },
+    screenHeaderText: {
+      fontFamily: Themes.fonts.bodyMedium,
+      color: themeFontColor(props.theme),
+      fontSize: props.size,
+    },
     subtitleText: {
       fontFamily: Themes.fonts.subtitle,
       color: themeFontColor(props.theme),
