@@ -11,7 +11,7 @@ import {Themes} from '../../styles/Themes';
 import TransactionsScreen from '../../screens/TransactionsScreen';
 import ReportScreen from '../../screens/ReportScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import DashboardScreen from '../../screens/DashboardScreen';
 
 /**
@@ -181,7 +181,7 @@ function TabBarIconGenerator(props: TabBarIconGeneratorProps) {
 const HomeTabStyles = () =>
   StyleSheet.create({
     tabBarStyle: {
-      height: 60,
+      height: Platform.OS === 'ios' ? 80 : 60,
       paddingVertical: 5,
     },
   });
