@@ -42,6 +42,7 @@ import URLs from '../shared/Urls';
 import {useNavigation} from '@react-navigation/native';
 import {useGetCardsQuery} from '../state/features/api/slice';
 import {getCardIssuerLogo, getCardTypeLogo} from '../state/features/card/card';
+import {useHeaderHeight} from '@react-navigation/elements';
 
 /**
  * Add card screen
@@ -50,7 +51,7 @@ import {getCardIssuerLogo, getCardTypeLogo} from '../state/features/card/card';
 function AddCardScreen() {
   const {errStr} = useAppSelector(state => state.addCard);
   return (
-    <SafeAreaViewGlobal>
+    <SafeAreaViewGlobal headerHeight={useHeaderHeight()}>
       <PaddedView
         direction="horizontal"
         size={Themes.sizes.horizontalScreenSizeWide}>

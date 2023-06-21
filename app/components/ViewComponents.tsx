@@ -9,7 +9,6 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   View,
   ViewStyle,
@@ -35,6 +34,7 @@ type paddedViewProps = {
 type safeAreaViewGlobalProps = {
   children?: React.ReactNode;
   style?: ViewStyle;
+  headerHeight?: number;
 };
 
 /**
@@ -108,7 +108,7 @@ const PaddedViewGenerator = (props: paddedViewProps) => {
 
 const SafeAreaViewGlobal = (props: safeAreaViewGlobalProps) => {
   return (
-    <SafeAreaView style={safeAreaViewGlobalStyles().androidSafeArea}>
+    <SafeAreaView style={safeAreaViewGlobalStyles(props).androidSafeArea}>
       {props.children}
     </SafeAreaView>
   );
@@ -129,11 +129,11 @@ const paddedViewStyles = (props: paddedViewProps) =>
     },
   });
 
-const safeAreaViewGlobalStyles = () =>
+const safeAreaViewGlobalStyles = (props: safeAreaViewGlobalProps) =>
   StyleSheet.create({
     androidSafeArea: {
       flex: 1,
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      paddingTop: Platform.OS === 'android' ? props.headerHeight : 0,
     },
   });
 
