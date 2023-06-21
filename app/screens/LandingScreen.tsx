@@ -40,7 +40,7 @@ function LandingScreen({navigation}) {
     // Reset the navigation stack (Prevent users from going back to the landing page)
     navigation.reset({
       index: 0,
-      routes: [{name: 'Login'}],
+      routes: [{name: 'SignIn'}],
     });
   };
 

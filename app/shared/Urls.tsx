@@ -5,15 +5,13 @@ const {API_SERVER_BASE_URL_IOS, API_SERVER_BASE_URL_ANDROID} = Config;
 
 const URLs = {
   API_SERVER: {
+    BASE:
+      Platform.OS === 'ios'
+        ? API_SERVER_BASE_URL_IOS
+        : API_SERVER_BASE_URL_ANDROID,
     USER: {
-      BASE:
-        Platform.OS === 'ios'
-          ? API_SERVER_BASE_URL_IOS + '/users'
-          : API_SERVER_BASE_URL_ANDROID + '/users',
-      LOGIN:
-        Platform.OS === 'ios'
-          ? API_SERVER_BASE_URL_IOS + '/users' + '/login'
-          : API_SERVER_BASE_URL_ANDROID + '/users' + '/login',
+      BASE: '/users',
+      LOGIN: '/login',
     },
   },
 };

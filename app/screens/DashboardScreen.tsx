@@ -10,7 +10,6 @@ import {useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
-import NavigationBar from '../components/NavigationBar';
 
 // Props for the header
 type headerProps = {
