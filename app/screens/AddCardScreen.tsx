@@ -33,7 +33,6 @@ import {setUserCards} from '../state/features/user/user';
 import {Themes} from '../styles/Themes';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
-import HeaderView from '../components/HeaderView';
 import {DropdownBox, TextInputBox} from '../components/Inputs';
 import TextStyles from '../styles/TextStyles';
 import RoundButton from '../components/RoundButton';
@@ -49,7 +48,6 @@ import {getCardIssuerLogo, getCardTypeLogo} from '../state/features/card/card';
  * @returns add card screen component
  */
 function AddCardScreen() {
-  const dispatch = useDispatch();
   const {errStr} = useAppSelector(state => state.addCard);
   return (
     <SafeAreaViewGlobal>
@@ -317,7 +315,8 @@ const inputsViewStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-      gap: 20,
+      gap: 30,
+      paddingTop: 20,
     },
     expiryView: {
       flexDirection: 'row',
