@@ -9,11 +9,11 @@ import {Themes} from '../styles/Themes';
 
 interface HeaderViewProps {
   name: string;
-  callback: () => void
+  callback: () => void;
 }
 
 function HeaderView(props: HeaderViewProps) {
-  const { name, callback } = props;
+  const {name, callback} = props;
   const navigation = useNavigation();
   const onBackPress = () => {
     if (navigation.canGoBack()) {
@@ -60,6 +60,5 @@ const headerViewStyles = () =>
       textAlign: 'center',
     },
   });
-
 
 export default HeaderView;

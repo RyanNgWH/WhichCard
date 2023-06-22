@@ -49,6 +49,10 @@ export default (props: styleProps) =>
       color: themeFontColor(props.theme),
       fontSize: props.size,
     },
+    bodySubTextWithoutColor: {
+      fontFamily: Themes.fonts.bodyMedium,
+      fontSize: props.size,
+    },
     buttonText: {
       fontFamily: Themes.fonts.button,
       color: themeFontColor(props.theme),

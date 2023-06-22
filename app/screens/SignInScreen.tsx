@@ -169,7 +169,19 @@ function ButtonView() {
         case 200:
           dispatch(setUserInitialState(resp.data.data));
           dispatch(setSignInInitialState());
-          navigation.navigate('Dashboard');
+          // Reset the navigation stack (Prevent users from going back to the sign up screen)
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'HomeStack',
+                params: {
+                  screen: 'HomeTab',
+                  params: {user: resp.data.data},
+                },
+              },
+            ],
+          });
           break;
         default:
           if (resp.data.data && resp.data.data.error) {

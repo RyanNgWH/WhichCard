@@ -28,14 +28,11 @@ import {
   setInitialState as setInitialAddCardState,
   DbCard,
 } from '../state/features/card/addCard';
-import {
-  setUserCards
-} from '../state/features/user/user';
+import {setUserCards} from '../state/features/user/user';
 
 import {Themes} from '../styles/Themes';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
-import HeaderView from '../components/HeaderView';
 import {DropdownBox, TextInputBox} from '../components/Inputs';
 import TextStyles from '../styles/TextStyles';
 import RoundButton from '../components/RoundButton';
@@ -44,17 +41,17 @@ import {ItemType} from 'react-native-dropdown-picker';
 import URLs from '../shared/Urls';
 import {useNavigation} from '@react-navigation/native';
 import {useGetCardsQuery} from '../state/features/api/slice';
-import { getCardIssuerLogo, getCardTypeLogo } from '../state/features/card/card';
+import {getCardIssuerLogo, getCardTypeLogo} from '../state/features/card/card';
+import {useHeaderHeight} from '@react-navigation/elements';
 
 /**
  * Add card screen
  * @returns add card screen component
  */
 function AddCardScreen() {
-  const dispatch = useDispatch();
   const {errStr} = useAppSelector(state => state.addCard);
   return (
-    <SafeAreaViewGlobal>
+    <SafeAreaViewGlobal headerHeight={useHeaderHeight()}>
       <PaddedView
         direction="horizontal"
         size={Themes.sizes.horizontalScreenSizeWide}>
@@ -62,10 +59,6 @@ function AddCardScreen() {
           behavior="padding"
           style={screenStyles().keyboardAvoidingView}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : -250}>
-          <HeaderView
-            name="Add Card"
-            callback={() => dispatch(setInitialAddCardState())}
-          />
           <View style={screenStyles().screen}>
             <View style={screenStyles().inputsContainer}>
               <InputsView />
@@ -95,7 +88,6 @@ function InputsView() {
     cardIssuerOpen,
     cardTypeOpen,
   } = useAppSelector(state => state.addCard);
-  console.log(cardIssuer, cardType);
 
   const onCardIssuerOpen = () => {
     dispatch(setCardTypeOpen(false));
@@ -109,7 +101,7 @@ function InputsView() {
     return dbCards.map(card => {
       const {issuer} = card;
       let logoSrc: ImageSourcePropType = getCardIssuerLogo(issuer);
-      
+
       return {
         label: issuer.toUpperCase(),
         value: issuer,
@@ -247,7 +239,6 @@ function ButtonView() {
 
   const saveCard = async () => {
     try {
-
       const formattedCardExpiry = formatCardExpiryDate(expiryDate);
       const data = {
         type: cardType,
@@ -266,14 +257,16 @@ function ButtonView() {
 
       switch (resp.status) {
         case 200:
-          dispatch(setUserCards([
-            ...cards,
-            {
-              cardName: cardName,
-              cardExpiry: formattedCardExpiry,
-              card: resp.data._id
-            }
-          ]));
+          dispatch(
+            setUserCards([
+              ...cards,
+              {
+                cardName: cardName,
+                cardExpiry: formattedCardExpiry,
+                card: resp.data._id,
+              },
+            ]),
+          );
           dispatch(setInitialAddCardState());
           navigation.navigate('Dashboard');
           break;
@@ -323,7 +316,8 @@ const inputsViewStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-      gap: 20,
+      gap: 30,
+      paddingTop: 20,
     },
     expiryView: {
       flexDirection: 'row',

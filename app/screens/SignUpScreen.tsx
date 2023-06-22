@@ -13,7 +13,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
 import {useAppSelector, useAppDispatch} from '../state/hooks';
@@ -25,9 +25,7 @@ import {
   setPassword,
   setInitialState as setSignUpInitialState,
 } from '../state/features/auth/signUp';
-import {
-  setUserState as setUserInitialState
-} from '../state/features/user/user';
+import {setUserState as setUserInitialState} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -59,7 +57,7 @@ function SignUpScreen() {
               <Body />
             </View>
             <View style={styles.buttonViewContainer}>
-              <ButtonView/>
+              <ButtonView />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -95,7 +93,6 @@ function Header() {
  * Body of the sign up page
  */
 function Body() {
-
   const dispatch = useAppDispatch();
   const {errStr, fullName, email, password} = useAppSelector(
     state => state.signUp,
@@ -124,13 +121,13 @@ function Body() {
         value={password}
       />
       <Text
-          style={[
-            TextStyles({theme: 'light'}).bodyText,
-            styles.title,
-            styles.error,
-          ]}>
-          {errStr || ""}
-        </Text>
+        style={[
+          TextStyles({theme: 'light'}).bodyText,
+          styles.title,
+          styles.error,
+        ]}>
+        {errStr || ''}
+      </Text>
     </View>
   );
 }
@@ -162,7 +159,19 @@ function ButtonView() {
         case 201:
           dispatch(setUserInitialState(resp.data.data));
           dispatch(setSignUpInitialState());
-          navigation.navigate('Dashboard');
+          // Reset the navigation stack (Prevent users from going back to the sign up screen)
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'HomeStack',
+                params: {
+                  screen: 'HomeTab',
+                  params: {user: resp.data.data},
+                },
+              },
+            ],
+          });
           break;
         default:
           if (resp.data.data && resp.data.data.error) {

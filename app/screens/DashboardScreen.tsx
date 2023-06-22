@@ -3,7 +3,7 @@
  */
 
 import {Image, LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import {useNavigation} from '@react-navigation/native';
 
 import {useAppSelector} from '../state/hooks';
 
@@ -14,7 +14,6 @@ import {useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
-import NavigationBar from '../components/NavigationBar';
 
 // Props for the header
 type headerProps = {
@@ -43,10 +42,7 @@ function DashboardScreen() {
           <Header name={name} />
         </View>
         <View style={screenStyles().bodyContainer}>
-          <Body/>
-        </View>
-        <View style={screenStyles().footerContainer}>
-          <Footer />
+          <Body />
         </View>
       </SafeAreaViewGlobal>
     </View>
@@ -118,14 +114,6 @@ function Body() {
 }
 
 /**
- * Footer of the dashboard
- * @returns Footer of the dashboard
- */
-function Footer() {
-  return <NavigationBar />;
-}
-
-/**
  * Card view of the dashboard
  * @returns Card view of the dashboard
  */
@@ -177,7 +165,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
 
   // Handler for add credit card button
   const onAddCreditCardPress = () => {
-    navigation.navigate("AddCard");
+    navigation.navigate('AddCard');
   };
 
   return (
@@ -208,9 +196,6 @@ const screenStyles = () =>
     bodyContainer: {
       flex: 10,
       backgroundColor: Themes.colors.appBackgroundSecondary,
-    },
-    footerContainer: {
-      flex: 1,
     },
   });
 
