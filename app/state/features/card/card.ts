@@ -1,3 +1,16 @@
+export interface DbCard {
+  issuer: string,
+  type: string
+}
+
+export interface Card {
+  cardName: string,
+  card: {
+    _id: string,
+    type: string,
+    issuer: string
+  }
+}
 
 function getCardIssuerLogo(issuer: string) {
     let logoSrc;
@@ -14,7 +27,7 @@ function getCardIssuerLogo(issuer: string) {
     return logoSrc;
 }
 
-function getCardTypeLogo(issuer: string, type: string) {
+function getCardLogo(issuer: string, type: string) {
   let logoSrc = null;
   switch (`${issuer}_${type}`) {
     case 'ocbc_365':
@@ -29,4 +42,4 @@ function getCardTypeLogo(issuer: string, type: string) {
   return logoSrc;
 }
 
-export { getCardIssuerLogo, getCardTypeLogo };
+export { getCardIssuerLogo, getCardLogo };

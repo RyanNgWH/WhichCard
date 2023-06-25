@@ -14,6 +14,8 @@ import {useRef, useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
+import { useGetUserCardsQuery } from '../state/features/api/slice';
+import { Card, getCardLogo } from '../state/features/card/card';
 
 // Props for the header
 type headerProps = {
@@ -123,15 +125,13 @@ function Body() {
  * @returns Card view of the dashboard
  */
 function CardView() {
-  // Card view width
-  const [cardWidth, setCreateCardWidth] = useState(0);
+  const navigation = useNavigation();
 
-  // Card size ratio
+  const [cardWidth, setCreateCardWidth] = useState(0);
   const cardSizeRatio = 318 / 201;
 
-  // TODO: Add view all onPress handler
-  const onViewAllPress = () => {
-    console.log('View all text pressed');
+  const addCardPress = () => {
+    navigation.navigate("AddCard");
   };
 
   const { width } = Dimensions.get('window');
@@ -157,8 +157,8 @@ function CardView() {
         </Text>
         <Text
           style={TextStyles({theme: 'light', size: 16}).bodySubText}
-          onPress={onViewAllPress}>
-          View All
+          onPress={addCardPress}>
+            +
         </Text>
       </View>
       <CardViewFilled {...cardViewStyleProps}/>
@@ -252,17 +252,30 @@ function CardRestrictionsView() {
  * @returns Filled card view
  */
 function CardViewFilled(props: cardViewStyleProps) {
+  const {_id, cards} = useAppSelector(state => state.user);
+  const {data, isSuccess, refetch, isFetching} = useGetUserCardsQuery(_id);
 
-  const { cardWidth } = props;
+  if (!isFetching) {
+    if (data.data.length !== cards.length) {
+      setTimeout(refetch, 500);
+    }
+  }
+
+  const getCardDataFromUserCards = (cards: Card[]) => {
+    return cards.map((el, index) => {
+      const {card} = el;
+      return  {
+        _id: card._id,
+        id: index + 1,
+        name: el.cardName,
+        image: getCardLogo(card.issuer, card.type)
+      }
+    });
+  };
+
+  let cardData = isSuccess ? getCardDataFromUserCards(data.data) : [];
 
   const scrollX = useRef(new Animated.Value(0)).current;
-
-  const cardData = [
-    { id: 1, image: require('../assets/logo/issuers/ocbc/365.png') },
-    { id: 2, image: require('../assets/logo/issuers/ocbc/frank_credit.png') },
-    { id: 3, image: require('../assets/logo/issuers/dbs/live_fresh.png') },
-  ];
-
   const handleScroll = (e: any) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     scrollX.setValue(offsetX);
@@ -291,11 +304,11 @@ function CardViewFilled(props: cardViewStyleProps) {
                   //       extrapolate: 'clamp',
                   //     }),
                   //   },
-                  // ],
+                  // ],   
                 },
               ]}
             />
-            <Text style={cardViewStyles(props).cardTitle}>My Lovely OCBC</Text>
+            <Text style={cardViewStyles(props).cardTitle}>{card.name}</Text>
           </View>
         ))}
       </ScrollView>);

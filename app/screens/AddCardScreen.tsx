@@ -26,7 +26,6 @@ import {
   setCardTypeOpen,
   setErrStr,
   setInitialState as setInitialAddCardState,
-  DbCard,
 } from '../state/features/card/addCard';
 import {setUserCards} from '../state/features/user/user';
 
@@ -41,7 +40,7 @@ import {ItemType} from 'react-native-dropdown-picker';
 import URLs from '../shared/Urls';
 import {useNavigation} from '@react-navigation/native';
 import {useGetCardsQuery} from '../state/features/api/slice';
-import {getCardIssuerLogo, getCardTypeLogo} from '../state/features/card/card';
+import {DbCard, getCardIssuerLogo, getCardLogo} from '../state/features/card/card';
 import {useHeaderHeight} from '@react-navigation/elements';
 
 /**
@@ -125,7 +124,7 @@ function InputsView() {
       const {issuer, type} = card;
 
       if (card.issuer === cardIssuer) {
-        let logoSrc: ImageSourcePropType = getCardTypeLogo(issuer, type);
+        let logoSrc: ImageSourcePropType = getCardLogo(issuer, type);
 
         items.push({
           label: `${issuer} ${type}`.toUpperCase(),
@@ -258,14 +257,7 @@ function ButtonView() {
       switch (resp.status) {
         case 200:
           dispatch(
-            setUserCards([
-              ...cards,
-              {
-                cardName: cardName,
-                cardExpiry: formattedCardExpiry,
-                card: resp.data._id,
-              },
-            ]),
+            setUserCards(resp.data.data.cards),
           );
           dispatch(setInitialAddCardState());
           navigation.navigate('Dashboard');
