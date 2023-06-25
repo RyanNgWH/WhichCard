@@ -146,9 +146,9 @@ function CardView() {
   };
 
   return (
-    <View style={cardViewStyles(cardViewStyleProps).cardViewContainer}>
+    <View style={cardViewStyles(cardViewStyleProps).container}>
       <View
-        style={cardViewStyles(cardViewStyleProps).cardViewHeader}
+        style={cardViewStyles(cardViewStyleProps).header}
         onLayout={(event: LayoutChangeEvent) =>
           setCreateCardWidth(event.nativeEvent.layout.width)
         }>
@@ -177,9 +177,9 @@ function CashbackAndRewardsView() {
   }
 
   return (
-    <View style={cashbackAndRewardsViewStyles().cashbackAndRewardsContainer}>
+    <View style={cashbackAndRewardsViewStyles().container}>
       <View
-        style={cashbackAndRewardsViewStyles().cashbackAndRewardsHeaderContainer}>
+        style={cashbackAndRewardsViewStyles().headerContainer}>
         <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
           Cashback & Rewards
         </Text>
@@ -221,9 +221,9 @@ function CardRestrictionsView() {
   }
 
   return (
-    <View style={cardRestrictionsViewStyles().cardRestrictionsContainer}>
+    <View style={cardRestrictionsViewStyles().container}>
       <View
-        style={cardRestrictionsViewStyles().cardRestrictionsHeaderContainer}>
+        style={cardRestrictionsViewStyles().headerContainer}>
         <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
           Card Restrictions
         </Text>
@@ -233,8 +233,15 @@ function CardRestrictionsView() {
           View All
         </Text>
       </View>
+      <View style={cardRestrictionsViewStyles().restrictionTypeContainer}>
+        <Image source={require('../assets/logo/card-restrictions/min_spend.png')} style={cardRestrictionsViewStyles().restrictionIcon}/>
+        <View style={cardRestrictionsViewStyles().restrictionDetailsContainer}>
+            <Text style={cardRestrictionsViewStyles().restrictionDetailsHeaderText}>Minimum Spend</Text>
+            <Text style={cardRestrictionsViewStyles().restrictionDetailsInfoText}>$160 / $800 Remaining</Text>
+        </View>
+        <Image source={require('../assets/logo/card-restrictions/min_spend_progress.png')} style={cardRestrictionsViewStyles().restrictionProgressIcon}/>
+      </View>
       <View>
-        
       </View>
     </View>
   );
@@ -251,9 +258,9 @@ function CardViewFilled(props: cardViewStyleProps) {
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const cardData = [
-    { id: 1, image: require('../assets/logo/issuers/ocbc/365_w290_h187.png') },
-    { id: 2, image: require('../assets/logo/issuers/ocbc/frank_credit_w290_h187.png') },
-    { id: 3, image: require('../assets/logo/issuers/dbs/live_fresh_w290_h187.png') },
+    { id: 1, image: require('../assets/logo/issuers/ocbc/365.png') },
+    { id: 2, image: require('../assets/logo/issuers/ocbc/frank_credit.png') },
+    { id: 3, image: require('../assets/logo/issuers/dbs/live_fresh.png') },
   ];
 
   const handleScroll = (e: any) => {
@@ -311,7 +318,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
       mode="outlined"
       onPress={onAddCreditCardPress}
       borderRadius={9}
-      style={cardViewStyles(props).cardViewEmptyContainer}>
+      style={cardViewStyles(props).emptyContainer}>
       <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
       <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
         Add Credit Card
@@ -376,7 +383,7 @@ const bodyStyles = () =>
 // Styles for the card view
 const cardViewStyles = (props: cardViewStyleProps) =>
   StyleSheet.create({
-    cardViewContainer: {
+    container: {
       paddingVertical: 15,
       paddingHorizontal: 20,
       backgroundColor: Themes.colors.appComponentBackground,
@@ -387,12 +394,12 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       elevation: 2,
       marginBottom: 20
     },
-    cardViewHeader: {
+    header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: 15,
     },
-    cardViewEmptyContainer: {
+    emptyContainer: {
       width: props.cardWidth,
       height: props.createCardBtnHeight,
       justifyContent: 'center',
@@ -414,7 +421,8 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     },
     cardImage: {
       // flexGrow: 1,
-      width: '100%',
+      width: 300,
+      height: 190,
       // height: '100%',
       resizeMode: 'contain',
       // backgroundColor: 'black'
@@ -423,7 +431,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
 
 const cashbackAndRewardsViewStyles = () => 
 StyleSheet.create({
-  cashbackAndRewardsContainer: {
+  container: {
     paddingVertical: 15,
     paddingHorizontal: 20,
     backgroundColor: Themes.colors.appComponentBackground,
@@ -432,8 +440,9 @@ StyleSheet.create({
     shadowRadius: 1,
     shadowOpacity: 0.1,
     elevation: 2,
+    marginBottom: 20
   },
-  cashbackAndRewardsHeaderContainer: {
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 15,
@@ -464,7 +473,7 @@ StyleSheet.create({
 
 const cardRestrictionsViewStyles = () => 
 StyleSheet.create({
-  cardRestrictionsContainer: {
+  container: {
     paddingVertical: 15,
     paddingHorizontal: 20,
     backgroundColor: Themes.colors.appComponentBackground,
@@ -473,34 +482,36 @@ StyleSheet.create({
     shadowRadius: 1,
     shadowOpacity: 0.1,
     elevation: 2,
+    marginBottom: 100
   },
-  cardRestrictionsHeaderContainer: {
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 15,
   },
-  // featuredCashBacksContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  // },
-  // featuredCashBacksHeader: {
-  //   // flexGrow: 1,
-  //   // backgroundColor: 'black'
-  // },
-  // featuredCashBacksHeaderText: {
-  //   textAlign: 'center',
-  //   marginBottom: 10
-  // },
-  // featuredCashBacksIcon: {
-  //   height: 52,
-  //   width: 52,
-  //   alignSelf: 'center',
-  //   marginBottom: 5
-  // },
-  // featuredCashBacksPerctText: {
-  //   color: 'gray',
-  //   textAlign: 'center'
-  // }
+  restrictionTypeContainer: {
+    flexDirection: 'row',
+  },
+  restrictionIcon: {
+    width: 52,
+    height: 52,
+    marginRight: 16
+  },
+  restrictionProgressIcon: {
+    width: 52,
+    height: 52,
+  },
+  restrictionDetailsContainer: {
+    flexGrow: 2
+  },
+  restrictionDetailsHeaderText: {
+    ...TextStyles({theme: 'light', size: 14}).bodySubText,
+    marginBottom: 10
+  },
+  restrictionDetailsInfoText: {
+    ...TextStyles({theme: 'light', size: 14}).bodyText,
+    opacity: 0.6
+  }
 });
 
 export default DashboardScreen;
