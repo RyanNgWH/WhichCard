@@ -97,11 +97,20 @@ function InputsView() {
   };
 
   const getDbCardIssuerItems = (dbCards: DbCard[]) => {
-    return dbCards.map(card => {
-      const {issuer} = card;
+    const issuers = dbCards.map(card => card.issuer);
+    const uniqueIssuers: string[] = [];
+    for (const issuer of issuers) {
+      if (!uniqueIssuers.includes(issuer)) {
+        uniqueIssuers.push(issuer);
+      }
+    }
+
+    const items: any[] = [];
+
+    for (const issuer of uniqueIssuers) {
       let logoSrc: ImageSourcePropType = getCardIssuerLogo(issuer);
 
-      return {
+      items.push({
         label: issuer.toUpperCase(),
         value: issuer,
         ...(logoSrc
@@ -114,8 +123,29 @@ function InputsView() {
               ),
             }
           : {}),
-      };
-    });
+      });
+    }
+    return items;
+
+    // return dbCards.map(card => {
+    //   const {issuer} = card;
+    //   let logoSrc: ImageSourcePropType = getCardIssuerLogo(issuer);
+
+    //   return {
+    //     label: issuer.toUpperCase(),
+    //     value: issuer,
+    //     ...(logoSrc
+    //       ? {
+    //           icon: () => (
+    //             <Image
+    //               source={logoSrc}
+    //               style={inputsViewStyles().cardIssuerItemIcon}
+    //             />
+    //           ),
+    //         }
+    //       : {}),
+    //   };
+    // });
   };
 
   const getDbCardTypeItems = (dbCards: DbCard[], cardIssuer: string) => {

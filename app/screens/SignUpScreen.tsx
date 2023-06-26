@@ -109,6 +109,7 @@ function Body() {
       />
       <TextInputBox
         title="Email Address"
+        placeholder="jangmanwol89@gmail.com"
         autoCorrect={false}
         onChangeText={email => dispatch(setEmail(email))}
         value={email}
@@ -174,6 +175,7 @@ function ButtonView() {
           });
           break;
         default:
+          console.log(resp.data);
           if (resp.data.data && resp.data.data.error) {
             throw new Error(resp.data.data.error);
           } else if (resp.data.error) {

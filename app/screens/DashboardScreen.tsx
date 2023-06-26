@@ -113,8 +113,6 @@ function Body() {
       />
       <ScrollView>
         <CardView />
-        <CashbackAndRewardsView/>
-        <CardRestrictionsView/>
       </ScrollView>
     </PaddedView>
   );
@@ -125,7 +123,10 @@ function Body() {
  * @returns Card view of the dashboard
  */
 function CardView() {
+  const {cards} = useAppSelector(state => state.user);
   const navigation = useNavigation();
+
+  const hasCards = cards.length !== 0;
 
   const [cardWidth, setCreateCardWidth] = useState(0);
   const cardSizeRatio = 318 / 201;
@@ -146,23 +147,30 @@ function CardView() {
   };
 
   return (
-    <View style={cardViewStyles(cardViewStyleProps).container}>
-      <View
-        style={cardViewStyles(cardViewStyleProps).header}
-        onLayout={(event: LayoutChangeEvent) =>
-          setCreateCardWidth(event.nativeEvent.layout.width)
-        }>
-        <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
-          Your Cards
-        </Text>
-        <Text
-          style={TextStyles({theme: 'light', size: 16}).bodySubText}
-          onPress={addCardPress}>
+    <View>
+      <View style={cardViewStyles(cardViewStyleProps).container}>
+        <View
+          style={cardViewStyles(cardViewStyleProps).header}
+          onLayout={(event: LayoutChangeEvent) =>
+            setCreateCardWidth(event.nativeEvent.layout.width)
+          }>
+          <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
+            Your Cards
+          </Text>
+          <Text
+            style={TextStyles({theme: 'light', size: 16}).bodySubText}
+            onPress={addCardPress}>
             +
-        </Text>
+          </Text>
+        </View>
+        {hasCards ? (
+          <CardViewFilled {...cardViewStyleProps} />
+        ) : (
+          <CardViewEmpty {...cardViewStyleProps} />
+        )}
       </View>
-      <CardViewFilled {...cardViewStyleProps}/>
-      {/* <CardViewEmpty {...cardViewStyleProps} /> */}
+      <CashbackAndRewardsView />
+      <CardRestrictionsView />
     </View>
   );
 }
@@ -257,7 +265,7 @@ function CardViewFilled(props: cardViewStyleProps) {
 
   if (!isFetching) {
     if (data.data.length !== cards.length) {
-      setTimeout(refetch, 500);
+      setTimeout(refetch, 100);
     }
   }
 
@@ -311,6 +319,7 @@ function CardViewFilled(props: cardViewStyleProps) {
             <Text style={cardViewStyles(props).cardTitle}>{card.name}</Text>
           </View>
         ))}
+
       </ScrollView>);
 }
 
@@ -334,7 +343,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
       style={cardViewStyles(props).emptyContainer}>
       <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
       <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
-        Add Credit Card
+        Add Card
       </Text>
     </RoundButton>
   );
