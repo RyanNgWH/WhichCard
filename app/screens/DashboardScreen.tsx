@@ -169,8 +169,8 @@ function CardView() {
           <CardViewEmpty {...cardViewStyleProps} />
         )}
       </View>
-      <CashbackAndRewardsView />
-      <CardRestrictionsView />
+      {hasCards ?       <CashbackAndRewardsView /> : null}
+      {hasCards ?  <CardRestrictionsView /> : null}
     </View>
   );
 }
