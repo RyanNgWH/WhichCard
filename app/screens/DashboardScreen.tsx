@@ -2,10 +2,23 @@
  * Dashboard of the app
  */
 
-import {Animated, Dimensions, Image, LayoutChangeEvent, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  Image,
+  LayoutChangeEvent,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useEffect} from 'react';
 
-import {useAppSelector} from '../state/hooks';
+
+import {useGetUserCardsMutation} from '../state/features/api/slice';
+import {useAppSelector, useAppDispatch} from '../state/hooks';
+import {setUserDbCards} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -14,8 +27,7 @@ import {useRef, useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import Icon from 'react-native-vector-icons/Feather';
-import { useGetUserCardsQuery } from '../state/features/api/slice';
-import { Card, getCardLogo } from '../state/features/card/card';
+import {Card, getCardLogo} from '../state/features/card/card';
 
 // Props for the header
 type headerProps = {
@@ -132,10 +144,10 @@ function CardView() {
   const cardSizeRatio = 318 / 201;
 
   const addCardPress = () => {
-    navigation.navigate("AddCard");
+    navigation.navigate('AddCard');
   };
 
-  const { width } = Dimensions.get('window');
+  const {width} = Dimensions.get('window');
   const cardMargin = width * 0.01;
 
   // Props for card view styles
@@ -143,7 +155,7 @@ function CardView() {
     createCardBtnWidth: cardWidth,
     createCardBtnHeight: cardWidth / cardSizeRatio,
     cardWidth: cardWidth,
-    cardMargin: cardMargin
+    cardMargin: cardMargin,
   };
 
   return (
@@ -169,8 +181,12 @@ function CardView() {
           <CardViewEmpty {...cardViewStyleProps} />
         )}
       </View>
-      {hasCards ?       <CashbackAndRewardsView /> : null}
-      {hasCards ?  <CardRestrictionsView /> : null}
+      {hasCards ? (
+        <View>
+          <CashbackAndRewardsView />
+          <CardRestrictionsView />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -181,13 +197,12 @@ function CardView() {
  */
 function CashbackAndRewardsView() {
   const onViewAllPress = () => {
-    console.log("View all pressed");
-  }
+    console.log('View all pressed');
+  };
 
   return (
     <View style={cashbackAndRewardsViewStyles().container}>
-      <View
-        style={cashbackAndRewardsViewStyles().headerContainer}>
+      <View style={cashbackAndRewardsViewStyles().headerContainer}>
         <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
           Cashback & Rewards
         </Text>
@@ -199,19 +214,46 @@ function CashbackAndRewardsView() {
       </View>
       <View style={cashbackAndRewardsViewStyles().featuredCashBacksContainer}>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>Dining</Text>
-          <Image source={require("../assets/logo/cashbacks/dining.png")} style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}/>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>6%</Text>
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>
+            Dining
+          </Text>
+          <Image
+            source={require('../assets/logo/cashbacks/dining.png')}
+            style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
+          />
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
+            6%
+          </Text>
         </View>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>Groceries</Text>
-          <Image source={require("../assets/logo/cashbacks/groceries.png")} style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}/>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>6%</Text>
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>
+            Groceries
+          </Text>
+          <Image
+            source={require('../assets/logo/cashbacks/groceries.png')}
+            style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
+          />
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
+            6%
+          </Text>
         </View>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>Transport</Text>
-          <Image source={require("../assets/logo/cashbacks/transport.png")} style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}/>
-          <Text style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>6%</Text>
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>
+            Transport
+          </Text>
+          <Image
+            source={require('../assets/logo/cashbacks/transport.png')}
+            style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
+          />
+          <Text
+            style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
+            6%
+          </Text>
         </View>
       </View>
     </View>
@@ -223,15 +265,13 @@ function CashbackAndRewardsView() {
  * @returns Card restrictions view of the dashboard
  */
 function CardRestrictionsView() {
-
   const onViewAllPress = () => {
-    console.log("View all pressed");
-  }
+    console.log('View all pressed');
+  };
 
   return (
     <View style={cardRestrictionsViewStyles().container}>
-      <View
-        style={cardRestrictionsViewStyles().headerContainer}>
+      <View style={cardRestrictionsViewStyles().headerContainer}>
         <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
           Card Restrictions
         </Text>
@@ -242,15 +282,25 @@ function CardRestrictionsView() {
         </Text>
       </View>
       <View style={cardRestrictionsViewStyles().restrictionTypeContainer}>
-        <Image source={require('../assets/logo/card-restrictions/min_spend.png')} style={cardRestrictionsViewStyles().restrictionIcon}/>
+        <Image
+          source={require('../assets/logo/card-restrictions/min_spend.png')}
+          style={cardRestrictionsViewStyles().restrictionIcon}
+        />
         <View style={cardRestrictionsViewStyles().restrictionDetailsContainer}>
-            <Text style={cardRestrictionsViewStyles().restrictionDetailsHeaderText}>Minimum Spend</Text>
-            <Text style={cardRestrictionsViewStyles().restrictionDetailsInfoText}>$160 / $800 Remaining</Text>
+          <Text
+            style={cardRestrictionsViewStyles().restrictionDetailsHeaderText}>
+            Minimum Spend
+          </Text>
+          <Text style={cardRestrictionsViewStyles().restrictionDetailsInfoText}>
+            $160 / $800 Remaining
+          </Text>
         </View>
-        <Image source={require('../assets/logo/card-restrictions/min_spend_progress.png')} style={cardRestrictionsViewStyles().restrictionProgressIcon}/>
+        <Image
+          source={require('../assets/logo/card-restrictions/min_spend_progress.png')}
+          style={cardRestrictionsViewStyles().restrictionProgressIcon}
+        />
       </View>
-      <View>
-      </View>
+      <View></View>
     </View>
   );
 }
@@ -260,28 +310,36 @@ function CardRestrictionsView() {
  * @returns Filled card view
  */
 function CardViewFilled(props: cardViewStyleProps) {
-  const {_id, cards} = useAppSelector(state => state.user);
-  const {data, isSuccess, refetch, isFetching} = useGetUserCardsQuery(_id);
+  const dispatch = useAppDispatch();
+  const {_id, dbCards, cards} = useAppSelector(state => state.user);
+  const [getUserCards] = useGetUserCardsMutation();
 
-  if (!isFetching) {
-    if (data.data.length !== cards.length) {
-      setTimeout(refetch, 100);
+  // Called whenever `cards` field in user state changes
+  useEffect(() => {
+   getUserCards(_id).then((resp: any) => {
+    const {data: dataWrapper, error} = resp;
+    if (!error) {
+      const {data} = dataWrapper;
+      if (data) {
+        dispatch(setUserDbCards(data));
+      }
     }
-  }
+   }).catch(err => console.log(err));
+  }, [cards]);
 
   const getCardDataFromUserCards = (cards: Card[]) => {
     return cards.map((el, index) => {
       const {card} = el;
-      return  {
+      return {
         _id: card._id,
         id: index + 1,
         name: el.cardName,
-        image: getCardLogo(card.issuer, card.type)
-      }
+        image: getCardLogo(card.issuer, card.type),
+      };
     });
   };
 
-  let cardData = isSuccess ? getCardDataFromUserCards(data.data) : [];
+  let cardData = getCardDataFromUserCards(dbCards);
 
   const scrollX = useRef(new Animated.Value(0)).current;
   const handleScroll = (e: any) => {
@@ -290,37 +348,36 @@ function CardViewFilled(props: cardViewStyleProps) {
   };
 
   return (
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        {cardData.map((card, index) => (
-          <View key={card.id} style={cardViewStyles(props).cardContainer}>
-            <Animated.Image
-              source={card.image}
-              style={[
-                cardViewStyles(props).cardImage,
-                {
-                  // transform: [
-                  //   {
-                  //     scale: scrollX.interpolate({
-                  //       inputRange: [(index - 1) * cardWidth, index * cardWidth, (index + 1) * cardWidth],
-                  //       outputRange: [0.9, 1, 0.9],
-                  //       extrapolate: 'clamp',
-                  //     }),
-                  //   },
-                  // ],   
-                },
-              ]}
-            />
-            <Text style={cardViewStyles(props).cardTitle}>{card.name}</Text>
-          </View>
-        ))}
-
-      </ScrollView>);
+    <ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}>
+      {cardData.map((card, index) => (
+        <View key={card.id} style={cardViewStyles(props).cardContainer}>
+          <Animated.Image
+            source={card.image}
+            style={[
+              cardViewStyles(props).cardImage,
+              {
+                // transform: [
+                //   {
+                //     scale: scrollX.interpolate({
+                //       inputRange: [(index - 1) * cardWidth, index * cardWidth, (index + 1) * cardWidth],
+                //       outputRange: [0.9, 1, 0.9],
+                //       extrapolate: 'clamp',
+                //     }),
+                //   },
+                // ],
+              },
+            ]}
+          />
+          <Text style={cardViewStyles(props).cardTitle}>{card.name}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
 }
 
 /**
@@ -414,7 +471,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       shadowRadius: 1,
       shadowOpacity: 0.1,
       elevation: 2,
-      marginBottom: 20
+      marginBottom: 20,
     },
     header: {
       flexDirection: 'row',
@@ -439,7 +496,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     cardTitle: {
       textAlign: 'center',
       marginTop: 10,
-      ...TextStyles({theme: 'light', size: 16}).bodySubText
+      ...TextStyles({theme: 'light', size: 16}).bodySubText,
     },
     cardImage: {
       // flexGrow: 1,
@@ -451,89 +508,89 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     },
   });
 
-const cashbackAndRewardsViewStyles = () => 
-StyleSheet.create({
-  container: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    backgroundColor: Themes.colors.appComponentBackground,
-    borderRadius: 9,
-    shadowColor: Themes.colors.shadow,
-    shadowRadius: 1,
-    shadowOpacity: 0.1,
-    elevation: 2,
-    marginBottom: 20
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  featuredCashBacksContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  featuredCashBacksHeader: {
-    // flexGrow: 1,
-    // backgroundColor: 'black'
-  },
-  featuredCashBacksHeaderText: {
-    textAlign: 'center',
-    marginBottom: 10
-  },
-  featuredCashBacksIcon: {
-    height: 52,
-    width: 52,
-    alignSelf: 'center',
-    marginBottom: 5
-  },
-  featuredCashBacksPerctText: {
-    color: 'gray',
-    textAlign: 'center'
-  }
-});
+const cashbackAndRewardsViewStyles = () =>
+  StyleSheet.create({
+    container: {
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      borderRadius: 9,
+      shadowColor: Themes.colors.shadow,
+      shadowRadius: 1,
+      shadowOpacity: 0.1,
+      elevation: 2,
+      marginBottom: 20,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    featuredCashBacksContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    featuredCashBacksHeader: {
+      // flexGrow: 1,
+      // backgroundColor: 'black'
+    },
+    featuredCashBacksHeaderText: {
+      textAlign: 'center',
+      marginBottom: 10,
+    },
+    featuredCashBacksIcon: {
+      height: 52,
+      width: 52,
+      alignSelf: 'center',
+      marginBottom: 5,
+    },
+    featuredCashBacksPerctText: {
+      color: 'gray',
+      textAlign: 'center',
+    },
+  });
 
-const cardRestrictionsViewStyles = () => 
-StyleSheet.create({
-  container: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    backgroundColor: Themes.colors.appComponentBackground,
-    borderRadius: 9,
-    shadowColor: Themes.colors.shadow,
-    shadowRadius: 1,
-    shadowOpacity: 0.1,
-    elevation: 2,
-    marginBottom: 100
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  restrictionTypeContainer: {
-    flexDirection: 'row',
-  },
-  restrictionIcon: {
-    width: 52,
-    height: 52,
-    marginRight: 16
-  },
-  restrictionProgressIcon: {
-    width: 52,
-    height: 52,
-  },
-  restrictionDetailsContainer: {
-    flexGrow: 2
-  },
-  restrictionDetailsHeaderText: {
-    ...TextStyles({theme: 'light', size: 14}).bodySubText,
-    marginBottom: 10
-  },
-  restrictionDetailsInfoText: {
-    ...TextStyles({theme: 'light', size: 14}).bodyText,
-    opacity: 0.6
-  }
-});
+const cardRestrictionsViewStyles = () =>
+  StyleSheet.create({
+    container: {
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      borderRadius: 9,
+      shadowColor: Themes.colors.shadow,
+      shadowRadius: 1,
+      shadowOpacity: 0.1,
+      elevation: 2,
+      marginBottom: 100,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    restrictionTypeContainer: {
+      flexDirection: 'row',
+    },
+    restrictionIcon: {
+      width: 52,
+      height: 52,
+      marginRight: 16,
+    },
+    restrictionProgressIcon: {
+      width: 52,
+      height: 52,
+    },
+    restrictionDetailsContainer: {
+      flexGrow: 2,
+    },
+    restrictionDetailsHeaderText: {
+      ...TextStyles({theme: 'light', size: 14}).bodySubText,
+      marginBottom: 10,
+    },
+    restrictionDetailsInfoText: {
+      ...TextStyles({theme: 'light', size: 14}).bodyText,
+      opacity: 0.6,
+    },
+  });
 
 export default DashboardScreen;

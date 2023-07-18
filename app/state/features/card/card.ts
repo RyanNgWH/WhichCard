@@ -29,7 +29,6 @@ function getCardIssuerLogo(issuer: string) {
 
 function getCardLogo(issuer: string, type: string) {
   let logoSrc = null;
-  console.log(`${issuer}_${type}`);
   switch (`${issuer}_${type}`) {
     case 'ocbc_365':
       logoSrc = require('../../../assets/logo/issuers/ocbc/365.png');

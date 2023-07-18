@@ -14,18 +14,34 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   // The "endpoints" represent operations and requests for this server
   endpoints: builder => ({
-    // The `getPosts` endpoint is a "query" operation that returns data
+    signUp: builder.mutation({
+      query: (data) => ({
+        url: URLs.API_SERVER.USER.BASE,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    login: builder.mutation({
+      query: (data) => ({
+        url: URLs.API_SERVER.USER.BASE + URLs.API_SERVER.USER.LOGIN,
+        method: 'POST',
+        body: data,
+      }),
+    }),
     getCards: builder.query({
-      // The URL for the request is '/fakeApi/posts'
       query: () => '/cards'
     }),
-    getUserCards: builder.query({
-      query: (_id: string) => {
-        return `/users/${_id}/cards`;
-      }
+    getUserCards: builder.mutation({
+      query: (_id: string) => ({
+        url: URLs.API_SERVER.USER.BASE + `/${_id}` + '/cards',
+        method: 'GET',
+      })
+      // query: (_id: string) => {
+      //   return `/users/${_id}/cards`;
+      // }
     }),
   }),
 })
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useGetCardsQuery, useGetUserCardsQuery } = apiSlice;
+export const { useSignUpMutation, useLoginMutation, useGetCardsQuery, useGetUserCardsMutation } = apiSlice;

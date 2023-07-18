@@ -23,6 +23,7 @@ import {
   setInitialState as setSignInInitialState,
 } from '../state/features/auth/signIn';
 import {setUserState as setUserInitialState} from '../state/features/user/user';
+import {useLoginMutation} from '../state/features/api/slice';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -141,6 +142,9 @@ function Body() {
 function ButtonView() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+
+  const [login] = useLoginMutation();
+
   const {email, password} = useAppSelector(state => state.signIn);
 
   const onSignUpPress = async () => {
@@ -150,51 +154,42 @@ function ButtonView() {
 
   const onSignInPress = async () => {
     try {
-      const data = {
-        email,
-        password,
-      };
+      const postData = {email, password};
 
-      const resp = await axios({
-        method: 'POST',
-        url:
-          URLs.API_SERVER.BASE +
-          URLs.API_SERVER.USER.BASE +
-          URLs.API_SERVER.USER.LOGIN,
-        data,
-        validateStatus: () => true,
-      });
+      const resp: any = await login(postData);
+      const {data: dataWrapper, error} = resp;
 
-      switch (resp.status) {
-        case 200:
-          dispatch(setUserInitialState(resp.data.data));
-          dispatch(setSignInInitialState());
-          // Reset the navigation stack (Prevent users from going back to the sign up screen)
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'HomeStack',
-                params: {
-                  screen: 'HomeTab',
-                  params: {user: resp.data.data},
-                },
-              },
-            ],
-          });
-          break;
-        default:
-          if (resp.data.data && resp.data.data.error) {
-            throw new Error(resp.data.data.error);
-          } else if (resp.data.error) {
-            throw new Error(resp.data.error);
-          } else if (resp.data.errors) {
-            throw new Error(
-              resp.data.errors.map(error => error.msg).join('\n'),
-            );
-          }
-          break;
+      if (error) {
+        const {data: dataWrapper} = error;
+        const {errors, data} = dataWrapper;
+
+        if (errors) {
+          throw new Error(
+            errors.map((err: any) => (err && err.msg) || '').join('\n'),
+          );
+        } else if (data.error) {
+          throw new Error(data.error);
+        }
       }
+
+      const { data } = dataWrapper;
+
+      dispatch(setUserInitialState(data));
+      dispatch(setSignInInitialState());
+
+        // Reset the navigation stack (Prevent users from going back to the sign up screen)
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'HomeStack',
+              params: {
+                screen: 'HomeTab',
+                params: {user: resp.data.data},
+              },
+            },
+          ],
+        });
     } catch (err: any) {
       dispatch(setErrStr(err.message || 'Failed to sign in.'));
     }

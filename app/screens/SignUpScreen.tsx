@@ -26,6 +26,8 @@ import {
   setInitialState as setSignUpInitialState,
 } from '../state/features/auth/signUp';
 import {setUserState as setUserInitialState} from '../state/features/user/user';
+import {useSignUpMutation} from '../state/features/api/slice';
+
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -139,54 +141,52 @@ function Body() {
 function ButtonView() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+  const [signUp] = useSignUpMutation();
+
+
   const {fullName, email, password} = useAppSelector(state => state.signUp);
 
   const onSignUpPress = async () => {
     try {
-      const data = {
+      const postData = {
         name: fullName,
         email,
         password,
       };
 
-      const resp = await axios({
-        method: 'POST',
-        url: URLs.API_SERVER.BASE + URLs.API_SERVER.USER.BASE,
-        data,
-        validateStatus: () => true,
-      });
+      const resp: any = await signUp(postData);
+      const {data: dataWrapper, error} = resp;
 
-      switch (resp.status) {
-        case 201:
-          dispatch(setUserInitialState(resp.data.data));
-          dispatch(setSignUpInitialState());
-          // Reset the navigation stack (Prevent users from going back to the sign up screen)
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'HomeStack',
-                params: {
-                  screen: 'HomeTab',
-                  params: {user: resp.data.data},
-                },
-              },
-            ],
-          });
-          break;
-        default:
-          console.log(resp.data);
-          if (resp.data.data && resp.data.data.error) {
-            throw new Error(resp.data.data.error);
-          } else if (resp.data.error) {
-            throw new Error(resp.data.error);
-          } else if (resp.data.errors) {
-            throw new Error(
-              resp.data.errors.map(error => error.msg).join('\n'),
-            );
-          }
-          break;
+      if (error) {
+        const {data: dataWrapper} = error;
+        const {errors, data} = dataWrapper;
+
+        if (errors) {
+          throw new Error(
+            errors.map((err: any) => (err && err.msg) || '').join('\n'),
+          );
+        } else if (data.error) {
+          throw new Error(data.error);
+        }
       }
+
+      const { data } = dataWrapper;
+
+      dispatch(setUserInitialState(data));
+      dispatch(setSignUpInitialState());
+      // Reset the navigation stack (Prevent users from going back to the sign up screen)
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'HomeStack',
+            params: {
+              screen: 'HomeTab',
+              params: {user: data},
+            },
+          },
+        ],
+      });
     } catch (err: any) {
       dispatch(setErrStr(err.message || 'Failed to sign up.'));
     }

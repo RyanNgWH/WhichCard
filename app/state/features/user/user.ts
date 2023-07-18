@@ -1,10 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-export interface UserCardState {
+interface UserCardState {
   cardName: string;
   cardExpiry: string;
   card: string;
+}
+
+interface UserDbCardState {
+  cardName: string,
+  cardExpiry: string,
+  card: {
+    _id: string,
+    issuer: string,
+    type: string,
+  }
 }
 
 interface UserState {
@@ -15,6 +25,7 @@ interface UserState {
   createdAt: number;
   updatedAt: number;
   cards: UserCardState[];
+  dbCards: UserDbCardState[];
 }
 
 const initialState: UserState = {
@@ -25,6 +36,7 @@ const initialState: UserState = {
   createdAt: 0,
   updatedAt: 0,
   cards: [],
+  dbCards: []
 };
 
 export const signUpSlice = createSlice({
@@ -42,11 +54,17 @@ export const signUpSlice = createSlice({
             ...state,
             cards: action.payload
         }
-      }
+      },
+      setUserDbCards: (state: UserState, action: PayloadAction<UserDbCardState[]>) => {
+        return {
+            ...state,
+            dbCards: action.payload
+        }
+      },
     }
 });
   
   // Action creators are generated for each case reducer function
-export const { setUserState, setUserCards } = signUpSlice.actions
+export const { setUserState, setUserCards, setUserDbCards } = signUpSlice.actions
   
 export default signUpSlice.reducer

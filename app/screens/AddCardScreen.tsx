@@ -256,7 +256,7 @@ function ButtonView() {
   const {cardName, expiryDate, cardIssuer, cardType} = useAppSelector(
     state => state.addCard,
   );
-  const {_id: userId, cards} = useAppSelector(state => state.user);
+  const {_id: userId} = useAppSelector(state => state.user);
 
   const formatCardExpiryDate = (expiryDate: string) => {
     const parts = expiryDate.split(' / ');
@@ -305,7 +305,7 @@ function ButtonView() {
           break;
       }
     } catch (err: any) {
-      dispatch(setErrStr(err.message || 'Failed to sign in.'));
+      dispatch(setErrStr(err.message || 'Failed to save card.'));
     }
   };
 
