@@ -113,6 +113,16 @@ android {
         }
     }
     signingConfigs {
+
+        release {
+            if (project.hasProperty('storeFile')) {
+                storeFile file(project.getProperty('storeFile'))
+                keyAlias project.getProperty('keyAlias')
+                keyPassword project.getProperty('keyPassword')
+                storePassword project.getProperty('storePassword')
+            }
+        }
+        
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -130,6 +140,7 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
 
