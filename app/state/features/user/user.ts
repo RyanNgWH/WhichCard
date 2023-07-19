@@ -14,6 +14,7 @@ interface UserDbCardState {
     _id: string,
     issuer: string,
     type: string,
+    benefits: Array<{ category: string, mccs: number[], cashbackRate: number }>
   }
 }
 
@@ -24,6 +25,7 @@ interface UserState {
   password: string;
   createdAt: number;
   updatedAt: number;
+  activeCardIndex: number;
   cards: UserCardState[];
   dbCards: UserDbCardState[];
 }
@@ -35,6 +37,7 @@ const initialState: UserState = {
   password: '',
   createdAt: 0,
   updatedAt: 0,
+  activeCardIndex: 0,
   cards: [],
   dbCards: []
 };
@@ -47,6 +50,12 @@ export const signUpSlice = createSlice({
         return {
             ...state,
             ...action.payload
+        }
+      },
+      setActiveCardIndex(state: UserState, action: PayloadAction<number>) {
+        return {
+          ...state,
+          activeCardIndex: action.payload
         }
       },
       setUserCards: (state: UserState, action: PayloadAction<UserCardState[]>) => {
@@ -65,6 +74,6 @@ export const signUpSlice = createSlice({
 });
   
   // Action creators are generated for each case reducer function
-export const { setUserState, setUserCards, setUserDbCards } = signUpSlice.actions
+export const { setUserState, setActiveCardIndex, setUserCards, setUserDbCards } = signUpSlice.actions
   
 export default signUpSlice.reducer

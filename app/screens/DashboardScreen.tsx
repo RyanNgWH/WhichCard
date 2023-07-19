@@ -18,7 +18,7 @@ import {useEffect} from 'react';
 
 import {useGetUserCardsMutation} from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
-import {setUserDbCards} from '../state/features/user/user';
+import {setActiveCardIndex, setUserDbCards} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -196,6 +196,20 @@ function CardView() {
  * @returns Cashback and rewards view of the dashboard
  */
 function CashbackAndRewardsView() {
+  const { activeCardIndex, dbCards} = useAppSelector(state => state.user);
+
+  let diningCashBackRate = 0;
+  let groceriesCashbackRate = 0;
+  let transportCashbackRate = 0;
+
+  const cardWrapper = dbCards[activeCardIndex];
+  if (cardWrapper) {
+    const { card: {benefits} } = cardWrapper;
+    diningCashBackRate = (benefits.find(b => b.category === 'dining') || { cashbackRate: 0 }).cashbackRate;
+    groceriesCashbackRate = (benefits.find(b => b.category === 'groceries') || { cashbackRate: 0 }).cashbackRate;
+    transportCashbackRate = (benefits.find(b => b.category === 'transport') || { cashbackRate: 0 }).cashbackRate;
+  }
+
   const onViewAllPress = () => {
     console.log('View all pressed');
   };
@@ -224,7 +238,7 @@ function CashbackAndRewardsView() {
           />
           <Text
             style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
-            6%
+            {diningCashBackRate}%
           </Text>
         </View>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
@@ -238,7 +252,7 @@ function CashbackAndRewardsView() {
           />
           <Text
             style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
-            6%
+            {groceriesCashbackRate}%
           </Text>
         </View>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
@@ -252,7 +266,7 @@ function CashbackAndRewardsView() {
           />
           <Text
             style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
-            6%
+            {transportCashbackRate}%
           </Text>
         </View>
       </View>
@@ -314,6 +328,8 @@ function CardViewFilled(props: cardViewStyleProps) {
   const {_id, dbCards, cards} = useAppSelector(state => state.user);
   const [getUserCards] = useGetUserCardsMutation();
 
+  const CARD_WIDTH = 300;
+
   // Called whenever `cards` field in user state changes
   useEffect(() => {
    getUserCards(_id).then((resp: any) => {
@@ -346,6 +362,17 @@ function CardViewFilled(props: cardViewStyleProps) {
     const offsetX = e.nativeEvent.contentOffset.x;
     scrollX.setValue(offsetX);
   };
+
+  useEffect(() => {
+    scrollX.addListener(({ value }) => {
+      const index = Math.round(value / CARD_WIDTH);
+      dispatch(setActiveCardIndex(index));
+    });
+
+    return () => {
+      scrollX.removeAllListeners();
+    };
+  }, []);
 
   return (
     <ScrollView
