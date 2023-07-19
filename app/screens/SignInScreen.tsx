@@ -13,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 
 import {useAppSelector, useAppDispatch} from '../state/hooks';
 import {
@@ -160,16 +159,7 @@ function ButtonView() {
       const {data: dataWrapper, error} = resp;
 
       if (error) {
-        const {data: dataWrapper} = error;
-        const {errors, data} = dataWrapper;
-
-        if (errors) {
-          throw new Error(
-            errors.map((err: any) => (err && err.msg) || '').join('\n'),
-          );
-        } else if (data.error) {
-          throw new Error(data.error);
-        }
+        throw new Error(error);
       }
 
       const { data } = dataWrapper;
@@ -185,7 +175,7 @@ function ButtonView() {
               name: 'HomeStack',
               params: {
                 screen: 'HomeTab',
-                params: {user: resp.data.data},
+                params: {user: data},
               },
             },
           ],

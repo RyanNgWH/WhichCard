@@ -28,6 +28,7 @@ import {
   setInitialState as setInitialAddCardState,
 } from '../state/features/card/addCard';
 import {setUserCards} from '../state/features/user/user';
+import {useCreateUserCardMutation} from "../state/features/api/slice";
 
 import {Themes} from '../styles/Themes';
 
@@ -257,6 +258,7 @@ function ButtonView() {
     state => state.addCard,
   );
   const {_id: userId} = useAppSelector(state => state.user);
+  const [createCard] = useCreateUserCardMutation();
 
   const formatCardExpiryDate = (expiryDate: string) => {
     const parts = expiryDate.split(' / ');
@@ -269,41 +271,29 @@ function ButtonView() {
   const saveCard = async () => {
     try {
       const formattedCardExpiry = formatCardExpiryDate(expiryDate);
-      const data = {
+      const postData = {
+        userId,
         type: cardType,
         issuer: cardIssuer,
         cardName: cardName,
         cardExpiry: formattedCardExpiry,
       };
 
-      const url = `${URLs.API_SERVER.BASE}${URLs.API_SERVER.USER.BASE}/${userId}${URLs.API_SERVER.USER.CARDS}`;
-      const resp = await axios({
-        url,
-        method: 'POST',
-        data,
-        validateStatus: () => true,
-      });
+      const resp: any = await createCard(postData);
+      const {data: dataWrapper, error} = resp;
 
-      switch (resp.status) {
-        case 200:
-          dispatch(
-            setUserCards(resp.data.data.cards),
-          );
-          dispatch(setInitialAddCardState());
-          navigation.navigate('Dashboard');
-          break;
-        default:
-          if (resp.data.data && resp.data.data.error) {
-            throw new Error(resp.data.data.error);
-          } else if (resp.data.error) {
-            throw new Error(resp.data.error);
-          } else if (resp.data.errors) {
-            throw new Error(
-              resp.data.errors.map(error => error.msg).join('\n'),
-            );
-          }
-          break;
+      if (error) {
+        throw new Error(error);
       }
+
+      const {data} = dataWrapper;
+
+      dispatch(
+        setUserCards(data.cards),
+      );
+      dispatch(setInitialAddCardState());
+      navigation.navigate('Dashboard');
+
     } catch (err: any) {
       dispatch(setErrStr(err.message || 'Failed to save card.'));
     }
