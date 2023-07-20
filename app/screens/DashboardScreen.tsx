@@ -454,18 +454,7 @@ function CardViewFilled(props: cardViewStyleProps) {
           <Animated.Image
             source={card.image}
             style={[
-              cardViewStyles(props).cardImage,
-              {
-                // transform: [
-                //   {
-                //     scale: scrollX.interpolate({
-                //       inputRange: [(index - 1) * cardWidth, index * cardWidth, (index + 1) * cardWidth],
-                //       outputRange: [0.9, 1, 0.9],
-                //       extrapolate: 'clamp',
-                //     }),
-                //   },
-                // ],
-              },
+              cardViewStyles(props).cardImage
             ]}
           />
           <View>
@@ -604,8 +593,6 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     },
     cardContainer: {
       width: props.cardWidth,
-      // paddingLeft: props.cardMargin,
-      // paddingRight: props.cardMargin
     },
     cardTitle: {
       textAlign: 'center',
@@ -613,12 +600,9 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       ...TextStyles({theme: 'light', size: 16}).bodySubText,
     },
     cardImage: {
-      // flexGrow: 1,
       width: 300,
       height: 190,
-      // height: '100%',
       resizeMode: 'contain',
-      // backgroundColor: 'black'
     },
   });
 
@@ -644,10 +628,7 @@ const cashbackAndRewardsViewStyles = () =>
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    featuredCashBacksHeader: {
-      // flexGrow: 1,
-      // backgroundColor: 'black'
-    },
+    featuredCashBacksHeader: {},
     featuredCashBacksHeaderText: {
       textAlign: 'center',
       marginBottom: 10,

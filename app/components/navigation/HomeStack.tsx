@@ -13,7 +13,7 @@ import TextStyles from '../../styles/TextStyles';
 import Icon from '../../styles/Icons';
 import {useNavigation} from '@react-navigation/native';
 import { useAppDispatch } from '../../state/hooks';
-import { setInitialState } from '../../state/features/card/addCard';
+import { setInitialState as setAddCardInitialState } from '../../state/features/card/addCard';
 
 /**
  * HomeStackPramList defines the types of the parameters that can be passed to each screen
@@ -39,7 +39,7 @@ function HomeStackScreen() {
   const dispatch = useAppDispatch();
 
   const addCardHeaderBackButtonCallback = () => {
-    dispatch(setInitialState());
+    dispatch(setAddCardInitialState());
   }
 
   return (
