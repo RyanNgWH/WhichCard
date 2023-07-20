@@ -42,7 +42,7 @@ const initialState: UserState = {
   dbCards: []
 };
 
-export const signUpSlice = createSlice({
+export const userSlice = createSlice({
     name: 'signUp',
     initialState,
     reducers: {
@@ -70,10 +70,11 @@ export const signUpSlice = createSlice({
             dbCards: action.payload
         }
       },
+      setUserInitialState: () => initialState
     }
 });
   
   // Action creators are generated for each case reducer function
-export const { setUserState, setActiveCardIndex, setUserCards, setUserDbCards } = signUpSlice.actions
+export const { setUserState, setActiveCardIndex, setUserCards, setUserDbCards, setUserInitialState } = userSlice.actions
   
-export default signUpSlice.reducer
+export default userSlice.reducer

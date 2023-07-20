@@ -24,9 +24,8 @@ import {
   setPassword,
   setInitialState as setSignUpInitialState,
 } from '../state/features/auth/signUp';
-import {setUserState as setUserInitialState} from '../state/features/user/user';
+import {setUserState} from '../state/features/user/user';
 import {useSignUpMutation} from '../state/features/api/slice';
-
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -142,7 +141,6 @@ function ButtonView() {
   const dispatch = useAppDispatch();
   const [signUp] = useSignUpMutation();
 
-
   const {fullName, email, password} = useAppSelector(state => state.signUp);
 
   const onSignUpPress = async () => {
@@ -160,9 +158,9 @@ function ButtonView() {
         throw new Error(error);
       }
 
-      const { data } = dataWrapper;
+      const {data} = dataWrapper;
 
-      dispatch(setUserInitialState(data));
+      dispatch(setUserState(data));
       dispatch(setSignUpInitialState());
       // Reset the navigation stack (Prevent users from going back to the sign up screen)
       navigation.reset({

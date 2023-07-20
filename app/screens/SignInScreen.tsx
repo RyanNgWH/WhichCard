@@ -21,7 +21,7 @@ import {
   setPassword,
   setInitialState as setSignInInitialState,
 } from '../state/features/auth/signIn';
-import {setUserState as setUserInitialState} from '../state/features/user/user';
+import {setUserState} from '../state/features/user/user';
 import {useLoginMutation} from '../state/features/api/slice';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
@@ -162,24 +162,24 @@ function ButtonView() {
         throw new Error(error);
       }
 
-      const { data } = dataWrapper;
+      const {data} = dataWrapper;
 
-      dispatch(setUserInitialState(data));
+      dispatch(setUserState(data));
       dispatch(setSignInInitialState());
 
-        // Reset the navigation stack (Prevent users from going back to the sign up screen)
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'HomeStack',
-              params: {
-                screen: 'HomeTab',
-                params: {user: data},
-              },
+      // Reset the navigation stack (Prevent users from going back to the sign up screen)
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'HomeStack',
+            params: {
+              screen: 'HomeTab',
+              params: {user: data},
             },
-          ],
-        });
+          },
+        ],
+      });
     } catch (err: any) {
       dispatch(setErrStr(err.message || 'Failed to sign in.'));
     }

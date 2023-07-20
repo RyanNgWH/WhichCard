@@ -15,10 +15,17 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {useEffect} from 'react';
 
-
-import {useDeleteUserCardMutation, useGetUserCardsMutation} from '../state/features/api/slice';
+import {
+  useDeleteUserCardMutation,
+  useGetUserCardsMutation,
+} from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
-import {setActiveCardIndex, setUserCards, setUserDbCards} from '../state/features/user/user';
+import {
+  setActiveCardIndex,
+  setUserInitialState,
+  setUserCards,
+  setUserDbCards,
+} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -49,13 +56,13 @@ type cardViewStyleProps = {
 
 // TODO: Add type for route and navigation
 function DashboardScreen() {
-  const {name} = useAppSelector(state => state.user);
+  const user = useAppSelector(state => state.user);
 
   return (
     <View style={screenStyles().screen}>
       <SafeAreaViewGlobal>
         <View style={screenStyles().headerContainer}>
-          <Header name={name} />
+          <Header name={user.name} />
         </View>
         <View style={screenStyles().bodyContainer}>
           <Body />
@@ -70,12 +77,23 @@ function DashboardScreen() {
  * @returns Header of the dashboard
  */
 function Header(props: headerProps) {
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+
   // Container width
   const [headerContainerHeight, setHeaderContainerHeight] = useState(0);
 
   // Props for the header styles
   const headerStyleProps = {
     containerHeight: headerContainerHeight,
+  };
+
+  const onLogoutPress = () => {
+    dispatch(setUserInitialState());
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Landing'}],
+    });
   };
 
   return (
@@ -90,6 +108,9 @@ function Header(props: headerProps) {
         source={require('../assets/logo/whichcard_logo.png')}
         style={headerStyles({containerHeight: headerContainerHeight}).logo}
       />
+      <View style={[headerStyles(headerStyleProps).logoutLogo]}>
+        <FontAwesome5Icon name="sign-out" size={20} onPress={onLogoutPress} />
+      </View>
       <View style={headerStyles(headerStyleProps).headerTextContainer}>
         <Text
           style={[
@@ -197,7 +218,7 @@ function CardView() {
  * @returns Cashback and rewards view of the dashboard
  */
 function CashbackAndRewardsView() {
-  const { activeCardIndex, dbCards} = useAppSelector(state => state.user);
+  const {activeCardIndex, dbCards} = useAppSelector(state => state.user);
 
   let diningCashBackRate = 0;
   let groceriesCashbackRate = 0;
@@ -205,10 +226,18 @@ function CashbackAndRewardsView() {
 
   const cardWrapper = dbCards[activeCardIndex];
   if (cardWrapper) {
-    const { card: {benefits} } = cardWrapper;
-    diningCashBackRate = (benefits.find(b => b.category === 'dining') || { cashbackRate: 0 }).cashbackRate;
-    groceriesCashbackRate = (benefits.find(b => b.category === 'groceries') || { cashbackRate: 0 }).cashbackRate;
-    transportCashbackRate = (benefits.find(b => b.category === 'transport') || { cashbackRate: 0 }).cashbackRate;
+    const {
+      card: {benefits},
+    } = cardWrapper;
+    diningCashBackRate = (
+      benefits.find(b => b.category === 'dining') || {cashbackRate: 0}
+    ).cashbackRate;
+    groceriesCashbackRate = (
+      benefits.find(b => b.category === 'groceries') || {cashbackRate: 0}
+    ).cashbackRate;
+    transportCashbackRate = (
+      benefits.find(b => b.category === 'transport') || {cashbackRate: 0}
+    ).cashbackRate;
   }
 
   const onViewAllPress = () => {
@@ -280,14 +309,13 @@ function CashbackAndRewardsView() {
  * @returns Card restrictions view of the dashboard
  */
 function CardRestrictionsView() {
-  const { activeCardIndex, dbCards} = useAppSelector(state => state.user);
+  const {activeCardIndex, dbCards} = useAppSelector(state => state.user);
 
   let currMinSpent = 0;
   let minSpendRequirement = 0;
 
   const cardWrapper = dbCards[activeCardIndex];
   if (cardWrapper) {
-
   }
 
   const onViewAllPress = () => {
@@ -336,7 +364,9 @@ function CardRestrictionsView() {
  */
 function CardViewFilled(props: cardViewStyleProps) {
   const dispatch = useAppDispatch();
-  const {_id, dbCards, cards, activeCardIndex} = useAppSelector(state => state.user);
+  const {_id, dbCards, cards, activeCardIndex} = useAppSelector(
+    state => state.user,
+  );
   const [getUserCards] = useGetUserCardsMutation();
   const [deleteUserCard] = useDeleteUserCardMutation();
 
@@ -344,15 +374,17 @@ function CardViewFilled(props: cardViewStyleProps) {
 
   // Get user cards
   useEffect(() => {
-   getUserCards(_id).then((resp: any) => {
-    const {data: dataWrapper, error} = resp;
-    if (!error) {
-      const {data} = dataWrapper;
-      if (data) {
-        dispatch(setUserDbCards(data));
-      }
-    }
-   }).catch(err => console.log(err));
+    getUserCards(_id)
+      .then((resp: any) => {
+        const {data: dataWrapper, error} = resp;
+        if (!error) {
+          const {data} = dataWrapper;
+          if (data) {
+            dispatch(setUserDbCards(data));
+          }
+        }
+      })
+      .catch(err => console.log(err));
   }, [cards]);
 
   // Extract relevant data to be displayed
@@ -380,7 +412,7 @@ function CardViewFilled(props: cardViewStyleProps) {
 
   // Set active card index on horizontal scroll offset
   useEffect(() => {
-    scrollX.addListener(({ value }) => {
+    scrollX.addListener(({value}) => {
       const index = Math.round(value / CARD_WIDTH);
       dispatch(setActiveCardIndex(index));
     });
@@ -396,14 +428,18 @@ function CardViewFilled(props: cardViewStyleProps) {
     if (activeCard) {
       const deleteData = {
         userId: _id,
-        cardName: activeCard.cardName
-      }
+        cardName: activeCard.cardName,
+      };
 
       const resp = await deleteUserCard(deleteData);
-      dispatch(setUserDbCards(dbCards.filter((c, index) => index !== activeCardIndex)));
-      dispatch(setUserCards(cards.filter((c, index) => index !== activeCardIndex)));
+      dispatch(
+        setUserDbCards(dbCards.filter((c, index) => index !== activeCardIndex)),
+      );
+      dispatch(
+        setUserCards(cards.filter((c, index) => index !== activeCardIndex)),
+      );
     }
-  }
+  };
 
   return (
     <ScrollView
@@ -434,8 +470,14 @@ function CardViewFilled(props: cardViewStyleProps) {
           />
           <View>
             <Text style={cardViewStyles(props).cardTitle}>
-              <FontAwesome5Icon name="minus-circle" size={25} color={"#d01632"} onPress={onCardDeletePressed}/>
-              {`  ${card.name}`}</Text>
+              <FontAwesome5Icon
+                name="minus-circle"
+                size={25}
+                color={'#d01632'}
+                onPress={onCardDeletePressed}
+              />
+              {`  ${card.name}`}
+            </Text>
           </View>
         </View>
       ))}
@@ -461,7 +503,11 @@ function CardViewEmpty(props: cardViewStyleProps) {
       onPress={onAddCreditCardPress}
       borderRadius={9}
       style={cardViewStyles(props).emptyContainer}>
-      <FeatherIcon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
+      <FeatherIcon
+        name="plus"
+        size={20}
+        color={Themes.colors.textLightBackground}
+      />{' '}
       <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
         Add Card
       </Text>
@@ -501,6 +547,11 @@ const headerStyles = (props: headerStylesProps) =>
     },
     headerTextContainer: {
       flex: 2,
+    },
+    logoutLogo: {
+      position: 'absolute',
+      top: 15,
+      right: 0,
     },
     welcomeText: {
       textAlign: 'right',
