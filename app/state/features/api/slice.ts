@@ -13,16 +13,20 @@ export const apiSlice = createApi({
   // All of our requests will have URLs starting with '/fakeApi'
   baseQuery: async (args, api, extraOptions) => {
     const resp: any = await fetchBaseQuery({ baseUrl: BASE_URL })(args, api, extraOptions);
-    const {error} = resp;
+    const {error: errorWrapper} = resp;
 
-    if (error) {
-      const {data: dataWrapper} = error;
-      const {errors, data} = dataWrapper;
+    if (errorWrapper) {
+      const {data: dataWrapper, error} = errorWrapper;
+      if (error) {
+        resp.error = error.message || error;
+      } else if (dataWrapper) {
+        const {errors, data} = dataWrapper;
 
-      if (errors) {
-        resp.error = errors.map((err: any) => (err && err.msg) || '').join('\n');
-      } else if (data.error) {
-        resp.error = data.error;
+        if (errors) {
+          resp.error = errors.map((err: any) => (err && err.msg) || '').join('\n');
+        } else if (data.error) {
+          resp.error = data.error;
+        }
       }
     }
 
@@ -47,6 +51,12 @@ export const apiSlice = createApi({
     getCards: builder.query({
       query: () => '/cards'
     }),
+    getUserCards: builder.mutation({
+      query: (_id: string) => ({
+        url: URLs.API_SERVER.USER.BASE + `/${_id}` + '/cards',
+        method: 'GET',
+      })
+    }),
     createUserCard: builder.mutation({
       query: (data) => {
         const {userId} = data;
@@ -58,14 +68,17 @@ export const apiSlice = createApi({
         }
       }
     }),
-    getUserCards: builder.mutation({
-      query: (_id: string) => ({
-        url: URLs.API_SERVER.USER.BASE + `/${_id}` + '/cards',
-        method: 'GET',
-      })
-    }),
+    deleteUserCard: builder.mutation({
+      query: (data) => {
+        const { userId, cardName } = data;
+        return {
+          url: URLs.API_SERVER.USER.BASE + `/${userId}` + URLs.API_SERVER.USER.CARDS + `/${cardName}`,
+          method: 'DELETE',
+        }
+      }
+    })
   }),
 })
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useSignUpMutation, useLoginMutation, useCreateUserCardMutation, useGetCardsQuery, useGetUserCardsMutation } = apiSlice;
+export const { useSignUpMutation, useLoginMutation, useGetCardsQuery, useCreateUserCardMutation, useGetUserCardsMutation, useDeleteUserCardMutation } = apiSlice;

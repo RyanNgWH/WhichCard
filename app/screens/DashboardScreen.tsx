@@ -16,9 +16,9 @@ import {useNavigation} from '@react-navigation/native';
 import {useEffect} from 'react';
 
 
-import {useGetUserCardsMutation} from '../state/features/api/slice';
+import {useDeleteUserCardMutation, useGetUserCardsMutation} from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
-import {setActiveCardIndex, setUserDbCards} from '../state/features/user/user';
+import {setActiveCardIndex, setUserCards, setUserDbCards} from '../state/features/user/user';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -26,7 +26,8 @@ import TextStyles from '../styles/TextStyles';
 import {useRef, useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
-import Icon from 'react-native-vector-icons/Feather';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, getCardLogo} from '../state/features/card/card';
 
 // Props for the header
@@ -279,6 +280,16 @@ function CashbackAndRewardsView() {
  * @returns Card restrictions view of the dashboard
  */
 function CardRestrictionsView() {
+  const { activeCardIndex, dbCards} = useAppSelector(state => state.user);
+
+  let currMinSpent = 0;
+  let minSpendRequirement = 0;
+
+  const cardWrapper = dbCards[activeCardIndex];
+  if (cardWrapper) {
+
+  }
+
   const onViewAllPress = () => {
     console.log('View all pressed');
   };
@@ -325,12 +336,13 @@ function CardRestrictionsView() {
  */
 function CardViewFilled(props: cardViewStyleProps) {
   const dispatch = useAppDispatch();
-  const {_id, dbCards, cards} = useAppSelector(state => state.user);
+  const {_id, dbCards, cards, activeCardIndex} = useAppSelector(state => state.user);
   const [getUserCards] = useGetUserCardsMutation();
+  const [deleteUserCard] = useDeleteUserCardMutation();
 
   const CARD_WIDTH = 300;
 
-  // Called whenever `cards` field in user state changes
+  // Get user cards
   useEffect(() => {
    getUserCards(_id).then((resp: any) => {
     const {data: dataWrapper, error} = resp;
@@ -343,6 +355,7 @@ function CardViewFilled(props: cardViewStyleProps) {
    }).catch(err => console.log(err));
   }, [cards]);
 
+  // Extract relevant data to be displayed
   const getCardDataFromUserCards = (cards: Card[]) => {
     return cards.map((el, index) => {
       const {card} = el;
@@ -355,14 +368,17 @@ function CardViewFilled(props: cardViewStyleProps) {
     });
   };
 
-  let cardData = getCardDataFromUserCards(dbCards);
+  // Card data shown in horizontal view
+  const cardData = getCardDataFromUserCards(dbCards);
 
+  // Update scroll offset value
   const scrollX = useRef(new Animated.Value(0)).current;
   const handleScroll = (e: any) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     scrollX.setValue(offsetX);
   };
 
+  // Set active card index on horizontal scroll offset
   useEffect(() => {
     scrollX.addListener(({ value }) => {
       const index = Math.round(value / CARD_WIDTH);
@@ -374,6 +390,21 @@ function CardViewFilled(props: cardViewStyleProps) {
     };
   }, []);
 
+  const onCardDeletePressed = async () => {
+    const activeCard = dbCards[activeCardIndex];
+
+    if (activeCard) {
+      const deleteData = {
+        userId: _id,
+        cardName: activeCard.cardName
+      }
+
+      const resp = await deleteUserCard(deleteData);
+      dispatch(setUserDbCards(dbCards.filter((c, index) => index !== activeCardIndex)));
+      dispatch(setUserCards(cards.filter((c, index) => index !== activeCardIndex)));
+    }
+  }
+
   return (
     <ScrollView
       horizontal
@@ -383,6 +414,7 @@ function CardViewFilled(props: cardViewStyleProps) {
       scrollEventThrottle={16}>
       {cardData.map((card, index) => (
         <View key={card.id} style={cardViewStyles(props).cardContainer}>
+          <View style={{height: 10}}></View>
           <Animated.Image
             source={card.image}
             style={[
@@ -400,7 +432,11 @@ function CardViewFilled(props: cardViewStyleProps) {
               },
             ]}
           />
-          <Text style={cardViewStyles(props).cardTitle}>{card.name}</Text>
+          <View>
+            <Text style={cardViewStyles(props).cardTitle}>
+              <FontAwesome5Icon name="minus-circle" size={25} color={"#d01632"} onPress={onCardDeletePressed}/>
+              {`  ${card.name}`}</Text>
+          </View>
         </View>
       ))}
     </ScrollView>
@@ -425,7 +461,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
       onPress={onAddCreditCardPress}
       borderRadius={9}
       style={cardViewStyles(props).emptyContainer}>
-      <Icon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
+      <FeatherIcon name="plus" size={20} color={Themes.colors.textLightBackground} />{' '}
       <Text style={[TextStyles({theme: 'light', size: 20}).bodySubText]}>
         Add Card
       </Text>
