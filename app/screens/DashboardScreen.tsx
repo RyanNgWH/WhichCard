@@ -206,7 +206,7 @@ function CardView() {
       {hasCards ? (
         <View>
           <CashbackAndRewardsView />
-          <CardRestrictionsView />
+          {/* <CardRestrictionsView /> */}
         </View>
       ) : null}
     </View>
@@ -596,6 +596,8 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     },
     cardTitle: {
       textAlign: 'center',
+      // verticalAlign: "middle",
+      // backgroundColor: "black",
       marginTop: 10,
       ...TextStyles({theme: 'light', size: 16}).bodySubText,
     },
