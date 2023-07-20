@@ -453,19 +453,18 @@ function CardViewFilled(props: cardViewStyleProps) {
           <View style={{height: 10}}></View>
           <Animated.Image
             source={card.image}
-            style={[
-              cardViewStyles(props).cardImage
-            ]}
+            style={[cardViewStyles(props).cardImage]}
           />
-          <View>
-            <Text style={cardViewStyles(props).cardTitle}>
-              <FontAwesome5Icon
-                name="minus-circle"
-                size={25}
-                color={'#d01632'}
-                onPress={onCardDeletePressed}
-              />
-              {`  ${card.name}`}
+          <View
+            style={cardViewStyles(props).cardTitleContainer}>
+            <FontAwesome5Icon
+              name="minus-circle"
+              size={25}
+              color={'#d01632'}
+              onPress={onCardDeletePressed}
+            />
+            <Text style={{...cardViewStyles(props).cardTitle}}>
+              {`${card.name}`}
             </Text>
           </View>
         </View>
@@ -594,12 +593,16 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     cardContainer: {
       width: props.cardWidth,
     },
+    cardTitleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 10
+    },
     cardTitle: {
-      textAlign: 'center',
-      // verticalAlign: "middle",
-      // backgroundColor: "black",
-      marginTop: 10,
       ...TextStyles({theme: 'light', size: 16}).bodySubText,
+      textAlign: 'center',
+      marginLeft: 10
     },
     cardImage: {
       width: 300,
