@@ -12,6 +12,8 @@ import {Themes} from '../../styles/Themes';
 import TextStyles from '../../styles/TextStyles';
 import Icon from '../../styles/Icons';
 import {useNavigation} from '@react-navigation/native';
+import { useAppDispatch } from '../../state/hooks';
+import { setInitialState as setAddCardInitialState } from '../../state/features/card/addCard';
 
 /**
  * HomeStackPramList defines the types of the parameters that can be passed to each screen
@@ -22,6 +24,10 @@ type HomeStackParamList = {
   AddCard: undefined;
 };
 
+type HeaderBackButtonProps = {
+  callback: () => void
+};
+
 // Create the stack navigator
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -30,6 +36,12 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>();
  * @returns A home navigation stack
  */
 function HomeStackScreen() {
+  const dispatch = useAppDispatch();
+
+  const addCardHeaderBackButtonCallback = () => {
+    dispatch(setAddCardInitialState());
+  }
+
   return (
     <HomeStack.Navigator
       initialRouteName="HomeTab"
@@ -40,7 +52,7 @@ function HomeStackScreen() {
         headerTitleAlign: 'center',
         headerTitleStyle: TextStyles({theme: 'light', size: 20}).bodyTextBold,
         headerBackTitleVisible: false,
-        headerLeft: HeaderBackButton,
+        headerLeft: () => { return <HeaderBackButton callback={() => {}}/> },
       }}>
       <HomeStack.Screen
         name="HomeTab"
@@ -52,17 +64,22 @@ function HomeStackScreen() {
         component={AddCardScreen}
         options={{
           title: 'Add Card',
+          headerLeft: () => { return <HeaderBackButton callback={addCardHeaderBackButtonCallback}/> }
         }}
       />
     </HomeStack.Navigator>
   );
 }
 
-function HeaderBackButton() {
+function HeaderBackButton(props: HeaderBackButtonProps) {
+  const {callback} = props;
   const navigation = useNavigation();
   const onBackPress = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
+    }
+    if (callback) {
+      callback();
     }
   };
 

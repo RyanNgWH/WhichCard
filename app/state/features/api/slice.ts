@@ -11,16 +11,74 @@ export const apiSlice = createApi({
   // The cache reducer expects to be added at `state.api` (already default - this is optional)
   reducerPath: 'api',
   // All of our requests will have URLs starting with '/fakeApi'
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: async (args, api, extraOptions) => {
+    const resp: any = await fetchBaseQuery({ baseUrl: BASE_URL })(args, api, extraOptions);
+    const {error: errorWrapper} = resp;
+
+    if (errorWrapper) {
+      const {data: dataWrapper, error} = errorWrapper;
+      if (error) {
+        resp.error = error.message || error;
+      } else if (dataWrapper) {
+        const {errors, data} = dataWrapper;
+
+        if (errors) {
+          resp.error = errors.map((err: any) => (err && err.msg) || '').join('\n');
+        } else if (data.error) {
+          resp.error = data.error;
+        }
+      }
+    }
+
+    return resp;
+  },
   // The "endpoints" represent operations and requests for this server
   endpoints: builder => ({
-    // The `getPosts` endpoint is a "query" operation that returns data
+    signUp: builder.mutation({
+      query: (data) => ({
+        url: URLs.API_SERVER.USER.BASE,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    login: builder.mutation({
+      query: (data) => ({
+        url: URLs.API_SERVER.USER.BASE + URLs.API_SERVER.USER.LOGIN,
+        method: 'POST',
+        body: data,
+      }),
+    }),
     getCards: builder.query({
-      // The URL for the request is '/fakeApi/posts'
       query: () => '/cards'
+    }),
+    getUserCards: builder.mutation({
+      query: (_id: string) => ({
+        url: URLs.API_SERVER.USER.BASE + `/${_id}` + '/cards',
+        method: 'GET',
+      })
+    }),
+    createUserCard: builder.mutation({
+      query: (data) => {
+        const {userId} = data;
+        delete data['userId'];
+        return {
+          url: URLs.API_SERVER.USER.BASE + `/${userId}` + URLs.API_SERVER.USER.CARDS,
+          method: 'POST',
+          body: data,
+        }
+      }
+    }),
+    deleteUserCard: builder.mutation({
+      query: (data) => {
+        const { userId, cardName } = data;
+        return {
+          url: URLs.API_SERVER.USER.BASE + `/${userId}` + URLs.API_SERVER.USER.CARDS + `/${cardName}`,
+          method: 'DELETE',
+        }
+      }
     })
-  })
+  }),
 })
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useGetCardsQuery } = apiSlice;
+export const { useSignUpMutation, useLoginMutation, useGetCardsQuery, useCreateUserCardMutation, useGetUserCardsMutation, useDeleteUserCardMutation } = apiSlice;

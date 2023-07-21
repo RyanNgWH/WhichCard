@@ -1,3 +1,16 @@
+export interface DbCard {
+  issuer: string,
+  type: string
+}
+
+export interface Card {
+  cardName: string,
+  card: {
+    _id: string,
+    type: string,
+    issuer: string
+  }
+}
 
 function getCardIssuerLogo(issuer: string) {
     let logoSrc;
@@ -14,14 +27,17 @@ function getCardIssuerLogo(issuer: string) {
     return logoSrc;
 }
 
-function getCardTypeLogo(issuer: string, type: string) {
+function getCardLogo(issuer: string, type: string) {
   let logoSrc = null;
   switch (`${issuer}_${type}`) {
     case 'ocbc_365':
       logoSrc = require('../../../assets/logo/issuers/ocbc/365.png');
       break;
-    case 'ocbc_frank_credit':
+    case 'ocbc_frank credit':
       logoSrc = require('../../../assets/logo/issuers/ocbc/frank_credit.png');
+      break;
+    case 'dbs_live fresh':
+      logoSrc = require('../../../assets/logo/issuers/dbs/live_fresh.png');
       break;
     default:
       break;
@@ -29,4 +45,4 @@ function getCardTypeLogo(issuer: string, type: string) {
   return logoSrc;
 }
 
-export { getCardIssuerLogo, getCardTypeLogo };
+export { getCardIssuerLogo, getCardLogo };

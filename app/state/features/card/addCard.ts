@@ -1,12 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-
-// type AllowedCardIssuers = 'ocbc' | 'dbs' | '';
-// type AllowedCardTypes = '365 credit' | '';
-
-export interface DbCard {
-  issuer: string,
-  type: string
-}
+import { DbCard } from './card';
 
 interface AddCardState {
   errStr: string;

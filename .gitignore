@@ -71,3 +71,6 @@ __tests__/DefaultApp-test.tsx
 
 # Ruby configurations
 .ruby-version
+
+# Environment variables
+.env
