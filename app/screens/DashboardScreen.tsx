@@ -11,12 +11,16 @@ import {
   StyleSheet,
   Text,
   View,
+  TextInput,
+  FlatList,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useEffect} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {useEffect, useState, useRef} from 'react';
 
 import {
   useDeleteUserCardMutation,
+  useGetAllMerchantsQuery,
   useGetUserCardsMutation,
 } from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
@@ -30,12 +34,12 @@ import {
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
-import {useRef, useState} from 'react';
-import SearchBar from '../components/SearchBar';
+// import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, getCardLogo} from '../state/features/card/card';
+import { setAllMerchants } from '../state/features/merchant/merchant';
 
 // Props for the header
 type headerProps = {
@@ -57,6 +61,16 @@ type cardViewStyleProps = {
 // TODO: Add type for route and navigation
 function DashboardScreen() {
   const user = useAppSelector(state => state.user);
+  const merchant = useAppSelector(state => state.merchant);
+
+  const dispatch = useAppDispatch();
+
+  const {data} = useGetAllMerchantsQuery(null);
+  useEffect(() => {
+    if (data) {
+      dispatch(setAllMerchants(data.data || []));
+    }
+  }, [data]);
 
   return (
     <View style={screenStyles().screen}>
@@ -131,6 +145,46 @@ function Header(props: headerProps) {
   );
 }
 
+
+function SearchBar() {
+  const [query, setQuery] = useState('');
+  const merchants = useAppSelector((state) => state.merchant); // 
+
+  const filteredMerchants = merchants.allMerchants.filter((merchant) =>
+    merchant.prettyName.toLowerCase().startsWith(query.toLowerCase())
+  );
+
+  return (
+    <View>
+      <View style={bodyStyles().searchContainer}>
+        <Icon style={bodyStyles().searchIcon} name="ios-search" size={20} color="#000" />
+        <TextInput
+          style={bodyStyles().input}
+          placeholder="Search Merchants"
+          onChangeText={(text) => setQuery(text)}
+          value={query}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      </View>
+
+      {query.length > 0 && (
+          <FlatList
+          style={bodyStyles().searchResultList}
+          data={filteredMerchants}
+          keyExtractor={(merchant) => merchant._id.toString()}
+          renderItem={({ item: merchant }) => (
+            <View style={bodyStyles().searchResultContainer}>
+              <Image source={require("../assets/logo/merchants/icons/popular_bookstore.png")} style={{width: 25, height: 25}}/>
+              <Text style={bodyStyles().searchResultText}>{merchant.prettyName}</Text>
+            </View>
+          )}
+        />
+      )}
+    </View>
+  );
+};
+
 /**
  * Body of the dashboard
  * @returns Body of the dashboard
@@ -142,8 +196,8 @@ function Body() {
       direction="horizontal"
       size={Themes.sizes.horizontalScreenSizeWide}>
       <SearchBar
-        placeholder="Search Merchants"
-        style={bodyStyles().searchBar}
+        // placeholder="Search Merchants"
+        // style={bodyStyles().searchBar}
       />
       <ScrollView>
         <CardView />
@@ -553,12 +607,67 @@ const headerStyles = (props: headerStylesProps) =>
 // Styles for the body
 const bodyStyles = () =>
   StyleSheet.create({
-    searchBar: {
+    // searchBar: {
+    //   shadowColor: Themes.colors.shadow,
+    //   shadowRadius: 1,
+    //   shadowOpacity: 0.1,
+    //   elevation: 2,
+    // },
+    searchContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
       shadowColor: Themes.colors.shadow,
+      borderRadius: 30,
+      shadowRadius: 2,
+      shadowOffset: {
+        width: 2,
+        height: 2
+      },
+      shadowOpacity: 0.5,
+      elevation: 2,
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      marginTop: 20,
+      marginBottom: 15,
+    },
+    searchIcon: {},
+    input: {
+      flex: 1,
+      paddingLeft: 10,
+      backgroundColor: '#fff',
+      color: '#424242',
+    },
+    searchResultList: {
+      // position: 'absolute', // Dropdown will appear below search bar
+      // zIndex: 1, // Dropdown will appear above other components
+      maxHeight: 100, // Limit dropdown height
+      // width: '100%', // Fill the parent's width
+      // backgroundColor: 'white', // Set background color to improve visibility
+      marginBottom: 10
+    },
+    searchResultContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingLeft: 20,
+      marginBottom: 10,
+      backgroundColor: "white",
+      paddingTop: 5,
+      paddingBottom: 5,
+      shadowColor: Themes.colors.shadow,
+      borderRadius: 30,
       shadowRadius: 1,
-      shadowOpacity: 0.1,
+      shadowOffset: {
+        width: 2,
+        height: 2
+      },
+      shadowOpacity: 0.5,
       elevation: 2,
     },
+    searchResultText: { 
+      paddingLeft: 5
+    }
   });
 
 // Styles for the card view
@@ -690,7 +799,7 @@ const cardRestrictionsViewStyles = () =>
     restrictionDetailsInfoText: {
       ...TextStyles({theme: 'light', size: 14}).bodyText,
       opacity: 0.6,
-    },
+    }
   });
 
 export default DashboardScreen;

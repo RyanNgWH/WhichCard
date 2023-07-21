@@ -12,8 +12,14 @@ const URLs = {
     USER: {
       BASE: '/users',
       LOGIN: '/login',
-      CARDS: '/cards'
     },
+    CARDS: {
+      BASE: "/cards"
+    },
+    MERCHANTS: {
+      BASE: "/merchants",
+      ACTIVE_MERCHANTS: "/active"
+    }
   },
 };
 
