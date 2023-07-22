@@ -13,6 +13,7 @@ import {
   View,
   TextInput,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,6 +31,9 @@ import {
   setUserCards,
   setUserDbCards,
 } from '../state/features/user/user';
+import {
+  getMerchantIcon, setActiveMerchant
+} from '../state/features/merchant/merchant'
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
@@ -40,11 +44,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, getCardLogo} from '../state/features/card/card';
 import { setAllMerchants } from '../state/features/merchant/merchant';
-
-// Props for the header
-type headerProps = {
-  name: string;
-};
 
 // Props for the header styles
 type headerStylesProps = {
@@ -60,9 +59,6 @@ type cardViewStyleProps = {
 
 // TODO: Add type for route and navigation
 function DashboardScreen() {
-  const user = useAppSelector(state => state.user);
-  const merchant = useAppSelector(state => state.merchant);
-
   const dispatch = useAppDispatch();
 
   const {data} = useGetAllMerchantsQuery(null);
@@ -76,7 +72,7 @@ function DashboardScreen() {
     <View style={screenStyles().screen}>
       <SafeAreaViewGlobal>
         <View style={screenStyles().headerContainer}>
-          <Header name={user.name} />
+          <Header/>
         </View>
         <View style={screenStyles().bodyContainer}>
           <Body />
@@ -90,11 +86,14 @@ function DashboardScreen() {
  * Header of the dashboard
  * @returns Header of the dashboard
  */
-function Header(props: headerProps) {
+function Header() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
+  const { name } = useAppSelector(state => state.user);
+
   // Container width
+  const [hasSetContainerHeight, setHasSetContainerHeight] = useState(false);
   const [headerContainerHeight, setHeaderContainerHeight] = useState(0);
 
   // Props for the header styles
@@ -116,7 +115,10 @@ function Header(props: headerProps) {
       size={Themes.sizes.horizontalScreenSize}
       style={headerStyles(headerStyleProps).header}
       onLayout={(event: LayoutChangeEvent) => {
-        setHeaderContainerHeight(event.nativeEvent.layout.height);
+        if (!hasSetContainerHeight) {
+          setHasSetContainerHeight(true);
+          setHeaderContainerHeight(event.nativeEvent.layout.height);
+        }
       }}>
       <Image
         source={require('../assets/logo/whichcard_logo.png')}
@@ -138,46 +140,58 @@ function Header(props: headerProps) {
             TextStyles({theme: 'light', size: 20}).bodyTextBold,
             headerStyles(headerStyleProps).nameText,
           ]}>
-          {props.name}
+          {name}
         </Text>
       </View>
     </PaddedView>
   );
 }
 
-
 function SearchBar() {
-  const [query, setQuery] = useState('');
+  const navigation = useNavigation();
+
+  const dispatch = useAppDispatch();
+
+  const [merchantQuery, setMerchantQuery] = useState('');
   const merchants = useAppSelector((state) => state.merchant); // 
 
   const filteredMerchants = merchants.allMerchants.filter((merchant) =>
-    merchant.prettyName.toLowerCase().startsWith(query.toLowerCase())
+    merchant.prettyName.toLowerCase().startsWith(merchantQuery.toLowerCase())
   );
+
+  const getOnSearchResultContainerPress = (merchantIndex: number) => {
+    return (() => {
+      dispatch(setActiveMerchant(merchants.allMerchants[merchantIndex]));
+      navigation.navigate("Merchant");
+    });
+  }
 
   return (
     <View>
-      <View style={bodyStyles().searchContainer}>
-        <Icon style={bodyStyles().searchIcon} name="ios-search" size={20} color="#000" />
+      <View style={searchBarStyles().searchContainer}>
+        <Icon style={searchBarStyles().searchIcon} name="ios-search" size={20} color="#000" />
         <TextInput
-          style={bodyStyles().input}
+          style={searchBarStyles().input}
           placeholder="Search Merchants"
-          onChangeText={(text) => setQuery(text)}
-          value={query}
+          onChangeText={(text) => setMerchantQuery(text)}
+          value={merchantQuery}
           autoCapitalize="none"
           autoCorrect={false}
         />
       </View>
 
-      {query.length > 0 && (
+      {merchantQuery.length > 0 && (
           <FlatList
-          style={bodyStyles().searchResultList}
+          style={searchBarStyles().searchResultList}
           data={filteredMerchants}
           keyExtractor={(merchant) => merchant._id.toString()}
           renderItem={({ item: merchant }) => (
-            <View style={bodyStyles().searchResultContainer}>
-              <Image source={require("../assets/logo/merchants/icons/popular_bookstore.png")} style={{width: 25, height: 25}}/>
-              <Text style={bodyStyles().searchResultText}>{merchant.prettyName}</Text>
+            <TouchableOpacity onPress={getOnSearchResultContainerPress(merchants.allMerchants.findIndex(m => m._id === merchant._id))} activeOpacity={0.5}>
+            <View style={searchBarStyles().searchResultContainer}>
+              <Image source={getMerchantIcon(merchant.name)} style={searchBarStyles().merchantIcon}/>
+              <Text style={searchBarStyles().searchResultText}>{merchant.prettyName}</Text>
             </View>
+            </TouchableOpacity>
           )}
         />
       )}
@@ -195,10 +209,7 @@ function Body() {
     <PaddedView
       direction="horizontal"
       size={Themes.sizes.horizontalScreenSizeWide}>
-      <SearchBar
-        // placeholder="Search Merchants"
-        // style={bodyStyles().searchBar}
-      />
+      <SearchBar/>
       <ScrollView>
         <CardView />
       </ScrollView>
@@ -502,7 +513,7 @@ function CardViewFilled(props: cardViewStyleProps) {
       showsHorizontalScrollIndicator={false}
       onScroll={handleScroll}
       scrollEventThrottle={16}>
-      {cardData.map((card, index) => (
+      {cardData.map((card) => (
         <View key={card.id} style={cardViewStyles(props).cardContainer}>
           <View style={{height: 10}}></View>
           <Animated.Image
@@ -588,7 +599,7 @@ const headerStyles = (props: headerStylesProps) =>
       flex: 1,
     },
     headerTextContainer: {
-      flex: 2,
+      flex: 2
     },
     logoutLogo: {
       position: 'absolute',
@@ -613,6 +624,10 @@ const bodyStyles = () =>
     //   shadowOpacity: 0.1,
     //   elevation: 2,
     // },
+  });
+
+const searchBarStyles = () =>
+  StyleSheet.create({
     searchContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -640,11 +655,7 @@ const bodyStyles = () =>
       color: '#424242',
     },
     searchResultList: {
-      // position: 'absolute', // Dropdown will appear below search bar
-      // zIndex: 1, // Dropdown will appear above other components
       maxHeight: 100, // Limit dropdown height
-      // width: '100%', // Fill the parent's width
-      // backgroundColor: 'white', // Set background color to improve visibility
       marginBottom: 10
     },
     searchResultContainer: {
@@ -667,6 +678,10 @@ const bodyStyles = () =>
     },
     searchResultText: { 
       paddingLeft: 5
+    },
+    merchantIcon: {
+      width: 25,
+      height: 25
     }
   });
 

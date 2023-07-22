@@ -4,7 +4,7 @@
  * @format
  */
 
-import {View, Text, TextInput, StyleSheet, ViewStyle, Image} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ViewStyle, Image, TextStyle, FlexStyle} from 'react-native';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {Dispatch, SetStateAction, useState} from 'react';
@@ -27,6 +27,7 @@ type TextInputBoxProps = {
 // Props for the dropdown box component
 type DropdownBoxProps = {
   title: string;
+  titleFlexStyle: FlexStyle;
   items: DropdownItem[];
   open: boolean;
   onOpen: () => void;
@@ -115,6 +116,7 @@ function DropdownBox(props: DropdownBoxProps) {
         style={[
           TextStyles({theme: 'light'}).bodyText,
           dropdownBoxStyles(props).title,
+          props.titleFlexStyle
         ]}>
         {props.title}
       </Text>

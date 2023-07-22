@@ -14,7 +14,6 @@ import {
   Text,
   ImageSourcePropType,
 } from 'react-native';
-import axios from 'axios';
 
 import {useAppSelector} from '../state/hooks';
 import {

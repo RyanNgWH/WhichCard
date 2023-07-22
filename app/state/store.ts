@@ -5,6 +5,7 @@ import signInReducer from './features/auth/signIn';
 import userReducer from './features/user/user';
 import addCardReducer from './features/card/addCard';
 import merchantReducer from './features/merchant/merchant';
+import transactionReducer from './features/transaction/transaction';
 import { apiSlice } from './features/api/slice';
 
 
@@ -15,6 +16,7 @@ export const store = configureStore({
     user: userReducer,
     addCard: addCardReducer,
     merchant: merchantReducer,
+    transaction: transactionReducer,
     [apiSlice.reducerPath]: apiSlice.reducer
   },
   middleware: getDefaultMiddleware =>
