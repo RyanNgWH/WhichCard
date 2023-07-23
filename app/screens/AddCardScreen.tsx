@@ -207,9 +207,9 @@ function InputsView() {
         onOpen={onCardIssuerOpen}
         zIndex={3000}
         value={cardIssuer}
-        onSelectItem={(item: ItemType<string>) => {
-          dispatch(setCardIssuer(item.value || ''));
-          setTimeout(closeAllDropdown, 0);
+        onSelectItem={(item: ItemType<string | number>) => {
+          dispatch(setCardIssuer(item.value as string || ''));
+          setTimeout(closeAllDropdown, 10);
         }}
       />
       <DropdownBox
@@ -221,9 +221,9 @@ function InputsView() {
         onOpen={onCardTypeOpen}
         zIndex={2000}
         value={cardType}
-        onSelectItem={(item: ItemType<string>) => {
-          dispatch(setCardType(item.value || ''));
-          setTimeout(closeAllDropdown, 0);
+        onSelectItem={(item: ItemType<string | number>) => {
+          dispatch(setCardType(item.value as string || ''));
+          setTimeout(closeAllDropdown, 10);
         }}
       />
     </Pressable>

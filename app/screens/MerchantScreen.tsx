@@ -5,6 +5,7 @@
 import {
   Dimensions,
   Image,
+  ImageSourcePropType,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -18,8 +19,11 @@ import {
 import {useAppDispatch, useAppSelector} from '../state/hooks';
 import {getMerchantLogo} from '../state/features/merchant/merchant';
 import transaction, {
+  RecommendedCard,
   setAmount,
+  setCardSelectionOpen,
   setRecommendedCards,
+  setSelectedCardIndex,
   setModalVisible as setTransactionModalVisible,
 } from '../state/features/transaction/transaction';
 
@@ -34,7 +38,7 @@ import {Palette} from '../styles/Palette';
 import {DropdownBox, TextInputBox} from '../components/Inputs';
 import {ItemType} from 'react-native-dropdown-picker';
 import { useGetRecommendedCardMutation } from '../state/features/api/slice';
-import { DbCard } from '../state/features/card/card';
+import { DbCard, getCardLogo } from '../state/features/card/card';
 
 // TODO: Add type for route and navigation
 function MerchantScreen() {
@@ -112,14 +116,16 @@ function Transaction() {
       const {data} = dataWrapper;
 
       const recommendedCards = data.map((e: any) => {
+        const {cashbackAmount,cashbackRate} = e;
         const card = dbCards.find(c => c.cardName === e.cardName);
         if (card) {
-          const { cardName, card: { issuer: cardIssuer, type: cardType } } = card;
+          const { cardName: name, card: { issuer, type } } = card;
           return {
-            cardName,
-            cardIssuer,
-            cardType,
-            cashbackAmount: e.cashbackAmount
+            name,
+            issuer,
+            type,
+            cashbackAmount,
+            cashbackRate
           }
         }
         return undefined;
@@ -179,7 +185,38 @@ function Transaction() {
 function TransactionModal() {
   const dispatch = useAppDispatch();
 
-  const {amount, modalVisible} = useAppSelector(state => state.transaction);
+  const { activeMerchant } = useAppSelector(state => state.merchant);
+  const {amount, modalVisible, recommendedCards, cardSelectionOpen, selectedCardIndex} = useAppSelector(state => state.transaction);
+
+  const merchantCategoryText = activeMerchant.category.charAt(0).toUpperCase() + activeMerchant.category.slice(1);
+  const cashbackPercentageText = recommendedCards[selectedCardIndex] ? recommendedCards[selectedCardIndex].cashbackRate : "-";
+  const cashbackAmountText = recommendedCards[selectedCardIndex] ? recommendedCards[selectedCardIndex].cashbackAmount : "-";
+
+  const getRecommendedCardItems = (cards: RecommendedCard[]) => {
+    const items = [];
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const {issuer, type} = card;
+
+      let logoSrc: ImageSourcePropType = getCardLogo(issuer, type);
+
+      items.push({
+        label: `${issuer} ${type}`.toUpperCase(),
+        value: i,
+        ...(logoSrc
+          ? {
+              icon: () => (
+                <Image
+                  source={logoSrc}
+                  style={transactionStyles().recommendedCardIcon}
+                />
+              ),
+            }
+          : {}),
+      });
+    }
+    return items;
+  }
 
   return (
     <View style={transactionStyles().centeredView}>
@@ -218,28 +255,31 @@ function TransactionModal() {
               <Text style={transactionStyles().cardSectionHeaderText}>
                 Card Name
               </Text>
-              <View style={transactionStyles().cardRecommendedTagContainer}>
+              {selectedCardIndex === 0 ? <View style={transactionStyles().cardRecommendedTagContainer}>
                 <Text style={transactionStyles().cardRecommendedTag}>
                   Recommended
                 </Text>
-              </View>
+              </View> : null}
             </View>
             <View>
               <DropdownBox
                 title=""
                 titleFlexStyle={{display: 'none'}}
-                items={[]}
+                items={getRecommendedCardItems(recommendedCards)}
                 placeholder="Select Card"
-                open={false}
-                setOpen={() => {}}
+                open={cardSelectionOpen}
+                setOpen={() => dispatch(setCardSelectionOpen(true))}
                 onOpen={() => {}}
                 zIndex={1}
-                value={''}
-                onSelectItem={(item: ItemType<string>) => {}}
+                value={selectedCardIndex}
+                onSelectItem={(item: ItemType<string | number>) => {
+                  dispatch(setSelectedCardIndex(item.value as number));
+                  setTimeout(() => dispatch(setCardSelectionOpen(false)), 10);
+                }}
               />
             </View>
           </View>
-          <View style={transactionStyles().sectionContainer}>
+          <View style={[transactionStyles().sectionContainer, transactionStyles().cashbackSectionContainer]}>
             <View style={transactionStyles().sectionHeaderContainer}>
               <Text style={[TextStyles({theme: 'light', size: 14}).bodyText]}>
                 Cashback Category
@@ -247,10 +287,10 @@ function TransactionModal() {
             </View>
             <View style={transactionStyles().sectionHeaderContainer}>
               <Text style={transactionStyles().cashbackCategoryText}>
-                Other
+                {merchantCategoryText}
               </Text>
               <Text style={transactionStyles().cashbackPercentageText}>
-                0.3%
+                {cashbackPercentageText}%
               </Text>
             </View>
             <View>
@@ -262,7 +302,7 @@ function TransactionModal() {
           </View>
           <View style={transactionStyles().cashbackTextContainer}>
             <Text style={transactionStyles().cashbackText}>
-                You will receive a cashback of <Text style={transactionStyles().cashbackAmountText}>$0.075</Text>
+                You will receive a cashback of <Text style={transactionStyles().cashbackAmountText}>${cashbackAmountText}</Text>
             </Text>
           </View>
           <RoundButton
@@ -386,6 +426,9 @@ const transactionStyles = () =>
       ...TextStyles({theme: 'light', size: 10}).screenHeaderText,
       color: Palette.white,
     },
+    cashbackSectionContainer: {
+      zIndex: -1
+    },
     cashbackCategoryText: {
       ...TextStyles({theme: 'light', size: 16}).screenHeaderText,
     },
@@ -398,6 +441,10 @@ const transactionStyles = () =>
       height: 52,
       width: 52,
     },
+    recommendedCardIcon: {
+      width: 45,
+      height: 29,
+    },
     cashbackTextContainer: {
       marginBottom: 20,
     },
@@ -409,7 +456,7 @@ const transactionStyles = () =>
       textDecorationLine: "underline"
     },
     saveTransactionBtn: {
-      width: '90%',
+      width: "100%",
       alignSelf: 'center',
     },
   });

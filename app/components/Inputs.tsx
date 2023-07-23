@@ -28,21 +28,21 @@ type TextInputBoxProps = {
 // Props for the dropdown box component
 type DropdownBoxProps = {
   title: string;
-  titleFlexStyle: FlexStyle;
+  titleFlexStyle?: FlexStyle;
   items: DropdownItem[];
   open: boolean;
   onOpen: () => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   zIndex?: number;
   placeholder?: string;
-  value: string,
-  onSelectItem: (item: ItemType<string>) => void;
+  value: string | number,
+  onSelectItem: (item: ItemType<string | number>) => void;
 };
 
 // Item for the dropdown box component
 export type DropdownItem = {
   label: string;
-  value: string;
+  value: string | number;
   icon?: () => React.ReactElement<typeof Image>;
 };
 
