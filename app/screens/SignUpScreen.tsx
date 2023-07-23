@@ -170,7 +170,6 @@ function ButtonView() {
             name: 'HomeStack',
             params: {
               screen: 'HomeTab',
-              params: {user: data},
             },
           },
         ],

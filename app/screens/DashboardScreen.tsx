@@ -11,12 +11,17 @@ import {
   StyleSheet,
   Text,
   View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useEffect} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {useEffect, useState, useRef} from 'react';
 
 import {
   useDeleteUserCardMutation,
+  useGetAllMerchantsQuery,
   useGetUserCardsMutation,
 } from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
@@ -26,21 +31,19 @@ import {
   setUserCards,
   setUserDbCards,
 } from '../state/features/user/user';
+import {
+  getMerchantIcon, setActiveMerchant
+} from '../state/features/merchant/merchant'
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
-import {useRef, useState} from 'react';
-import SearchBar from '../components/SearchBar';
+// import SearchBar from '../components/SearchBar';
 import RoundButton from '../components/RoundButton';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, getCardLogo} from '../state/features/card/card';
-
-// Props for the header
-type headerProps = {
-  name: string;
-};
+import { setAllMerchants } from '../state/features/merchant/merchant';
 
 // Props for the header styles
 type headerStylesProps = {
@@ -56,13 +59,20 @@ type cardViewStyleProps = {
 
 // TODO: Add type for route and navigation
 function DashboardScreen() {
-  const user = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
+
+  const {data} = useGetAllMerchantsQuery(null);
+  useEffect(() => {
+    if (data) {
+      dispatch(setAllMerchants(data.data || []));
+    }
+  }, [data]);
 
   return (
     <View style={screenStyles().screen}>
       <SafeAreaViewGlobal>
         <View style={screenStyles().headerContainer}>
-          <Header name={user.name} />
+          <Header/>
         </View>
         <View style={screenStyles().bodyContainer}>
           <Body />
@@ -76,11 +86,14 @@ function DashboardScreen() {
  * Header of the dashboard
  * @returns Header of the dashboard
  */
-function Header(props: headerProps) {
+function Header() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
+  const { name } = useAppSelector(state => state.user);
+
   // Container width
+  const [hasSetContainerHeight, setHasSetContainerHeight] = useState(false);
   const [headerContainerHeight, setHeaderContainerHeight] = useState(0);
 
   // Props for the header styles
@@ -102,7 +115,10 @@ function Header(props: headerProps) {
       size={Themes.sizes.horizontalScreenSize}
       style={headerStyles(headerStyleProps).header}
       onLayout={(event: LayoutChangeEvent) => {
-        setHeaderContainerHeight(event.nativeEvent.layout.height);
+        if (!hasSetContainerHeight) {
+          setHasSetContainerHeight(true);
+          setHeaderContainerHeight(event.nativeEvent.layout.height);
+        }
       }}>
       <Image
         source={require('../assets/logo/whichcard_logo.png')}
@@ -124,12 +140,64 @@ function Header(props: headerProps) {
             TextStyles({theme: 'light', size: 20}).bodyTextBold,
             headerStyles(headerStyleProps).nameText,
           ]}>
-          {props.name}
+          {name}
         </Text>
       </View>
     </PaddedView>
   );
 }
+
+function SearchBar() {
+  const navigation = useNavigation();
+
+  const dispatch = useAppDispatch();
+
+  const [merchantQuery, setMerchantQuery] = useState('');
+  const merchants = useAppSelector((state) => state.merchant); // 
+
+  const filteredMerchants = merchants.allMerchants.filter((merchant) =>
+    merchant.prettyName.toLowerCase().startsWith(merchantQuery.toLowerCase())
+  );
+
+  const getOnSearchResultContainerPress = (merchantIndex: number) => {
+    return (() => {
+      dispatch(setActiveMerchant(merchants.allMerchants[merchantIndex]));
+      navigation.navigate("Merchant");
+    });
+  }
+
+  return (
+    <View>
+      <View style={searchBarStyles().searchContainer}>
+        <Icon style={searchBarStyles().searchIcon} name="ios-search" size={20} color="#000" />
+        <TextInput
+          style={searchBarStyles().input}
+          placeholder="Search Merchants"
+          onChangeText={(text) => setMerchantQuery(text)}
+          value={merchantQuery}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      </View>
+
+      {merchantQuery.length > 0 && (
+          <FlatList
+          style={searchBarStyles().searchResultList}
+          data={filteredMerchants}
+          keyExtractor={(merchant) => merchant._id.toString()}
+          renderItem={({ item: merchant }) => (
+            <TouchableOpacity onPress={getOnSearchResultContainerPress(merchants.allMerchants.findIndex(m => m._id === merchant._id))} activeOpacity={0.5}>
+            <View style={searchBarStyles().searchResultContainer}>
+              <Image source={getMerchantIcon(merchant.name)} style={searchBarStyles().merchantIcon}/>
+              <Text style={searchBarStyles().searchResultText}>{merchant.prettyName}</Text>
+            </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
+    </View>
+  );
+};
 
 /**
  * Body of the dashboard
@@ -141,10 +209,7 @@ function Body() {
     <PaddedView
       direction="horizontal"
       size={Themes.sizes.horizontalScreenSizeWide}>
-      <SearchBar
-        placeholder="Search Merchants"
-        style={bodyStyles().searchBar}
-      />
+      <SearchBar/>
       <ScrollView>
         <CardView />
       </ScrollView>
@@ -277,7 +342,7 @@ function CashbackAndRewardsView() {
             Groceries
           </Text>
           <Image
-            source={require('../assets/logo/cashbacks/groceries.png')}
+            source={require('../assets/logo/cashbacks/grocery.png')}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -448,7 +513,7 @@ function CardViewFilled(props: cardViewStyleProps) {
       showsHorizontalScrollIndicator={false}
       onScroll={handleScroll}
       scrollEventThrottle={16}>
-      {cardData.map((card, index) => (
+      {cardData.map((card) => (
         <View key={card.id} style={cardViewStyles(props).cardContainer}>
           <View style={{height: 10}}></View>
           <Animated.Image
@@ -534,7 +599,7 @@ const headerStyles = (props: headerStylesProps) =>
       flex: 1,
     },
     headerTextContainer: {
-      flex: 2,
+      flex: 2
     },
     logoutLogo: {
       position: 'absolute',
@@ -553,12 +618,71 @@ const headerStyles = (props: headerStylesProps) =>
 // Styles for the body
 const bodyStyles = () =>
   StyleSheet.create({
-    searchBar: {
+    // searchBar: {
+    //   shadowColor: Themes.colors.shadow,
+    //   shadowRadius: 1,
+    //   shadowOpacity: 0.1,
+    //   elevation: 2,
+    // },
+  });
+
+const searchBarStyles = () =>
+  StyleSheet.create({
+    searchContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
       shadowColor: Themes.colors.shadow,
+      borderRadius: 30,
+      shadowRadius: 2,
+      shadowOffset: {
+        width: 2,
+        height: 2
+      },
+      shadowOpacity: 0.5,
+      elevation: 2,
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      marginTop: 20,
+      marginBottom: 15,
+    },
+    searchIcon: {},
+    input: {
+      flex: 1,
+      paddingLeft: 10,
+      backgroundColor: '#fff',
+      color: '#424242',
+    },
+    searchResultList: {
+      maxHeight: 100, // Limit dropdown height
+      marginBottom: 10
+    },
+    searchResultContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingLeft: 20,
+      marginBottom: 10,
+      backgroundColor: "white",
+      paddingTop: 5,
+      paddingBottom: 5,
+      shadowColor: Themes.colors.shadow,
+      borderRadius: 30,
       shadowRadius: 1,
-      shadowOpacity: 0.1,
+      shadowOffset: {
+        width: 2,
+        height: 2
+      },
+      shadowOpacity: 0.5,
       elevation: 2,
     },
+    searchResultText: { 
+      paddingLeft: 5
+    },
+    merchantIcon: {
+      width: 25,
+      height: 25
+    }
   });
 
 // Styles for the card view
@@ -690,7 +814,7 @@ const cardRestrictionsViewStyles = () =>
     restrictionDetailsInfoText: {
       ...TextStyles({theme: 'light', size: 14}).bodyText,
       opacity: 0.6,
-    },
+    }
   });
 
 export default DashboardScreen;

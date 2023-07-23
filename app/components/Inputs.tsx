@@ -4,7 +4,7 @@
  * @format
  */
 
-import {View, Text, TextInput, StyleSheet, ViewStyle, Image} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ViewStyle, Image, TextStyle, FlexStyle, KeyboardTypeOptions} from 'react-native';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {Dispatch, SetStateAction, useState} from 'react';
@@ -12,8 +12,9 @@ import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
 // Props for the text input box component
 type TextInputBoxProps = {
-  title: string;
+  title?: string;
   value?: string;
+  keyboardType: KeyboardTypeOptions | undefined;
   placeholder?: string;
   style?: ViewStyle;
   textAlign?: 'left' | 'center' | 'right';
@@ -27,20 +28,21 @@ type TextInputBoxProps = {
 // Props for the dropdown box component
 type DropdownBoxProps = {
   title: string;
+  titleFlexStyle?: FlexStyle;
   items: DropdownItem[];
   open: boolean;
   onOpen: () => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   zIndex?: number;
   placeholder?: string;
-  value: string,
-  onSelectItem: (item: ItemType<string>) => void;
+  value: string | number,
+  onSelectItem: (item: ItemType<string | number>) => void;
 };
 
 // Item for the dropdown box component
 export type DropdownItem = {
   label: string;
-  value: string;
+  value: string | number;
   icon?: () => React.ReactElement<typeof Image>;
 };
 
@@ -86,6 +88,7 @@ function TextInputBox(props: TextInputBoxProps) {
       </Text>
       <TextInput
         value={props.value}
+        keyboardType={props.keyboardType}
         onChangeText={props.onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -115,6 +118,7 @@ function DropdownBox(props: DropdownBoxProps) {
         style={[
           TextStyles({theme: 'light'}).bodyText,
           dropdownBoxStyles(props).title,
+          props.titleFlexStyle
         ]}>
         {props.title}
       </Text>
