@@ -106,6 +106,21 @@ function getMerchantLogo(merchantName: string) {
   return logoSrc;
 }
 
+function getMerchantCategoryLogo(category: Category) {
+  let logoSrc;
+  switch (category) {
+    case "dining":
+      logoSrc = require('../../../assets/logo/cashbacks/dining.png');
+      break;
+    case "transport":
+      logoSrc = require('../../../assets/logo/cashbacks/transport.png');
+      break;
+    default:
+      logoSrc = require('../../../assets/logo/cashbacks/grocery.png');
+  }
+  return logoSrc;
+}
+
 export const {
     setMerchantState,
     setAllMerchants,
@@ -115,4 +130,4 @@ export const {
 
 export default merchantSlice.reducer;
 
-export { getMerchantIcon, getMerchantLogo };
+export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo };

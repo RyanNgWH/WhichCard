@@ -17,11 +17,13 @@ import {
 } from 'react-native';
 
 import {useAppDispatch, useAppSelector} from '../state/hooks';
-import {getMerchantLogo} from '../state/features/merchant/merchant';
+import {getMerchantCategoryLogo, getMerchantLogo} from '../state/features/merchant/merchant';
 import transaction, {
   RecommendedCard,
   setAmount,
   setCardSelectionOpen,
+  setErrStr,
+  setInitialState as setTransactionInitialState,
   setRecommendedCards,
   setSelectedCardIndex,
   setModalVisible as setTransactionModalVisible,
@@ -37,8 +39,9 @@ import TextStyles from '../styles/TextStyles';
 import {Palette} from '../styles/Palette';
 import {DropdownBox, TextInputBox} from '../components/Inputs';
 import {ItemType} from 'react-native-dropdown-picker';
-import { useGetRecommendedCardMutation } from '../state/features/api/slice';
-import { DbCard, getCardLogo } from '../state/features/card/card';
+import {useCreateTransactionMutation, useGetRecommendedCardMutation} from '../state/features/api/slice';
+import {DbCard, getCardLogo} from '../state/features/card/card';
+import { useNavigation } from '@react-navigation/native';
 
 // TODO: Add type for route and navigation
 function MerchantScreen() {
@@ -89,12 +92,14 @@ function Transaction() {
   const dispatch = useAppDispatch();
   const [getRecommendedCard] = useGetRecommendedCardMutation();
 
-  const { amount } = useAppSelector(state => state.transaction);
-  const { _id: userId, dbCards } = useAppSelector(state => state.user); 
-  const { activeMerchant: { _id: merchant } } = useAppSelector(state => state.merchant);
+  const {amount, recommendedCards} = useAppSelector(state => state.transaction);
+  const {_id: userId, dbCards} = useAppSelector(state => state.user);
+  const {
+    activeMerchant: {_id: merchant},
+  } = useAppSelector(state => state.merchant);
 
   const onCreateTransactionButtonPressed = () => {
-    if (amount !== "") {
+    if (amount !== '') {
       dispatch(setTransactionModalVisible(true));
     }
   };
@@ -104,8 +109,8 @@ function Transaction() {
       const postData = {
         userId,
         merchant,
-        amount
-      }
+        amount,
+      };
       const resp: any = await getRecommendedCard(postData);
       const {data: dataWrapper, error} = resp;
 
@@ -116,32 +121,34 @@ function Transaction() {
       const {data} = dataWrapper;
 
       const recommendedCards = data.map((e: any) => {
-        const {cashbackAmount,cashbackRate} = e;
+        const {cashbackAmount, cashbackRate} = e;
         const card = dbCards.find(c => c.cardName === e.cardName);
         if (card) {
-          const { cardName: name, card: { issuer, type } } = card;
+          const {
+            cardName: name,
+            card: {issuer, type},
+          } = card;
           return {
             name,
             issuer,
             type,
             cashbackAmount,
-            cashbackRate
-          }
+            cashbackRate,
+          };
         }
         return undefined;
       });
 
       // Filter out cards that don't exist in state as precaution
-      const filteredCards = recommendedCards.filter((c: any )=> c);
+      const filteredCards = recommendedCards.filter((c: any) => c);
       dispatch(setRecommendedCards(filteredCards));
-
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   useEffect(() => {
-    if (amount !== "") {
+    if (amount !== '') {
       recommendCard();
     }
   }, [amount]);
@@ -149,16 +156,16 @@ function Transaction() {
   const validateAndSetAmount = async (amount: string) => {
     try {
       const regex = /^(?:\d+(?:\.\d*)?|\.\d+)?$/;
-      let filteredAmount: string = "";
+      let filteredAmount: string = '';
 
       if (regex.test(amount)) {
         filteredAmount = amount === '' ? '' : amount;
       } else {
-        filteredAmount =  '';
+        filteredAmount = '';
       }
       dispatch(setAmount(filteredAmount));
     } catch (e) {}
-  }
+  };
 
   return (
     <View>
@@ -169,7 +176,7 @@ function Transaction() {
           textAlign="center"
           onChangeText={validateAndSetAmount}
           value={amount}
-          keyboardType={"numeric"}
+          keyboardType={'numeric'}
           // style={inputsViewStyles().expiryBoxContainer}
           onFocus={() => {}}
         />
@@ -183,14 +190,31 @@ function Transaction() {
 }
 
 function TransactionModal() {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const { activeMerchant } = useAppSelector(state => state.merchant);
-  const {amount, modalVisible, recommendedCards, cardSelectionOpen, selectedCardIndex} = useAppSelector(state => state.transaction);
+  const { _id: user } = useAppSelector(state => state.user);
+  const {activeMerchant} = useAppSelector(state => state.merchant);
+  const {
+    amount,
+    modalVisible,
+    recommendedCards,
+    cardSelectionOpen,
+    selectedCardIndex,
+    errStr
+  } = useAppSelector(state => state.transaction);
 
-  const merchantCategoryText = activeMerchant.category.charAt(0).toUpperCase() + activeMerchant.category.slice(1);
-  const cashbackPercentageText = recommendedCards[selectedCardIndex] ? recommendedCards[selectedCardIndex].cashbackRate : "-";
-  const cashbackAmountText = recommendedCards[selectedCardIndex] ? recommendedCards[selectedCardIndex].cashbackAmount : "-";
+  const [createTransaction] = useCreateTransactionMutation();
+
+  const merchantCategoryText =
+    activeMerchant.category.charAt(0).toUpperCase() +
+    activeMerchant.category.slice(1);
+  const cashbackPercentageText = recommendedCards[selectedCardIndex]
+    ? recommendedCards[selectedCardIndex].cashbackRate
+    : '0';
+  const cashbackAmountText = recommendedCards[selectedCardIndex]
+    ? recommendedCards[selectedCardIndex].cashbackAmount
+    : '0';
 
   const getRecommendedCardItems = (cards: RecommendedCard[]) => {
     const items = [];
@@ -216,7 +240,46 @@ function TransactionModal() {
       });
     }
     return items;
-  }
+  };
+
+  const onSaveTransactionPress = async () => {
+    try {
+      const postData = {
+        user,
+        userCard: recommendedCards[selectedCardIndex].name,
+        merchant: activeMerchant._id,
+        dateTime: (new Date()).toISOString(),
+        amount,
+        cashbackAmount: recommendedCards[selectedCardIndex].cashbackAmount,
+        cashbackCategory: activeMerchant.category
+      };
+
+      const resp: any = await createTransaction(postData);
+      const {data: dataWrapper, error} = resp;
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      const {data} = dataWrapper;
+
+      dispatch(setTransactionInitialState());
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'HomeStack',
+            params: {
+              screen: 'HomeTab',
+            },
+          },
+        ],
+      });
+
+    } catch (err: any) {
+      dispatch(setErrStr(err.message || 'Failed to save transaction.'));
+    }
+  };
 
   return (
     <View style={transactionStyles().centeredView}>
@@ -255,11 +318,13 @@ function TransactionModal() {
               <Text style={transactionStyles().cardSectionHeaderText}>
                 Card Name
               </Text>
-              {selectedCardIndex === 0 ? <View style={transactionStyles().cardRecommendedTagContainer}>
-                <Text style={transactionStyles().cardRecommendedTag}>
-                  Recommended
-                </Text>
-              </View> : null}
+              {selectedCardIndex === 0 ? (
+                <View style={transactionStyles().cardRecommendedTagContainer}>
+                  <Text style={transactionStyles().cardRecommendedTag}>
+                    Recommended
+                  </Text>
+                </View>
+              ) : null}
             </View>
             <View>
               <DropdownBox
@@ -279,7 +344,11 @@ function TransactionModal() {
               />
             </View>
           </View>
-          <View style={[transactionStyles().sectionContainer, transactionStyles().cashbackSectionContainer]}>
+          <View
+            style={[
+              transactionStyles().sectionContainer,
+              transactionStyles().cashbackSectionContainer,
+            ]}>
             <View style={transactionStyles().sectionHeaderContainer}>
               <Text style={[TextStyles({theme: 'light', size: 14}).bodyText]}>
                 Cashback Category
@@ -295,19 +364,30 @@ function TransactionModal() {
             </View>
             <View>
               <Image
-                source={require('../assets/logo/cashbacks/dining.png')}
+                source={getMerchantCategoryLogo(activeMerchant.category)}
                 style={transactionStyles().cashbackCategoryIcon}
               />
             </View>
           </View>
           <View style={transactionStyles().cashbackTextContainer}>
             <Text style={transactionStyles().cashbackText}>
-                You will receive a cashback of <Text style={transactionStyles().cashbackAmountText}>${cashbackAmountText}</Text>
+              You will receive a cashback of{' '}
+              <Text style={transactionStyles().cashbackAmountText}>
+                ${cashbackAmountText}
+              </Text>
             </Text>
           </View>
+          {errStr !== '' ? (
+            <View>
+              <Text
+                style={[TextStyles({theme: 'light'}).bodyText, transactionStyles().errStr]}>
+                {errStr}
+              </Text>
+            </View>
+          ) : null}
           <RoundButton
             mode="contained"
-            onPress={() => {}}
+            onPress={onSaveTransactionPress}
             style={transactionStyles().saveTransactionBtn}>
             Save Transaction
           </RoundButton>
@@ -377,7 +457,7 @@ const transactionStyles = () =>
       textAlign: 'center',
     },
     transactionAmountInputContainer: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     sectionContainer: {
       paddingVertical: 15,
@@ -427,7 +507,7 @@ const transactionStyles = () =>
       color: Palette.white,
     },
     cashbackSectionContainer: {
-      zIndex: -1
+      zIndex: -1,
     },
     cashbackCategoryText: {
       ...TextStyles({theme: 'light', size: 16}).screenHeaderText,
@@ -446,17 +526,23 @@ const transactionStyles = () =>
       height: 29,
     },
     cashbackTextContainer: {
-      marginBottom: 20,
+      marginBottom: 10
     },
     cashbackText: {
       ...TextStyles({theme: 'light', size: 14}).screenHeaderText,
-      textAlign: "center",
+      textAlign: 'center',
     },
     cashbackAmountText: {
-      textDecorationLine: "underline"
+      textDecorationLine: 'underline',
+    },
+    errStr: {
+      textAlign: "center",
+      marginBottom: 20,
+      color: Themes.colors.errorTextFillColor,
+      zIndex: -1,
     },
     saveTransactionBtn: {
-      width: "100%",
+      width: '100%',
       alignSelf: 'center',
     },
   });

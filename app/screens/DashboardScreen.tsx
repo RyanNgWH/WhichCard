@@ -342,7 +342,7 @@ function CashbackAndRewardsView() {
             Groceries
           </Text>
           <Image
-            source={require('../assets/logo/cashbacks/groceries.png')}
+            source={require('../assets/logo/cashbacks/grocery.png')}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text

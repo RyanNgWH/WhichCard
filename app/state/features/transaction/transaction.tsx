@@ -5,6 +5,7 @@ export interface RecommendedCard {
   name: string,
   issuer: string,
   type: string,
+
   cashbackAmount: number,
   cashbackRate: number
 }
@@ -15,6 +16,7 @@ interface TransactionState {
   recommendedCards: RecommendedCard[];
   cardSelectionOpen: boolean;
   selectedCardIndex: number;
+  errStr: string;
 }
 
 const initialState: TransactionState = {
@@ -22,7 +24,8 @@ const initialState: TransactionState = {
   amount: "",
   recommendedCards: [],
   cardSelectionOpen: false,
-  selectedCardIndex: 0
+  selectedCardIndex: 0,
+  errStr: ""
 };
 
 export const transactionSlice = createSlice({
@@ -74,6 +77,15 @@ export const transactionSlice = createSlice({
         selectedCardIndex: action.payload,
       };
     },
+    setErrStr: (
+      state: TransactionState,
+      action: PayloadAction<string>,
+    ) => {
+      return {
+        ...state,
+        errStr: action.payload,
+      };
+    },
     setInitialState: () => initialState,
   },
 });
@@ -84,6 +96,7 @@ export const {
     setRecommendedCards,
     setCardSelectionOpen,
     setSelectedCardIndex,
+    setErrStr,
     setInitialState
 } = transactionSlice.actions;
 

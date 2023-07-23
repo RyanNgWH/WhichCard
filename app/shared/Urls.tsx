@@ -19,6 +19,9 @@ const URLs = {
     MERCHANTS: {
       BASE: "/merchants",
       ACTIVE_MERCHANTS: "/active"
+    },
+    TRANSACTIONS: {
+      BASE: "/transactions"
     }
   },
 };
