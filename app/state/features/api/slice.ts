@@ -87,6 +87,20 @@ export const apiSlice = createApi({
         };
       },
     }),
+    getRecommendedCard: builder.mutation({
+      query: data => {
+        const {userId} = data;
+        delete data["userId"];
+        return {
+          url:
+            URLs.API_SERVER.USER.BASE +
+            `/${userId}` + 
+            '/recommend',
+          method: 'POST',
+          body: data
+        };
+      },
+    }),
     // Cards
     getCards: builder.query({
       query: () => URLs.API_SERVER.CARDS.BASE,
@@ -107,6 +121,7 @@ export const {
   useGetCardsQuery,
   useCreateUserCardMutation,
   useGetUserCardsMutation,
+  useGetRecommendedCardMutation,
   useDeleteUserCardMutation,
   useGetAllMerchantsQuery
 } = apiSlice;

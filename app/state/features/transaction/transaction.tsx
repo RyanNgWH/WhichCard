@@ -1,12 +1,23 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 
+interface RecommendedCard {
+  cardName: string,
+  cardIssuer: string,
+  cardType: string,
+  cashbackAmount: number,
+}
+
 interface TransactionState {
   modalVisible: boolean;
+  amount: string;
+  recommendedCards: RecommendedCard[]
 }
 
 const initialState: TransactionState = {
-  modalVisible: false
+  modalVisible: false,
+  amount: "",
+  recommendedCards: []
 };
 
 export const transactionSlice = createSlice({
@@ -22,12 +33,33 @@ export const transactionSlice = createSlice({
         modalVisible: action.payload,
       };
     },
+    setAmount: (
+      state: TransactionState,
+      action: PayloadAction<string>,
+    ) => {
+      return {
+        ...state,
+        amount: action.payload,
+      };
+    },
+    setRecommendedCards: (
+      state: TransactionState,
+      action: PayloadAction<RecommendedCard[]>,
+    ) => {
+      return {
+        ...state,
+        recommendedCards: action.payload,
+      };
+    },
     setInitialState: () => initialState,
   },
 });
 
 export const {
-    setModalVisible
+    setModalVisible,
+    setAmount,
+    setRecommendedCards,
+    setInitialState
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

@@ -15,6 +15,7 @@ import Icon from '../../styles/Icons';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../state/hooks';
 import {setInitialState as setAddCardInitialState} from '../../state/features/card/addCard';
+import {setInitialState as setTransactionInitialState} from '../../state/features/transaction/transaction';
 
 /**
  * HomeStackPramList defines the types of the parameters that can be passed to each screen
@@ -46,7 +47,9 @@ function HomeStackScreen() {
     dispatch(setAddCardInitialState());
   };
 
-  const merchantHeaderBackButtonCallback = () => {}
+  const merchantHeaderBackButtonCallback = () => {
+    dispatch(setTransactionInitialState());
+  }
 
   return (
     <HomeStack.Navigator

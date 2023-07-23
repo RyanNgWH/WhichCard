@@ -18,6 +18,8 @@ import {
 import {useAppDispatch, useAppSelector} from '../state/hooks';
 import {getMerchantLogo} from '../state/features/merchant/merchant';
 import transaction, {
+  setAmount,
+  setRecommendedCards,
   setModalVisible as setTransactionModalVisible,
 } from '../state/features/transaction/transaction';
 
@@ -26,11 +28,13 @@ import RoundButton from '../components/RoundButton';
 
 import {useHeaderHeight} from '@react-navigation/elements';
 import {Themes} from '../styles/Themes';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import TextStyles from '../styles/TextStyles';
 import {Palette} from '../styles/Palette';
-import {DropdownBox} from '../components/Inputs';
+import {DropdownBox, TextInputBox} from '../components/Inputs';
 import {ItemType} from 'react-native-dropdown-picker';
+import { useGetRecommendedCardMutation } from '../state/features/api/slice';
+import { DbCard } from '../state/features/card/card';
 
 // TODO: Add type for route and navigation
 function MerchantScreen() {
@@ -79,13 +83,91 @@ function Merchant() {
 
 function Transaction() {
   const dispatch = useAppDispatch();
+  const [getRecommendedCard] = useGetRecommendedCardMutation();
+
+  const { amount } = useAppSelector(state => state.transaction);
+  const { _id: userId, dbCards } = useAppSelector(state => state.user); 
+  const { activeMerchant: { _id: merchant } } = useAppSelector(state => state.merchant);
 
   const onCreateTransactionButtonPressed = () => {
-    dispatch(setTransactionModalVisible(true));
+    if (amount !== "") {
+      dispatch(setTransactionModalVisible(true));
+    }
   };
+
+  const recommendCard = async () => {
+    try {
+      const postData = {
+        userId,
+        merchant,
+        amount
+      }
+      const resp: any = await getRecommendedCard(postData);
+      const {data: dataWrapper, error} = resp;
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      const {data} = dataWrapper;
+
+      const recommendedCards = data.map((e: any) => {
+        const card = dbCards.find(c => c.cardName === e.cardName);
+        if (card) {
+          const { cardName, card: { issuer: cardIssuer, type: cardType } } = card;
+          return {
+            cardName,
+            cardIssuer,
+            cardType,
+            cashbackAmount: e.cashbackAmount
+          }
+        }
+        return undefined;
+      });
+
+      // Filter out cards that don't exist in state as precaution
+      const filteredCards = recommendedCards.filter((c: any )=> c);
+      dispatch(setRecommendedCards(filteredCards));
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    if (amount !== "") {
+      recommendCard();
+    }
+  }, [amount]);
+
+  const validateAndSetAmount = async (amount: string) => {
+    try {
+      const regex = /^(?:\d+(?:\.\d*)?|\.\d+)?$/;
+      let filteredAmount: string = "";
+
+      if (regex.test(amount)) {
+        filteredAmount = amount === '' ? '' : amount;
+      } else {
+        filteredAmount =  '';
+      }
+      dispatch(setAmount(filteredAmount));
+    } catch (e) {}
+  }
 
   return (
     <View>
+      <View style={transactionStyles().transactionAmountInputContainer}>
+        <TextInputBox
+          placeholder="Transaction Amount"
+          autoCorrect={false}
+          textAlign="center"
+          onChangeText={validateAndSetAmount}
+          value={amount}
+          keyboardType={"numeric"}
+          // style={inputsViewStyles().expiryBoxContainer}
+          onFocus={() => {}}
+        />
+      </View>
       <RoundButton mode="contained" onPress={onCreateTransactionButtonPressed}>
         Create Transaction
       </RoundButton>
@@ -96,7 +178,8 @@ function Transaction() {
 
 function TransactionModal() {
   const dispatch = useAppDispatch();
-  const {modalVisible} = useAppSelector(state => state.transaction);
+
+  const {amount, modalVisible} = useAppSelector(state => state.transaction);
 
   return (
     <View style={transactionStyles().centeredView}>
@@ -124,7 +207,7 @@ function TransactionModal() {
             </Text>
           </View>
           <View style={transactionStyles().amountContainer}>
-            <Text style={transactionStyles().amountText}>$25</Text>
+            <Text style={transactionStyles().amountText}>${amount}</Text>
           </View>
           <View style={transactionStyles().sectionContainer}>
             <View
@@ -208,7 +291,7 @@ const bodyStyles = () =>
   StyleSheet.create({
     container: {
       marginTop: 20,
-      backgroundColor: Themes.colors.appBackgroundSecondary,
+      // backgroundColor: Themes.colors.appBackgroundSecondary,
     },
   });
 
@@ -218,7 +301,6 @@ const merchantBodyStyles = () =>
       flexGrow: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 50,
     },
     merchantLogo: {
       width: 280,
@@ -254,14 +336,8 @@ const transactionStyles = () =>
     headerText: {
       textAlign: 'center',
     },
-    amountContainer: {
-      marginBottom: 10,
-    },
-    amountText: {
-      textAlign: 'center',
-      ...TextStyles({theme: 'light', size: 30}).bodyText,
-      color: Palette.darkGrey,
-      textDecorationLine: 'underline',
+    transactionAmountInputContainer: {
+      marginBottom: 20
     },
     sectionContainer: {
       paddingVertical: 15,
@@ -286,6 +362,15 @@ const transactionStyles = () =>
     },
     cardSectionHeaderContainer: {
       justifyContent: 'flex-start',
+    },
+    amountContainer: {
+      marginBottom: 10,
+    },
+    amountText: {
+      textAlign: 'center',
+      ...TextStyles({theme: 'light', size: 30}).bodyText,
+      color: Palette.darkGrey,
+      textDecorationLine: 'underline',
     },
     cardSectionHeaderText: {
       ...TextStyles({theme: 'light', size: 14}).bodyText,

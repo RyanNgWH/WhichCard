@@ -4,7 +4,7 @@
  * @format
  */
 
-import {View, Text, TextInput, StyleSheet, ViewStyle, Image, TextStyle, FlexStyle} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ViewStyle, Image, TextStyle, FlexStyle, KeyboardTypeOptions} from 'react-native';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
 import {Dispatch, SetStateAction, useState} from 'react';
@@ -12,8 +12,9 @@ import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
 // Props for the text input box component
 type TextInputBoxProps = {
-  title: string;
+  title?: string;
   value?: string;
+  keyboardType: KeyboardTypeOptions | undefined;
   placeholder?: string;
   style?: ViewStyle;
   textAlign?: 'left' | 'center' | 'right';
@@ -87,6 +88,7 @@ function TextInputBox(props: TextInputBoxProps) {
       </Text>
       <TextInput
         value={props.value}
+        keyboardType={props.keyboardType}
         onChangeText={props.onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}

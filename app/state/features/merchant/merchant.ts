@@ -1,12 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 
+type Category = 'dining' | 'grocery' | 'petrol' | 'travel' | 'entertainment' | 'shopping' | 'transport' | 'telecommunications' | 'education' | 'electricity' | 'others';
+
 interface Merchant {
     _id: string,
     name: string,
     prettyName: string,
     address: string,
     mcc: number,
+    category: Category,
     longitude: number,
     latitude: number,
     status: string
@@ -25,6 +28,7 @@ const initialState: MerchantState = {
     prettyName: "",
     address: "",
     mcc: 0,
+    category: "others",
     longitude: 0,
     latitude: 0, 
     status: "inactive"
