@@ -33,6 +33,7 @@ import {
   setUserDbCards,
 } from '../state/features/user/user';
 import {
+  getMerchantCategoryLogo,
   getMerchantIcon, getMerchantLogo, setActiveMerchant
 } from '../state/features/merchant/merchant'
 
@@ -227,7 +228,7 @@ function Body() {
       direction="horizontal"
       size={Themes.sizes.horizontalScreenSizeWide}>
       <SearchBar/>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <CardView />
       </ScrollView>
     </PaddedView>
@@ -287,9 +288,9 @@ function CardView() {
       </View>
       {hasCards ? (
         <View>
+          <RecentTransactionsView/>
           <CashbackAndRewardsView />
           {/* <CardRestrictionsView /> */}
-          <RecentTransactionsView/>
         </View>
       ) : null}
     </View>
@@ -304,7 +305,7 @@ function CashbackAndRewardsView() {
   const {activeCardIndex, dbCards} = useAppSelector(state => state.user);
 
   let diningCashBackRate = 0;
-  let groceriesCashbackRate = 0;
+  let shoppingCashbackRate = 0;
   let transportCashbackRate = 0;
 
   const cardWrapper = dbCards[activeCardIndex];
@@ -315,8 +316,8 @@ function CashbackAndRewardsView() {
     diningCashBackRate = (
       benefits.find(b => b.category === 'dining') || {cashbackRate: 0}
     ).cashbackRate;
-    groceriesCashbackRate = (
-      benefits.find(b => b.category === 'groceries') || {cashbackRate: 0}
+    shoppingCashbackRate = (
+      benefits.find(b => b.category === 'shopping') || {cashbackRate: 0}
     ).cashbackRate;
     transportCashbackRate = (
       benefits.find(b => b.category === 'transport') || {cashbackRate: 0}
@@ -346,7 +347,7 @@ function CashbackAndRewardsView() {
             Dining
           </Text>
           <Image
-            source={require('../assets/logo/cashbacks/dining.png')}
+            source={getMerchantCategoryLogo("dining")}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -357,15 +358,15 @@ function CashbackAndRewardsView() {
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
           <Text
             style={cashbackAndRewardsViewStyles().featuredCashBacksHeaderText}>
-            Groceries
+            Shopping
           </Text>
           <Image
-            source={require('../assets/logo/cashbacks/grocery.png')}
+            source={getMerchantCategoryLogo("shopping")}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
             style={cashbackAndRewardsViewStyles().featuredCashBacksPerctText}>
-            {groceriesCashbackRate}%
+            {shoppingCashbackRate}%
           </Text>
         </View>
         <View style={cashbackAndRewardsViewStyles().featuredCashBacksHeader}>
@@ -374,7 +375,7 @@ function CashbackAndRewardsView() {
             Transport
           </Text>
           <Image
-            source={require('../assets/logo/cashbacks/transport.png')}
+            source={getMerchantCategoryLogo("transport")}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -449,7 +450,13 @@ function RecentTransactionsView() {
 
   const { _id: userId, activeCardIndex, dbCards} = useAppSelector(state => state.user);
   const { allTransactions } = useAppSelector(state => state.transaction);
-  const userTransactions = allTransactions.filter(t => t.user._id === userId && (dbCards[activeCardIndex] && t.userCard === dbCards[activeCardIndex].cardName));
+  let userTransactions = allTransactions.filter(t => t.user._id === userId);
+  userTransactions = userTransactions.filter(t => {
+    if (dbCards[activeCardIndex]) {
+      return t.userCard === dbCards[activeCardIndex].cardName
+    }
+    return false;
+  }) 
 
   const getPrettyDate = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -828,7 +835,7 @@ const cashbackAndRewardsViewStyles = () =>
       shadowRadius: 1,
       shadowOpacity: 0.1,
       elevation: 2,
-      marginBottom: 20,
+      marginBottom: 200,
     },
     headerContainer: {
       flexDirection: 'row',
@@ -910,7 +917,7 @@ const transactionViewStyles = () =>
       shadowRadius: 1,
       shadowOpacity: 0.1,
       elevation: 2,
-      marginBottom: 100,
+      marginBottom: 20,
     },
     headerContainer: {
       flexDirection: 'row',

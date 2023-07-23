@@ -43,6 +43,7 @@ import {ItemType} from 'react-native-dropdown-picker';
 import {useCreateTransactionMutation, useGetRecommendedCardMutation} from '../state/features/api/slice';
 import {DbCard, getCardLogo} from '../state/features/card/card';
 import { useNavigation } from '@react-navigation/native';
+import { setActiveCardIndex } from '../state/features/user/user';
 
 function MerchantScreen() {
   return (
@@ -142,6 +143,7 @@ function Transaction() {
       // Filter out cards that don't exist in state as precaution
       const filteredCards = recommendedCards.filter((c: any) => c);
       dispatch(setRecommendedCards(filteredCards));
+      dispatch(setSelectedCardIndex(0));
     } catch (e) {
       console.error(e);
     }
@@ -193,7 +195,7 @@ function TransactionModal() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const { _id: user } = useAppSelector(state => state.user);
+  const { _id: userId } = useAppSelector(state => state.user);
   const {activeMerchant} = useAppSelector(state => state.merchant);
   const {
     allTransactions,
@@ -246,7 +248,7 @@ function TransactionModal() {
   const onSaveTransactionPress = async () => {
     try {
       const postData = {
-        user,
+        user: userId,
         userCard: recommendedCards[selectedCardIndex].name,
         merchant: activeMerchant._id,
         dateTime: (new Date()).toISOString(),
@@ -263,9 +265,16 @@ function TransactionModal() {
       }
 
       const {data} = dataWrapper;
+      data.user = {
+        _id: userId
+      };
+      data.merchant = {
+        name: activeMerchant.name,
+        prettyName: activeMerchant.prettyName
+      };
 
       dispatch(setAllTransactions([...allTransactions, data]));
-
+      dispatch(setActiveCardIndex(0));
       dispatch(setTransactionCleanState());
       navigation.reset({
         index: 0,
@@ -529,7 +538,7 @@ const transactionStyles = () =>
       height: 29,
     },
     cashbackTextContainer: {
-      marginBottom: 10
+      marginBottom: 20
     },
     cashbackText: {
       ...TextStyles({theme: 'light', size: 14}).screenHeaderText,
@@ -537,6 +546,7 @@ const transactionStyles = () =>
     },
     cashbackAmountText: {
       textDecorationLine: 'underline',
+      color: Palette.darkRed
     },
     errStr: {
       textAlign: "center",
