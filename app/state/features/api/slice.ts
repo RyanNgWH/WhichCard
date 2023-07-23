@@ -112,6 +112,10 @@ export const apiSlice = createApi({
         URLs.API_SERVER.MERCHANTS.ACTIVE_MERCHANTS,
     }),
     // Transactions
+    getAllTransactions: builder.query({
+      query: () =>
+        URLs.API_SERVER.TRANSACTIONS.BASE,
+    }),
     createTransaction: builder.mutation({
       query: data => {
         return {
@@ -121,7 +125,7 @@ export const apiSlice = createApi({
           body: data
         };
       },
-    })
+    }),
   }),
 });
 
@@ -135,5 +139,6 @@ export const {
   useGetRecommendedCardMutation,
   useDeleteUserCardMutation,
   useGetAllMerchantsQuery,
+  useGetAllTransactionsQuery,
   useCreateTransactionMutation
 } = apiSlice;

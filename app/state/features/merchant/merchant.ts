@@ -115,8 +115,11 @@ function getMerchantCategoryLogo(category: Category) {
     case "transport":
       logoSrc = require('../../../assets/logo/cashbacks/transport.png');
       break;
+    case "shopping":
+      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');
+      break;
     default:
-      logoSrc = require('../../../assets/logo/cashbacks/grocery.png');
+      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');
   }
   return logoSrc;
 }
@@ -130,4 +133,4 @@ export const {
 
 export default merchantSlice.reducer;
 
-export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo };
+export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo as getMerchantCategoryLogo };
