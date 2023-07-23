@@ -22,6 +22,7 @@ import {useEffect, useState, useRef} from 'react';
 import {
   useDeleteUserCardMutation,
   useGetAllMerchantsQuery,
+  useGetAllTransactionsQuery,
   useGetUserCardsMutation,
 } from '../state/features/api/slice';
 import {useAppSelector, useAppDispatch} from '../state/hooks';
@@ -32,7 +33,7 @@ import {
   setUserDbCards,
 } from '../state/features/user/user';
 import {
-  getMerchantIcon, setActiveMerchant
+  getMerchantIcon, getMerchantLogo, setActiveMerchant
 } from '../state/features/merchant/merchant'
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
@@ -44,6 +45,8 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, getCardLogo} from '../state/features/card/card';
 import { setAllMerchants } from '../state/features/merchant/merchant';
+import { setAllTransactions, setHasFetchedAllTransactions } from '../state/features/transaction/transaction';
+import { Palette } from '../styles/Palette';
 
 // Props for the header styles
 type headerStylesProps = {
@@ -57,16 +60,27 @@ type cardViewStyleProps = {
   cardMargin: number;
 };
 
-// TODO: Add type for route and navigation
 function DashboardScreen() {
   const dispatch = useAppDispatch();
 
-  const {data} = useGetAllMerchantsQuery(null);
+  const {hasFetchedAllTransactions} = useAppSelector(state => state.transaction);
+
+  // Query all merchants
+  const {data: merchantData, isSuccess: isGetMerchantsSuccess} = useGetAllMerchantsQuery(null);
   useEffect(() => {
-    if (data) {
-      dispatch(setAllMerchants(data.data || []));
+    if (isGetMerchantsSuccess && merchantData) {
+      dispatch(setAllMerchants(merchantData.data || []));
     }
-  }, [data]);
+  }, [isGetMerchantsSuccess]);
+
+  // Query all transactions
+  const {data: transactionsData, isSuccess: isGetTransactionsSuccess} = useGetAllTransactionsQuery(null);
+  useEffect(() => {
+    if (isGetTransactionsSuccess && transactionsData && !hasFetchedAllTransactions) {
+      dispatch(setHasFetchedAllTransactions(true));
+      dispatch(setAllTransactions(transactionsData.data || []));
+    }
+  }, [isGetTransactionsSuccess]);
 
   return (
     <View style={screenStyles().screen}>
@@ -147,6 +161,10 @@ function Header() {
   );
 }
 
+/**
+ * Search bar of the dashboard
+ * @returns Search bar of the dashboard
+ */
 function SearchBar() {
   const navigation = useNavigation();
 
@@ -204,7 +222,6 @@ function SearchBar() {
  * @returns Body of the dashboard
  */
 function Body() {
-  // TODO: Implement search bar functionality
   return (
     <PaddedView
       direction="horizontal"
@@ -272,6 +289,7 @@ function CardView() {
         <View>
           <CashbackAndRewardsView />
           {/* <CardRestrictionsView /> */}
+          <RecentTransactionsView/>
         </View>
       ) : null}
     </View>
@@ -419,6 +437,70 @@ function CardRestrictionsView() {
         />
       </View>
       <View></View>
+    </View>
+  );
+}
+
+/**
+ * Recent transactions view of the dashboard
+ * @returns Recent transactions view of the dashboard
+ */
+function RecentTransactionsView() {
+
+  const { _id: userId, activeCardIndex, dbCards} = useAppSelector(state => state.user);
+  const { allTransactions } = useAppSelector(state => state.transaction);
+  const userTransactions = allTransactions.filter(t => t.user._id === userId && (dbCards[activeCardIndex] && t.userCard === dbCards[activeCardIndex].cardName));
+
+  const getPrettyDate = (dateTime: string) => {
+    const date = new Date(dateTime);
+
+    const options = { 
+      day: '2-digit', 
+      month: 'long', 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    };
+
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  } 
+
+  return (
+    <View style={transactionViewStyles().container}>
+      <View style={transactionViewStyles().headerContainer}>
+        <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
+          Recent Transactions
+        </Text>
+      </View>
+      <View style={transactionViewStyles().recentTransactionsContainer}>
+        {userTransactions.length > 0 && (
+          userTransactions.map(t => {
+            return (
+              <View key={t._id} style={transactionViewStyles().transactionContainer}>
+                <Image
+                  source={getMerchantIcon(t.merchant.name)}
+                  style={transactionViewStyles().transactionMerchantLogo}
+                />
+                <View
+                  style={transactionViewStyles().transactionDetailsContainer}>
+                  <View
+                    style={
+                      transactionViewStyles()
+                        .transactionDetailsRowContainerr
+                    }>
+                    <Text style={transactionViewStyles().merchantNameText}>{t.merchant.prettyName}</Text>
+                    <Text style={transactionViewStyles().transactionAmountText}>${t.amount}</Text>
+                  </View>
+                  <View style={transactionViewStyles().transactionDetailsRowContainerr}>
+                    <Text>{getPrettyDate(t.dateTime)}</Text>
+                    <Text style={transactionViewStyles().cashbackAmountText}>+${t.cashbackAmount}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })
+        )}
+      </View>
     </View>
   );
 }
@@ -814,6 +896,59 @@ const cardRestrictionsViewStyles = () =>
     restrictionDetailsInfoText: {
       ...TextStyles({theme: 'light', size: 14}).bodyText,
       opacity: 0.6,
+    }
+  });
+
+const transactionViewStyles = () =>
+  StyleSheet.create({
+    container: {
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      backgroundColor: Themes.colors.appComponentBackground,
+      borderRadius: 9,
+      shadowColor: Themes.colors.shadow,
+      shadowRadius: 1,
+      shadowOpacity: 0.1,
+      elevation: 2,
+      marginBottom: 100,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    recentTransactionsContainer: {
+
+    },
+    recentTransactionsList: {
+
+    },
+    transactionContainer: {
+      flexDirection: "row",
+      marginBottom: 30
+    },
+    transactionMerchantLogo: {
+      width: 40,
+      height: 40,
+      marginRight: 10
+    },
+    transactionDetailsContainer: {
+      flexGrow: 2,
+      justifyContent: "space-between"
+    },
+    transactionDetailsRowContainerr: {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    },
+    merchantNameText: {
+      ...TextStyles({theme: "light", size: 14}).bodySubText
+    },
+    transactionAmountText: {
+      ...TextStyles({theme: "light", size: 18}).bodySubTextWithoutColor
+    },
+    cashbackAmountText: {
+      ...TextStyles({theme: "light", size: 14}).bodyText,
+      color: Palette.darkGreen
     }
   });
 

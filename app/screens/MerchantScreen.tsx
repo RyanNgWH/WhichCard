@@ -23,10 +23,11 @@ import transaction, {
   setAmount,
   setCardSelectionOpen,
   setErrStr,
-  setInitialState as setTransactionInitialState,
+  setCleanState as setTransactionCleanState,
   setRecommendedCards,
   setSelectedCardIndex,
   setModalVisible as setTransactionModalVisible,
+  setAllTransactions,
 } from '../state/features/transaction/transaction';
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
@@ -43,7 +44,6 @@ import {useCreateTransactionMutation, useGetRecommendedCardMutation} from '../st
 import {DbCard, getCardLogo} from '../state/features/card/card';
 import { useNavigation } from '@react-navigation/native';
 
-// TODO: Add type for route and navigation
 function MerchantScreen() {
   return (
     <SafeAreaViewGlobal headerHeight={useHeaderHeight()}>
@@ -196,6 +196,7 @@ function TransactionModal() {
   const { _id: user } = useAppSelector(state => state.user);
   const {activeMerchant} = useAppSelector(state => state.merchant);
   const {
+    allTransactions,
     amount,
     modalVisible,
     recommendedCards,
@@ -263,7 +264,9 @@ function TransactionModal() {
 
       const {data} = dataWrapper;
 
-      dispatch(setTransactionInitialState());
+      dispatch(setAllTransactions([...allTransactions, data]));
+
+      dispatch(setTransactionCleanState());
       navigation.reset({
         index: 0,
         routes: [

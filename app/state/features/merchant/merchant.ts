@@ -130,4 +130,4 @@ export const {
 
 export default merchantSlice.reducer;
 
-export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo };
+export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo as getMerchantCategoryLogo };

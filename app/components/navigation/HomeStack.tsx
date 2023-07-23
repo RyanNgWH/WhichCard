@@ -15,7 +15,7 @@ import Icon from '../../styles/Icons';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../state/hooks';
 import {setInitialState as setAddCardInitialState} from '../../state/features/card/addCard';
-import {setInitialState as setTransactionInitialState} from '../../state/features/transaction/transaction';
+import {setCleanState as setTransactionCleanState} from '../../state/features/transaction/transaction';
 
 /**
  * HomeStackPramList defines the types of the parameters that can be passed to each screen
@@ -48,7 +48,7 @@ function HomeStackScreen() {
   };
 
   const merchantHeaderBackButtonCallback = () => {
-    dispatch(setTransactionInitialState());
+    dispatch(setTransactionCleanState());
   }
 
   return (
