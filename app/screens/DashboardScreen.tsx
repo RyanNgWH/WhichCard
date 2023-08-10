@@ -1,7 +1,8 @@
 /**
- * Dashboard of the app
+ * Dashboard screen
  */
 
+import {useEffect, useState, useRef} from 'react';
 import {
   Animated,
   Dimensions,
@@ -17,15 +18,16 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useEffect, useState, useRef} from 'react';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 
+import {useAppSelector, useAppDispatch} from '../state/hooks';
 import {
   useDeleteUserCardMutation,
   useGetAllMerchantsQuery,
   useGetAllTransactionsQuery,
   useGetUserCardsMutation,
 } from '../state/features/api/slice';
-import {useAppSelector, useAppDispatch} from '../state/hooks';
 import {
   setActiveCardIndex,
   setUserInitialState,
@@ -34,20 +36,21 @@ import {
 } from '../state/features/user/user';
 import {
   getMerchantCategoryLogo,
-  getMerchantIcon, getMerchantLogo, setActiveMerchant
-} from '../state/features/merchant/merchant'
+  getMerchantIcon,
+  setActiveMerchant,
+  setAllMerchants,
+} from '../state/features/merchant/merchant';
+import {Card, getCardLogo} from '../state/features/card/card';
+import {
+  setAllTransactions,
+  setHasFetchedAllTransactions,
+} from '../state/features/transaction/transaction';
 
+import RoundButton from '../components/RoundButton';
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import {Themes} from '../styles/Themes';
 import TextStyles from '../styles/TextStyles';
-// import SearchBar from '../components/SearchBar';
-import RoundButton from '../components/RoundButton';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
-import {Card, getCardLogo} from '../state/features/card/card';
-import { setAllMerchants } from '../state/features/merchant/merchant';
-import { setAllTransactions, setHasFetchedAllTransactions } from '../state/features/transaction/transaction';
-import { Palette } from '../styles/Palette';
+import {Palette} from '../styles/Palette';
 
 // Props for the header styles
 type headerStylesProps = {
@@ -61,13 +64,21 @@ type cardViewStyleProps = {
   cardMargin: number;
 };
 
+/**
+ * This is the main component that holds the entire dashboard.
+ * It queries merchant and transaction data and renders the Header and Body components.
+ * @returns Dashboard screen JSX
+ */
 function DashboardScreen() {
   const dispatch = useAppDispatch();
 
-  const {hasFetchedAllTransactions} = useAppSelector(state => state.transaction);
+  const {hasFetchedAllTransactions} = useAppSelector(
+    state => state.transaction,
+  );
 
   // Query all merchants
-  const {data: merchantData, isSuccess: isGetMerchantsSuccess} = useGetAllMerchantsQuery(null);
+  const {data: merchantData, isSuccess: isGetMerchantsSuccess} =
+    useGetAllMerchantsQuery(null);
   useEffect(() => {
     if (isGetMerchantsSuccess && merchantData) {
       dispatch(setAllMerchants(merchantData.data || []));
@@ -75,9 +86,14 @@ function DashboardScreen() {
   }, [isGetMerchantsSuccess]);
 
   // Query all transactions
-  const {data: transactionsData, isSuccess: isGetTransactionsSuccess} = useGetAllTransactionsQuery(null);
+  const {data: transactionsData, isSuccess: isGetTransactionsSuccess} =
+    useGetAllTransactionsQuery(null);
   useEffect(() => {
-    if (isGetTransactionsSuccess && transactionsData && !hasFetchedAllTransactions) {
+    if (
+      isGetTransactionsSuccess &&
+      transactionsData &&
+      !hasFetchedAllTransactions
+    ) {
       dispatch(setHasFetchedAllTransactions(true));
       dispatch(setAllTransactions(transactionsData.data || []));
     }
@@ -87,7 +103,7 @@ function DashboardScreen() {
     <View style={screenStyles().screen}>
       <SafeAreaViewGlobal>
         <View style={screenStyles().headerContainer}>
-          <Header/>
+          <Header />
         </View>
         <View style={screenStyles().bodyContainer}>
           <Body />
@@ -98,14 +114,14 @@ function DashboardScreen() {
 }
 
 /**
- * Header of the dashboard
- * @returns Header of the dashboard
+ * Dashboard header
+ * @returns Dashboard header JSX
  */
 function Header() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
-  const { name } = useAppSelector(state => state.user);
+  const {name} = useAppSelector(state => state.user);
 
   // Container width
   const [hasSetContainerHeight, setHasSetContainerHeight] = useState(false);
@@ -116,6 +132,7 @@ function Header() {
     containerHeight: headerContainerHeight,
   };
 
+  // Handle logout button pressed
   const onLogoutPress = () => {
     dispatch(setUserInitialState());
     navigation.reset({
@@ -124,6 +141,7 @@ function Header() {
     });
   };
 
+  // Render Header
   return (
     <PaddedView
       direction="horizontal"
@@ -163,8 +181,8 @@ function Header() {
 }
 
 /**
- * Search bar of the dashboard
- * @returns Search bar of the dashboard
+ * Dashboard search bar
+ * @returns Dashboard search bar JSX
  */
 function SearchBar() {
   const navigation = useNavigation();
@@ -172,27 +190,34 @@ function SearchBar() {
   const dispatch = useAppDispatch();
 
   const [merchantQuery, setMerchantQuery] = useState('');
-  const merchants = useAppSelector((state) => state.merchant); // 
+  const merchants = useAppSelector(state => state.merchant); //
 
-  const filteredMerchants = merchants.allMerchants.filter((merchant) =>
-    merchant.prettyName.toLowerCase().startsWith(merchantQuery.toLowerCase())
+  const filteredMerchants = merchants.allMerchants.filter(merchant =>
+    merchant.prettyName.toLowerCase().startsWith(merchantQuery.toLowerCase()),
   );
 
+  // Handle search result container press
   const getOnSearchResultContainerPress = (merchantIndex: number) => {
-    return (() => {
+    return () => {
       dispatch(setActiveMerchant(merchants.allMerchants[merchantIndex]));
-      navigation.navigate("Merchant");
-    });
-  }
+      navigation.navigate('Merchant');
+    };
+  };
 
+  // Render search bar
   return (
     <View>
       <View style={searchBarStyles().searchContainer}>
-        <Icon style={searchBarStyles().searchIcon} name="ios-search" size={20} color="#000" />
+        <Icon
+          style={searchBarStyles().searchIcon}
+          name="ios-search"
+          size={20}
+          color="#000"
+        />
         <TextInput
           style={searchBarStyles().input}
           placeholder="Search Merchants"
-          onChangeText={(text) => setMerchantQuery(text)}
+          onChangeText={text => setMerchantQuery(text)}
           value={merchantQuery}
           autoCapitalize="none"
           autoCorrect={false}
@@ -200,34 +225,43 @@ function SearchBar() {
       </View>
 
       {merchantQuery.length > 0 && (
-          <FlatList
+        <FlatList
           style={searchBarStyles().searchResultList}
           data={filteredMerchants}
-          keyExtractor={(merchant) => merchant._id.toString()}
-          renderItem={({ item: merchant }) => (
-            <TouchableOpacity onPress={getOnSearchResultContainerPress(merchants.allMerchants.findIndex(m => m._id === merchant._id))} activeOpacity={0.5}>
-            <View style={searchBarStyles().searchResultContainer}>
-              <Image source={getMerchantIcon(merchant.name)} style={searchBarStyles().merchantIcon}/>
-              <Text style={searchBarStyles().searchResultText}>{merchant.prettyName}</Text>
-            </View>
+          keyExtractor={merchant => merchant._id.toString()}
+          renderItem={({item: merchant}) => (
+            <TouchableOpacity
+              onPress={getOnSearchResultContainerPress(
+                merchants.allMerchants.findIndex(m => m._id === merchant._id),
+              )}
+              activeOpacity={0.5}>
+              <View style={searchBarStyles().searchResultContainer}>
+                <Image
+                  source={getMerchantIcon(merchant.name)}
+                  style={searchBarStyles().merchantIcon}
+                />
+                <Text style={searchBarStyles().searchResultText}>
+                  {merchant.prettyName}
+                </Text>
+              </View>
             </TouchableOpacity>
           )}
         />
       )}
     </View>
   );
-};
+}
 
 /**
- * Body of the dashboard
- * @returns Body of the dashboard
+ * Dashboard body
+ * @returns Dashboard body JSX
  */
 function Body() {
   return (
     <PaddedView
       direction="horizontal"
       size={Themes.sizes.horizontalScreenSizeWide}>
-      <SearchBar/>
+      <SearchBar />
       <ScrollView showsVerticalScrollIndicator={false}>
         <CardView />
       </ScrollView>
@@ -236,8 +270,8 @@ function Body() {
 }
 
 /**
- * Card view of the dashboard
- * @returns Card view of the dashboard
+ * Dashboard card view
+ * @returns Dashboard card view JSX
  */
 function CardView() {
   const {cards} = useAppSelector(state => state.user);
@@ -263,6 +297,7 @@ function CardView() {
     cardMargin: cardMargin,
   };
 
+  // Render card view
   return (
     <View>
       <View style={cardViewStyles(cardViewStyleProps).container}>
@@ -288,9 +323,8 @@ function CardView() {
       </View>
       {hasCards ? (
         <View>
-          <RecentTransactionsView/>
+          <RecentTransactionsView />
           <CashbackAndRewardsView />
-          {/* <CardRestrictionsView /> */}
         </View>
       ) : null}
     </View>
@@ -298,8 +332,8 @@ function CardView() {
 }
 
 /**
- * Cashback and rewards view of the dashboard
- * @returns Cashback and rewards view of the dashboard
+ * Dashboard cashback and rewards
+ * @returns Dashboard cashback and rewards JSX
  */
 function CashbackAndRewardsView() {
   const {activeCardIndex, dbCards} = useAppSelector(state => state.user);
@@ -324,10 +358,7 @@ function CashbackAndRewardsView() {
     ).cashbackRate;
   }
 
-  const onViewAllPress = () => {
-    console.log('View all pressed');
-  };
-
+  // Render cashback and rewards
   return (
     <View style={cashbackAndRewardsViewStyles().container}>
       <View style={cashbackAndRewardsViewStyles().headerContainer}>
@@ -336,7 +367,7 @@ function CashbackAndRewardsView() {
         </Text>
         <Text
           style={TextStyles({theme: 'light', size: 16}).bodySubText}
-          onPress={onViewAllPress}>
+          onPress={() => {}}>
           View All
         </Text>
       </View>
@@ -347,7 +378,7 @@ function CashbackAndRewardsView() {
             Dining
           </Text>
           <Image
-            source={getMerchantCategoryLogo("dining")}
+            source={getMerchantCategoryLogo('dining')}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -361,7 +392,7 @@ function CashbackAndRewardsView() {
             Shopping
           </Text>
           <Image
-            source={getMerchantCategoryLogo("shopping")}
+            source={getMerchantCategoryLogo('shopping')}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -375,7 +406,7 @@ function CashbackAndRewardsView() {
             Transport
           </Text>
           <Image
-            source={getMerchantCategoryLogo("transport")}
+            source={getMerchantCategoryLogo('transport')}
             style={cashbackAndRewardsViewStyles().featuredCashBacksIcon}
           />
           <Text
@@ -389,89 +420,44 @@ function CashbackAndRewardsView() {
 }
 
 /**
- * Card restrictions view of the dashboard
- * @returns Card restrictions view of the dashboard
- */
-function CardRestrictionsView() {
-  const {activeCardIndex, dbCards} = useAppSelector(state => state.user);
-
-  let currMinSpent = 0;
-  let minSpendRequirement = 0;
-
-  const cardWrapper = dbCards[activeCardIndex];
-  if (cardWrapper) {
-  }
-
-  const onViewAllPress = () => {
-    console.log('View all pressed');
-  };
-
-  return (
-    <View style={cardRestrictionsViewStyles().container}>
-      <View style={cardRestrictionsViewStyles().headerContainer}>
-        <Text style={TextStyles({theme: 'light', size: 16}).bodySubText}>
-          Card Restrictions
-        </Text>
-        <Text
-          style={TextStyles({theme: 'light', size: 16}).bodySubText}
-          onPress={onViewAllPress}>
-          View All
-        </Text>
-      </View>
-      <View style={cardRestrictionsViewStyles().restrictionTypeContainer}>
-        <Image
-          source={require('../assets/logo/card-restrictions/min_spend.png')}
-          style={cardRestrictionsViewStyles().restrictionIcon}
-        />
-        <View style={cardRestrictionsViewStyles().restrictionDetailsContainer}>
-          <Text
-            style={cardRestrictionsViewStyles().restrictionDetailsHeaderText}>
-            Minimum Spend
-          </Text>
-          <Text style={cardRestrictionsViewStyles().restrictionDetailsInfoText}>
-            $160 / $800 Remaining
-          </Text>
-        </View>
-        <Image
-          source={require('../assets/logo/card-restrictions/min_spend_progress.png')}
-          style={cardRestrictionsViewStyles().restrictionProgressIcon}
-        />
-      </View>
-      <View></View>
-    </View>
-  );
-}
-
-/**
- * Recent transactions view of the dashboard
- * @returns Recent transactions view of the dashboard
+ * Dashboard recent transactions
+ * @returns Dashboard recent transactions JSX
  */
 function RecentTransactionsView() {
+  const {
+    _id: userId,
+    activeCardIndex,
+    dbCards,
+  } = useAppSelector(state => state.user);
+  const {allTransactions} = useAppSelector(state => state.transaction);
 
-  const { _id: userId, activeCardIndex, dbCards} = useAppSelector(state => state.user);
-  const { allTransactions } = useAppSelector(state => state.transaction);
+  // Get all transactions belonging to user
   let userTransactions = allTransactions.filter(t => t.user._id === userId);
+
+  // Filter all transactions belonging to current card
   userTransactions = userTransactions.filter(t => {
     if (dbCards[activeCardIndex]) {
-      return t.userCard === dbCards[activeCardIndex].cardName
+      return t.userCard === dbCards[activeCardIndex].cardName;
     }
     return false;
-  }) 
+  });
 
+  // Pretty format transaction date
   const getPrettyDate = (dateTime: string) => {
     const date = new Date(dateTime);
 
-    const options = { 
-      day: '2-digit', 
-      month: 'long', 
-      hour: 'numeric', 
-      minute: '2-digit', 
-      hour12: true 
+    const options = {
+      day: '2-digit',
+      month: 'long',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
     };
 
     return new Intl.DateTimeFormat('en-US', options).format(date);
-  } 
+  };
 
+  // Render recent transactions
   return (
     <View style={transactionViewStyles().container}>
       <View style={transactionViewStyles().headerContainer}>
@@ -480,10 +466,12 @@ function RecentTransactionsView() {
         </Text>
       </View>
       <View style={transactionViewStyles().recentTransactionsContainer}>
-        {userTransactions.length > 0 && (
+        {userTransactions.length > 0 &&
           userTransactions.map(t => {
             return (
-              <View key={t._id} style={transactionViewStyles().transactionContainer}>
+              <View
+                key={t._id}
+                style={transactionViewStyles().transactionContainer}>
                 <Image
                   source={getMerchantIcon(t.merchant.name)}
                   style={transactionViewStyles().transactionMerchantLogo}
@@ -492,29 +480,36 @@ function RecentTransactionsView() {
                   style={transactionViewStyles().transactionDetailsContainer}>
                   <View
                     style={
-                      transactionViewStyles()
-                        .transactionDetailsRowContainerr
+                      transactionViewStyles().transactionDetailsRowContainerr
                     }>
-                    <Text style={transactionViewStyles().merchantNameText}>{t.merchant.prettyName}</Text>
-                    <Text style={transactionViewStyles().transactionAmountText}>${t.amount}</Text>
+                    <Text style={transactionViewStyles().merchantNameText}>
+                      {t.merchant.prettyName}
+                    </Text>
+                    <Text style={transactionViewStyles().transactionAmountText}>
+                      ${t.amount}
+                    </Text>
                   </View>
-                  <View style={transactionViewStyles().transactionDetailsRowContainerr}>
+                  <View
+                    style={
+                      transactionViewStyles().transactionDetailsRowContainerr
+                    }>
                     <Text>{getPrettyDate(t.dateTime)}</Text>
-                    <Text style={transactionViewStyles().cashbackAmountText}>+${t.cashbackAmount}</Text>
+                    <Text style={transactionViewStyles().cashbackAmountText}>
+                      +${t.cashbackAmount}
+                    </Text>
                   </View>
                 </View>
               </View>
             );
-          })
-        )}
+          })}
       </View>
     </View>
   );
 }
 
 /**
- * Filled card view
- * @returns Filled card view
+ * Dashboard "Filled Card"
+ * @returns Dashboard "Filled Card" JSX
  */
 function CardViewFilled(props: cardViewStyleProps) {
   const dispatch = useAppDispatch();
@@ -576,6 +571,7 @@ function CardViewFilled(props: cardViewStyleProps) {
     };
   }, []);
 
+  // Handle card deletion button pressed
   const onCardDeletePressed = async () => {
     const activeCard = dbCards[activeCardIndex];
 
@@ -595,6 +591,7 @@ function CardViewFilled(props: cardViewStyleProps) {
     }
   };
 
+  // Render Dashboard "Filled Card"
   return (
     <ScrollView
       horizontal
@@ -602,15 +599,14 @@ function CardViewFilled(props: cardViewStyleProps) {
       showsHorizontalScrollIndicator={false}
       onScroll={handleScroll}
       scrollEventThrottle={16}>
-      {cardData.map((card) => (
+      {cardData.map(card => (
         <View key={card.id} style={cardViewStyles(props).cardContainer}>
           <View style={{height: 10}}></View>
           <Animated.Image
             source={card.image}
             style={[cardViewStyles(props).cardImage]}
           />
-          <View
-            style={cardViewStyles(props).cardTitleContainer}>
+          <View style={cardViewStyles(props).cardTitleContainer}>
             <FontAwesome5Icon
               name="minus-circle"
               size={25}
@@ -628,8 +624,8 @@ function CardViewFilled(props: cardViewStyleProps) {
 }
 
 /**
- * Empty card view
- * @returns Empty card view
+ * Dashboard "Empty Card"
+ * @returns Dashboard "Empty Card" JSX
  */
 function CardViewEmpty(props: cardViewStyleProps) {
   const navigation = useNavigation();
@@ -639,6 +635,7 @@ function CardViewEmpty(props: cardViewStyleProps) {
     navigation.navigate('AddCard');
   };
 
+  // Render Dashboard "Empty Card"
   return (
     <RoundButton
       mode="outlined"
@@ -688,7 +685,7 @@ const headerStyles = (props: headerStylesProps) =>
       flex: 1,
     },
     headerTextContainer: {
-      flex: 2
+      flex: 2,
     },
     logoutLogo: {
       position: 'absolute',
@@ -704,17 +701,6 @@ const headerStyles = (props: headerStylesProps) =>
     },
   });
 
-// Styles for the body
-const bodyStyles = () =>
-  StyleSheet.create({
-    // searchBar: {
-    //   shadowColor: Themes.colors.shadow,
-    //   shadowRadius: 1,
-    //   shadowOpacity: 0.1,
-    //   elevation: 2,
-    // },
-  });
-
 const searchBarStyles = () =>
   StyleSheet.create({
     searchContainer: {
@@ -726,7 +712,7 @@ const searchBarStyles = () =>
       shadowRadius: 2,
       shadowOffset: {
         width: 2,
-        height: 2
+        height: 2,
       },
       shadowOpacity: 0.5,
       elevation: 2,
@@ -745,14 +731,14 @@ const searchBarStyles = () =>
     },
     searchResultList: {
       maxHeight: 100, // Limit dropdown height
-      marginBottom: 10
+      marginBottom: 10,
     },
     searchResultContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       paddingLeft: 20,
       marginBottom: 10,
-      backgroundColor: "white",
+      backgroundColor: 'white',
       paddingTop: 5,
       paddingBottom: 5,
       shadowColor: Themes.colors.shadow,
@@ -760,21 +746,21 @@ const searchBarStyles = () =>
       shadowRadius: 1,
       shadowOffset: {
         width: 2,
-        height: 2
+        height: 2,
       },
       shadowOpacity: 0.5,
       elevation: 2,
     },
-    searchResultText: { 
-      paddingLeft: 5
+    searchResultText: {
+      paddingLeft: 5,
     },
     merchantIcon: {
       width: 25,
-      height: 25
-    }
+      height: 25,
+    },
   });
 
-// Styles for the card view
+// Card view styles
 const cardViewStyles = (props: cardViewStyleProps) =>
   StyleSheet.create({
     container: {
@@ -810,12 +796,12 @@ const cardViewStyles = (props: cardViewStyleProps) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: 10
+      marginTop: 10,
     },
     cardTitle: {
       ...TextStyles({theme: 'light', size: 16}).bodySubText,
       textAlign: 'center',
-      marginLeft: 10
+      marginLeft: 10,
     },
     cardImage: {
       width: 300,
@@ -824,6 +810,7 @@ const cardViewStyles = (props: cardViewStyleProps) =>
     },
   });
 
+// Cashback and rewards styles
 const cashbackAndRewardsViewStyles = () =>
   StyleSheet.create({
     container: {
@@ -846,7 +833,6 @@ const cashbackAndRewardsViewStyles = () =>
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    featuredCashBacksHeader: {},
     featuredCashBacksHeaderText: {
       textAlign: 'center',
       marginBottom: 10,
@@ -861,51 +847,10 @@ const cashbackAndRewardsViewStyles = () =>
       color: 'gray',
       textAlign: 'center',
     },
+    featuredCashBacksHeader: {},
   });
 
-const cardRestrictionsViewStyles = () =>
-  StyleSheet.create({
-    container: {
-      paddingVertical: 15,
-      paddingHorizontal: 20,
-      backgroundColor: Themes.colors.appComponentBackground,
-      borderRadius: 9,
-      shadowColor: Themes.colors.shadow,
-      shadowRadius: 1,
-      shadowOpacity: 0.1,
-      elevation: 2,
-      marginBottom: 100,
-    },
-    headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 15,
-    },
-    restrictionTypeContainer: {
-      flexDirection: 'row',
-    },
-    restrictionIcon: {
-      width: 52,
-      height: 52,
-      marginRight: 16,
-    },
-    restrictionProgressIcon: {
-      width: 52,
-      height: 52,
-    },
-    restrictionDetailsContainer: {
-      flexGrow: 2,
-    },
-    restrictionDetailsHeaderText: {
-      ...TextStyles({theme: 'light', size: 14}).bodySubText,
-      marginBottom: 10,
-    },
-    restrictionDetailsInfoText: {
-      ...TextStyles({theme: 'light', size: 14}).bodyText,
-      opacity: 0.6,
-    }
-  });
-
+// Transaction view styles
 const transactionViewStyles = () =>
   StyleSheet.create({
     container: {
@@ -924,39 +869,35 @@ const transactionViewStyles = () =>
       justifyContent: 'space-between',
       marginBottom: 15,
     },
-    recentTransactionsContainer: {
-
-    },
-    recentTransactionsList: {
-
-    },
     transactionContainer: {
-      flexDirection: "row",
-      marginBottom: 30
+      flexDirection: 'row',
+      marginBottom: 30,
     },
     transactionMerchantLogo: {
       width: 40,
       height: 40,
-      marginRight: 10
+      marginRight: 10,
     },
     transactionDetailsContainer: {
       flexGrow: 2,
-      justifyContent: "space-between"
+      justifyContent: 'space-between',
     },
     transactionDetailsRowContainerr: {
-      flexDirection: "row",
-      justifyContent: "space-between"
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
+    recentTransactionsContainer: {},
+    featuredCashBacksContainer: {},
     merchantNameText: {
-      ...TextStyles({theme: "light", size: 14}).bodySubText
+      ...TextStyles({theme: 'light', size: 14}).bodySubText,
     },
     transactionAmountText: {
-      ...TextStyles({theme: "light", size: 18}).bodySubTextWithoutColor
+      ...TextStyles({theme: 'light', size: 18}).bodySubTextWithoutColor,
     },
     cashbackAmountText: {
-      ...TextStyles({theme: "light", size: 14}).bodyText,
-      color: Palette.darkGreen
-    }
+      ...TextStyles({theme: 'light', size: 14}).bodyText,
+      color: Palette.darkGreen,
+    },
   });
 
 export default DashboardScreen;

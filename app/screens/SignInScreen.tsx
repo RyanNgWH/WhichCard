@@ -30,8 +30,6 @@ import TextStyles from '../styles/TextStyles';
 import {TextInputBox} from '../components/Inputs';
 import RoundButton from '../components/RoundButton';
 
-import URLs from '../shared/Urls';
-
 /**
  * Sign in screen
  * @returns Sign in screen component

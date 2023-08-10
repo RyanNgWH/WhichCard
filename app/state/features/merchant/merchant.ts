@@ -1,27 +1,42 @@
-import {createSlice} from '@reduxjs/toolkit';
-import type {PayloadAction} from '@reduxjs/toolkit';
+// Import necessary dependencies from Redux Toolkit.
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type Category = 'dining' | 'grocery' | 'petrol' | 'travel' | 'entertainment' | 'shopping' | 'transport' | 'telecommunications' | 'education' | 'electricity' | 'others';
+// Define a type for the different merchant categories.
+type Category =
+  | 'dining'
+  | 'grocery'
+  | 'petrol'
+  | 'travel'
+  | 'entertainment'
+  | 'shopping'
+  | 'transport'
+  | 'telecommunications'
+  | 'education'
+  | 'electricity'
+  | 'others';
 
+// Define the interface for merchant data.
 interface Merchant {
-    _id: string,
-    name: string,
-    prettyName: string,
-    address: string,
-    mcc: number,
-    category: Category,
-    longitude: number,
-    latitude: number,
-    status: string
+  _id: string,
+  name: string,
+  prettyName: string,
+  address: string,
+  mcc: number,
+  category: Category,
+  longitude: number,
+  latitude: number,
+  status: string
 }
 
+// Define the interface for the state of the merchant feature.
 interface MerchantState {
-  allMerchants: Merchant[];
-  activeMerchant: Merchant;
+  allMerchants: Merchant[];   // Holds an array of all merchants.
+  activeMerchant: Merchant;   // Holds the active merchant data.
 }
 
+// Define the initial state for the merchant feature.
 const initialState: MerchantState = {
-  allMerchants: [],
+  allMerchants: [],           // Initialize the array of all merchants as empty.
   activeMerchant: {
     _id: "",
     name: "",
@@ -30,14 +45,15 @@ const initialState: MerchantState = {
     mcc: 0,
     category: "others",
     longitude: 0,
-    latitude: 0, 
+    latitude: 0,
     status: "inactive"
   },
 };
 
+// Create a Redux slice for the merchant feature.
 export const merchantSlice = createSlice({
-  name: 'merchant',
-  initialState,
+  name: 'merchant',            // Specify the slice name.
+  initialState,                // Provide the initial state.
   reducers: {
     setMerchantState: (
       state: MerchantState,
@@ -70,67 +86,73 @@ export const merchantSlice = createSlice({
   },
 });
 
+// Function to retrieve the icon source for a merchant.
 function getMerchantIcon(merchantName: string) {
-  let logoSrc;
+  let logoSrc;                // Variable to store the icon source.
   switch (merchantName) {
-      case 'ikea_restaurant':
-          logoSrc = require('../../../assets/logo/merchants/icons/ikea_restaurant.png');
-          break;
-      case 'popular_bookstore':
-          logoSrc = require('../../../assets/logo/merchants/icons/popular_bookstore.png');
-          break;
-      case 'comfort_delgro':
-        logoSrc = require('../../../assets/logo/merchants/icons/comfort_delgro.png');
-        break;
-      default:
-        logoSrc = require('../../../assets/logo/merchants/icons/default.png');
-      }
-  return logoSrc;
-}
-
-function getMerchantLogo(merchantName: string) {
-  let logoSrc;
-  switch (merchantName) {
-      case 'ikea_restaurant':
-          logoSrc = require('../../../assets/logo/merchants/ikea_restaurant.png');
-          break;
-      case 'popular_bookstore':
-          logoSrc = require('../../../assets/logo/merchants/popular_bookstore.png');
-          break;
-      case 'comfort_delgro':
-        logoSrc = require('../../../assets/logo/merchants/comfort_delgro.png');
-        break;
-      default:
-        logoSrc = require('../../../assets/logo/merchants/default.png');
-      }
-  return logoSrc;
-}
-
-function getMerchantCategoryLogo(category: Category) {
-  let logoSrc;
-  switch (category) {
-    case "dining":
-      logoSrc = require('../../../assets/logo/cashbacks/dining.png');
+    case 'ikea_restaurant':
+      logoSrc = require('../../../assets/logo/merchants/icons/ikea_restaurant.png');    // Icon source for Ikea restaurant.
       break;
-    case "transport":
-      logoSrc = require('../../../assets/logo/cashbacks/transport.png');
+    case 'popular_bookstore':
+      logoSrc = require('../../../assets/logo/merchants/icons/popular_bookstore.png');  // Icon source for Popular Bookstore.
       break;
-    case "shopping":
-      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');
+    case 'comfort_delgro':
+      logoSrc = require('../../../assets/logo/merchants/icons/comfort_delgro.png');     // Icon source for ComfortDelGro.
       break;
     default:
-      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');
+      logoSrc = require('../../../assets/logo/merchants/icons/default.png');           // Default icon source.
   }
-  return logoSrc;
+  return logoSrc;             // Return the icon source.
 }
 
+// Function to retrieve the logo source for a merchant.
+function getMerchantLogo(merchantName: string) {
+  let logoSrc;                // Variable to store the logo source.
+  switch (merchantName) {
+    case 'ikea_restaurant':
+      logoSrc = require('../../../assets/logo/merchants/ikea_restaurant.png');    // Logo source for Ikea restaurant.
+      break;
+    case 'popular_bookstore':
+      logoSrc = require('../../../assets/logo/merchants/popular_bookstore.png');  // Logo source for Popular Bookstore.
+      break;
+    case 'comfort_delgro':
+      logoSrc = require('../../../assets/logo/merchants/comfort_delgro.png');     // Logo source for ComfortDelGro.
+      break;
+    default:
+      logoSrc = require('../../../assets/logo/merchants/default.png');           // Default logo source.
+  }
+  return logoSrc;             // Return the logo source.
+}
+
+// Function to retrieve the logo source for a merchant category.
+function getMerchantCategoryLogo(category: Category) {
+  let logoSrc;                // Variable to store the logo source.
+  switch (category) {
+    case 'dining':
+      logoSrc = require('../../../assets/logo/cashbacks/dining.png');        // Logo source for Dining category.
+      break;
+    case 'transport':
+      logoSrc = require('../../../assets/logo/cashbacks/transport.png');     // Logo source for Transport category.
+      break;
+    case 'shopping':
+      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');      // Logo source for Shopping category.
+      break;
+    default:
+      logoSrc = require('../../../assets/logo/cashbacks/shopping.png');      // Default logo source.
+  }
+  return logoSrc;             // Return the logo source.
+}
+
+// Export the action creators generated by the slice.
 export const {
-    setMerchantState,
-    setAllMerchants,
-    setActiveMerchant,
-    setInitialState
+  setMerchantState,
+  setAllMerchants,
+  setActiveMerchant,
+  setInitialState
 } = merchantSlice.actions;
 
+// Export the reducer function from the slice to be used in the Redux store.
 export default merchantSlice.reducer;
 
+// Export the merchant-related utility functions.
 export { getMerchantIcon, getMerchantLogo, getMerchantCategoryLogo as getMerchantCategoryLogo };
