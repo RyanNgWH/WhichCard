@@ -16,7 +16,6 @@ type RootStackParamList = {
   Landing: undefined;
   SignUp: undefined;
   SignIn: undefined;
-  // TODO: Add user type
   HomeStack: {user: any};
 };
 

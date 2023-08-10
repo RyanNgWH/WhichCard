@@ -1,7 +1,8 @@
 /**
- * Dashboard of the app
+ * Merchant screen
  */
 
+import {useEffect} from 'react';
 import {
   Dimensions,
   Image,
@@ -11,14 +12,25 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TouchableHighlight,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {useHeaderHeight} from '@react-navigation/elements';
+import {ItemType} from 'react-native-dropdown-picker';
+import {useNavigation} from '@react-navigation/native';
 
 import {useAppDispatch, useAppSelector} from '../state/hooks';
-import {getMerchantCategoryLogo, getMerchantLogo} from '../state/features/merchant/merchant';
-import transaction, {
+import {
+  useCreateTransactionMutation,
+  useGetRecommendedCardMutation,
+} from '../state/features/api/slice';
+import {setActiveCardIndex} from '../state/features/user/user';
+import {getCardLogo} from '../state/features/card/card';
+import {
+  getMerchantCategoryLogo,
+  getMerchantLogo,
+} from '../state/features/merchant/merchant';
+import {
   RecommendedCard,
   setAmount,
   setCardSelectionOpen,
@@ -32,20 +44,19 @@ import transaction, {
 
 import {PaddedView, SafeAreaViewGlobal} from '../components/ViewComponents';
 import RoundButton from '../components/RoundButton';
+import {DropdownBox, TextInputBox} from '../components/Inputs';
 
-import {useHeaderHeight} from '@react-navigation/elements';
 import {Themes} from '../styles/Themes';
-import {useEffect, useState} from 'react';
 import TextStyles from '../styles/TextStyles';
 import {Palette} from '../styles/Palette';
-import {DropdownBox, TextInputBox} from '../components/Inputs';
-import {ItemType} from 'react-native-dropdown-picker';
-import {useCreateTransactionMutation, useGetRecommendedCardMutation} from '../state/features/api/slice';
-import {DbCard, getCardLogo} from '../state/features/card/card';
-import { useNavigation } from '@react-navigation/native';
-import { setActiveCardIndex } from '../state/features/user/user';
 
+/**
+ * The main function component representing the MerchantScreen.
+ * @returns Merchant screen JSX
+ */
 function MerchantScreen() {
+
+  // Render Merchant Screen JSX
   return (
     <SafeAreaViewGlobal headerHeight={useHeaderHeight()}>
       <PaddedView
@@ -64,7 +75,12 @@ function MerchantScreen() {
   );
 }
 
+/**
+ * Merchant body
+ */
 function Body() {
+
+  // Render Merchant body
   return (
     <View style={bodyStyles().container}>
       <Merchant />
@@ -73,9 +89,13 @@ function Body() {
   );
 }
 
+/**
+ * Merchant information
+ */
 function Merchant() {
   const {activeMerchant} = useAppSelector(state => state.merchant);
 
+  // Render Merchant information
   return (
     <View>
       <View style={merchantBodyStyles().logoContainer}>
@@ -89,22 +109,27 @@ function Merchant() {
   );
 }
 
+/**
+ * Merchant transaction
+ */
 function Transaction() {
   const dispatch = useAppDispatch();
   const [getRecommendedCard] = useGetRecommendedCardMutation();
 
-  const {amount, recommendedCards} = useAppSelector(state => state.transaction);
+  const {amount} = useAppSelector(state => state.transaction);
   const {_id: userId, dbCards} = useAppSelector(state => state.user);
   const {
     activeMerchant: {_id: merchant},
   } = useAppSelector(state => state.merchant);
 
+  // Handle create transaction button pressed
   const onCreateTransactionButtonPressed = () => {
     if (amount !== '') {
       dispatch(setTransactionModalVisible(true));
     }
   };
 
+  // Card recommednation
   const recommendCard = async () => {
     try {
       const postData = {
@@ -121,6 +146,7 @@ function Transaction() {
 
       const {data} = dataWrapper;
 
+      // Process recommended cards data structure
       const recommendedCards = data.map((e: any) => {
         const {cashbackAmount, cashbackRate} = e;
         const card = dbCards.find(c => c.cardName === e.cardName);
@@ -142,6 +168,8 @@ function Transaction() {
 
       // Filter out cards that don't exist in state as precaution
       const filteredCards = recommendedCards.filter((c: any) => c);
+
+      // Set recommended cards into state, reset "active" card index
       dispatch(setRecommendedCards(filteredCards));
       dispatch(setSelectedCardIndex(0));
     } catch (e) {
@@ -149,12 +177,14 @@ function Transaction() {
     }
   };
 
+  // Call card recommendation api whenever amount changes
   useEffect(() => {
     if (amount !== '') {
       recommendCard();
     }
   }, [amount]);
 
+  // Validate user input amount for transaction
   const validateAndSetAmount = async (amount: string) => {
     try {
       const regex = /^(?:\d+(?:\.\d*)?|\.\d+)?$/;
@@ -169,6 +199,7 @@ function Transaction() {
     } catch (e) {}
   };
 
+  // Render Merchant transaction
   return (
     <View>
       <View style={transactionStyles().transactionAmountInputContainer}>
@@ -191,11 +222,14 @@ function Transaction() {
   );
 }
 
+/**
+ * Merchant transaction details
+ */
 function TransactionModal() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const { _id: userId } = useAppSelector(state => state.user);
+  const {_id: userId} = useAppSelector(state => state.user);
   const {activeMerchant} = useAppSelector(state => state.merchant);
   const {
     allTransactions,
@@ -204,11 +238,12 @@ function TransactionModal() {
     recommendedCards,
     cardSelectionOpen,
     selectedCardIndex,
-    errStr
+    errStr,
   } = useAppSelector(state => state.transaction);
 
   const [createTransaction] = useCreateTransactionMutation();
 
+  // Generate the cashback amount and percentage to be displayed
   const merchantCategoryText =
     activeMerchant.category.charAt(0).toUpperCase() +
     activeMerchant.category.slice(1);
@@ -219,6 +254,7 @@ function TransactionModal() {
     ? recommendedCards[selectedCardIndex].cashbackAmount
     : '0';
 
+  // Generate the recommended card items to be displayed in the dropdown box
   const getRecommendedCardItems = (cards: RecommendedCard[]) => {
     const items = [];
     for (let i = 0; i < cards.length; i++) {
@@ -245,16 +281,17 @@ function TransactionModal() {
     return items;
   };
 
+  // Handle save transaction button pressed
   const onSaveTransactionPress = async () => {
     try {
       const postData = {
         user: userId,
         userCard: recommendedCards[selectedCardIndex].name,
         merchant: activeMerchant._id,
-        dateTime: (new Date()).toISOString(),
+        dateTime: new Date().toISOString(),
         amount,
         cashbackAmount: recommendedCards[selectedCardIndex].cashbackAmount,
-        cashbackCategory: activeMerchant.category
+        cashbackCategory: activeMerchant.category,
       };
 
       const resp: any = await createTransaction(postData);
@@ -266,16 +303,21 @@ function TransactionModal() {
 
       const {data} = dataWrapper;
       data.user = {
-        _id: userId
+        _id: userId,
       };
       data.merchant = {
         name: activeMerchant.name,
-        prettyName: activeMerchant.prettyName
+        prettyName: activeMerchant.prettyName,
       };
 
+      // Add new transactions to transactions state
       dispatch(setAllTransactions([...allTransactions, data]));
+      // Set "active" card index to 0
       dispatch(setActiveCardIndex(0));
+      // Reset transaction state
       dispatch(setTransactionCleanState());
+
+      // Redirect to Dashboard
       navigation.reset({
         index: 0,
         routes: [
@@ -287,12 +329,12 @@ function TransactionModal() {
           },
         ],
       });
-
     } catch (err: any) {
       dispatch(setErrStr(err.message || 'Failed to save transaction.'));
     }
   };
 
+  // Render Merchant transaction details
   return (
     <View style={transactionStyles().centeredView}>
       <Modal
@@ -392,7 +434,10 @@ function TransactionModal() {
           {errStr !== '' ? (
             <View>
               <Text
-                style={[TextStyles({theme: 'light'}).bodyText, transactionStyles().errStr]}>
+                style={[
+                  TextStyles({theme: 'light'}).bodyText,
+                  transactionStyles().errStr,
+                ]}>
                 {errStr}
               </Text>
             </View>
@@ -409,6 +454,7 @@ function TransactionModal() {
   );
 }
 
+// Screen styles
 const screenStyles = () =>
   StyleSheet.create({
     screen: {
@@ -419,14 +465,16 @@ const screenStyles = () =>
     },
   });
 
+// Body styles
 const bodyStyles = () =>
   StyleSheet.create({
     container: {
       marginTop: 20,
-      // backgroundColor: Themes.colors.appBackgroundSecondary,
     },
   });
 
+
+// Merchant body styles
 const merchantBodyStyles = () =>
   StyleSheet.create({
     logoContainer: {
@@ -440,6 +488,7 @@ const merchantBodyStyles = () =>
     },
   });
 
+// Merchant transaction styles
 const transactionStyles = () =>
   StyleSheet.create({
     centeredView: {
@@ -538,7 +587,7 @@ const transactionStyles = () =>
       height: 29,
     },
     cashbackTextContainer: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     cashbackText: {
       ...TextStyles({theme: 'light', size: 14}).screenHeaderText,
@@ -546,10 +595,10 @@ const transactionStyles = () =>
     },
     cashbackAmountText: {
       textDecorationLine: 'underline',
-      color: Palette.darkRed
+      color: Palette.darkRed,
     },
     errStr: {
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: 20,
       color: Themes.colors.errorTextFillColor,
       zIndex: -1,
